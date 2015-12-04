@@ -107,7 +107,7 @@ public:
 	void compute_lhs();
 };
 
-void ThinLayerGradientIns::setup(Structmesh2d* mesh, Array2d<double>* unknown, Array2d<double>* residual, Array2d<double>* lhs)
+void ThinLayerGradientIns::setup(Structmesh2d* mesh, Array2d<double>* unknown, Array2d<double>* residual, Array2d<double>* lhs, double visc)
 {
 	GradientSchemeIns::setup(mesh, unknown, residual, lhs, visc);
 	GradientSchemeIns::compute_CV_volumes();
@@ -130,9 +130,10 @@ void ThinLayerGradientIns::compute_lhs()
 /** \note We *subtract* the viscous contribution from the residual as the viscous term has a negative sign in iNS equations. */
 void ThinLayerGradientIns::compute_fluxes()
 {
+	int i,j,k;
 	vector<double> g(nvar), h(nvar);
-	for(int i = 1; i <= m->gimx()-1; i++)
-		for(int j = 1; j <= m->gjmx()-1; j++)
+	for(i = 1; i <= m->gimx()-1; i++)
+		for(j = 1; j <= m->gjmx()-1; j++)
 		{
 			for(k = 1; k < nvar; k++)
 			{
@@ -151,7 +152,6 @@ void ThinLayerGradientIns::compute_fluxes()
 * \todo TODO : This class is not yet ready for iNS:
 * - Implement for a vector unknown
 * - Multiply by viscosity at appropriate places
-* - Remove boundary-condition treatment, and do something about the extended stencil for the real boundary cells.
 */
 class NormTanGradientIns : public GradientSchemeIns
 {
@@ -222,254 +222,252 @@ void NormTanGradientIns::compute_lhs()
 
 void NormTanGradientIns::compute_fluxes()
 {
-	Array2d<double> cdelu(5,2);		// to store cell-wise gradient values for each of the 5 cells in a loop iteration.
-	int k,d;
+	Array2d<double>* cdelu;		// to store cell-wise gradient values for each of the 5 cells in a loop iteration.
+	cdelu = new Array2d<double>[nvar];
+	for(int i = 0; i < nvar; i++)
+		cdelu[i].setup(5,2);
+	int i,j,k,d;
 
 	// first iterate over interior cells
-	for(int i = 2; i <= m->gimx()-2; i++)
-		for(int j = 2; j <= m->gjmx()-2; j++)
+	for(i = 2; i <= m->gimx()-2; i++)
+		for(j = 2; j <= m->gjmx()-2; j++)
 		{
 			for(d = 0; d < 2; d++)
 			{
-				// i,j-1
-				cdelu(0,d) = 0.5/m->gvol(i,j-1)*( (u->get(i,j-1)+u->get(i+1,j-1))*m->gdel(i,j-1,d) + (u->get(i,j-1)+u->get(i,j))*m->gdel(i,j-1,2+d)
-					- (u->get(i,j-1)+u->get(i-1,j-1))*m->gdel(i-1,j-1,d) - (u->get(i,j-1)+u->get(i,j-2))*m->gdel(i,j-2,2+d));
-				//i-1,j
-				cdelu(1,d) = 0.5/m->gvol(i-1,j)*( (u->get(i-1,j)+u->get(i,j))*m->gdel(i-1,j,d) + (u->get(i-1,j)+u->get(i-1,j+1))*m->gdel(i-1,j,2+d)
-					- (u->get(i-1,j)+u->get(i-2,j))*m->gdel(i-2,j,d) - (u->get(i-1,j)+u->get(i-1,j-1))*m->gdel(i-1,j-1,2+d));
-				//i,j
-				cdelu(2,d) = 0.5/m->gvol(i,j)*( (u->get(i,j)+u->get(i+1,j))*m->gdel(i,j,d) + (u->get(i,j)+u->get(i,j+1))*m->gdel(i,j,2+d)
-					- (u->get(i,j)+u->get(i-1,j))*m->gdel(i-1,j,d) - (u->get(i,j)+u->get(i,j-1))*m->gdel(i,j-1,2+d));
-				//i+1,j
-				cdelu(3,d) = 0.5/m->gvol(i+1,j)*( (u->get(i+1,j)+u->get(i+2,j))*m->gdel(i+1,j,d) + (u->get(i+1,j)+u->get(i+1,j+1))*m->gdel(i+1,j,2+d)
-					- (u->get(i+1,j)+u->get(i,j))*m->gdel(i,j,d) - (u->get(i+1,j)+u->get(i+1,j-1))*m->gdel(i+1,j-1,2+d));
-				//i,j+1
-				cdelu(4,d) = 0.5/m->gvol(i,j+1)*( (u->get(i,j+1)+u->get(i+1,j+1))*m->gdel(i,j+1,d) + (u->get(i,j+1)+u->get(i,j+2))*m->gdel(i,j+1,2+d)
-					- (u->get(i,j+1)+u->get(i-1,j+1))*m->gdel(i-1,j+1,d) - (u->get(i,j+1)+u->get(i,j))*m->gdel(i,j,2+d));
+				for(k = 1; k < nvar; k++)
+				{
+					Array2d<double>* u = &(this->u[k]);
+					// i,j-1
+					cdelu[k](0,d) = 0.5/m->gvol(i,j-1)*( (u->get(i,j-1)+u->get(i+1,j-1))*m->gdel(i,j-1,d) + (u->get(i,j-1)+u->get(i,j))*m->gdel(i,j-1,2+d)
+						- (u->get(i,j-1)+u->get(i-1,j-1))*m->gdel(i-1,j-1,d) - (u->get(i,j-1)+u->get(i,j-2))*m->gdel(i,j-2,2+d));
+					//i-1,j
+					cdelu[k](1,d) = 0.5/m->gvol(i-1,j)*( (u->get(i-1,j)+u->get(i,j))*m->gdel(i-1,j,d) + (u->get(i-1,j)+u->get(i-1,j+1))*m->gdel(i-1,j,2+d)
+						- (u->get(i-1,j)+u->get(i-2,j))*m->gdel(i-2,j,d) - (u->get(i-1,j)+u->get(i-1,j-1))*m->gdel(i-1,j-1,2+d));
+					//i,j
+					cdelu[k](2,d) = 0.5/m->gvol(i,j)*( (u->get(i,j)+u->get(i+1,j))*m->gdel(i,j,d) + (u->get(i,j)+u->get(i,j+1))*m->gdel(i,j,2+d)
+						- (u->get(i,j)+u->get(i-1,j))*m->gdel(i-1,j,d) - (u->get(i,j)+u->get(i,j-1))*m->gdel(i,j-1,2+d));
+					//i+1,j
+					cdelu[k](3,d) = 0.5/m->gvol(i+1,j)*( (u->get(i+1,j)+u->get(i+2,j))*m->gdel(i+1,j,d) + (u->get(i+1,j)+u->get(i+1,j+1))*m->gdel(i+1,j,2+d)
+						- (u->get(i+1,j)+u->get(i,j))*m->gdel(i,j,d) - (u->get(i+1,j)+u->get(i+1,j-1))*m->gdel(i+1,j-1,2+d));
+					//i,j+1
+					cdelu[k](4,d) = 0.5/m->gvol(i,j+1)*( (u->get(i,j+1)+u->get(i+1,j+1))*m->gdel(i,j+1,d) + (u->get(i,j+1)+u->get(i,j+2))*m->gdel(i,j+1,2+d)
+						- (u->get(i,j+1)+u->get(i-1,j+1))*m->gdel(i-1,j+1,d) - (u->get(i,j+1)+u->get(i,j))*m->gdel(i,j,2+d));
+				}
 			}
 			
 			// now calculate contributions from the 4 faces
-			(*res)(i,j) += 0.5*((cdelu(2,0)+cdelu(3,0))*m->gdel(i,j,0)+(cdelu(2,1)+cdelu(3,1))*m->gdel(i,j,1) 
-				- ((cdelu(2,0)+cdelu(3,0))*svect[0](i,j)+(cdelu(2,1)+cdelu(3,1))*svect[1](i,j))*(svect[0](i,j)*m->gdel(i,j,0)+svect[1](i,j)*m->gdel(i,j,1)))
-				+ (u->get(i+1,j)-u->get(i,j))*(svect[0](i,j)*m->gdel(i,j,0)+svect[1](i,j)*m->gdel(i,j,1))/dels[0](i,j);
-			(*res)(i,j) -= 0.5*((cdelu(2,0)+cdelu(1,0))*m->gdel(i-1,j,0)+(cdelu(2,1)+cdelu(1,1))*m->gdel(i-1,j,1) 
-				- ((cdelu(2,0)+cdelu(1,0))*svect[0](i-1,j)+(cdelu(2,1)+cdelu(1,1))*svect[1](i-1,j))*(svect[0](i-1,j)*m->gdel(i-1,j,0)+svect[1](i-1,j)*m->gdel(i-1,j,1)))
-				+ (u->get(i,j)-u->get(i-1,j))*(svect[0](i-1,j)*m->gdel(i-1,j,0)+svect[1](i-1,j)*m->gdel(i-1,j,1))/dels[0](i-1,j);
-			(*res)(i,j) -= 0.5*((cdelu(2,0)+cdelu(0,0))*m->gdel(i,j-1,2)+(cdelu(2,1)+cdelu(0,1))*m->gdel(i,j-1,3) 
-				- ((cdelu(2,0)+cdelu(0,0))*svect[2](i,j-1)+(cdelu(2,1)+cdelu(0,1))*svect[3](i,j-1))*(svect[2](i,j-1)*m->gdel(i,j-1,2)+svect[3](i,j-1)*m->gdel(i,j-1,3)))
-				+ (u->get(i,j)-u->get(i,j-1))*(svect[2](i,j-1)*m->gdel(i,j-1,2)+svect[3](i,j-1)*m->gdel(i,j-1,3))/dels[1](i,j-1);
-			(*res)(i,j) += 0.5*((cdelu(2,0)+cdelu(4,0))*m->gdel(i,j,2)+(cdelu(2,1)+cdelu(4,1))*m->gdel(i,j,3) 
-				- ((cdelu(2,0)+cdelu(4,0))*svect[2](i,j)+(cdelu(2,1)+cdelu(4,1))*svect[3](i,j))*(svect[2](i,j)*m->gdel(i,j,2)+svect[3](i,j)*m->gdel(i,j,3)))
-				+ (u->get(i,j+1)-u->get(i,j))*(svect[2](i,j)*m->gdel(i,j,2)+svect[3](i,j)*m->gdel(i,j,3))/dels[1](i,j);
+			for(k = 1; k < nvar; k++)
+			{
+				Array2d<double>* u = &(this->u[k]);
+				res[k](i,j) += 0.5*((cdelu[k](2,0)+cdelu[k](3,0))*m->gdel(i,j,0)+(cdelu[k](2,1)+cdelu[k](3,1))*m->gdel(i,j,1) 
+					- ((cdelu[k](2,0)+cdelu[k](3,0))*svect[0](i,j)+(cdelu[k](2,1)+cdelu[k](3,1))*svect[1](i,j))*(svect[0](i,j)*m->gdel(i,j,0)+svect[1](i,j)*m->gdel(i,j,1)))
+					+ (u->get(i+1,j)-u->get(i,j))*(svect[0](i,j)*m->gdel(i,j,0)+svect[1](i,j)*m->gdel(i,j,1))/dels[0](i,j);
+				res[k](i,j) -= 0.5*((cdelu[k](2,0)+cdelu[k](1,0))*m->gdel(i-1,j,0)+(cdelu[k](2,1)+cdelu[k](1,1))*m->gdel(i-1,j,1) 
+					- ((cdelu[k](2,0)+cdelu[k](1,0))*svect[0](i-1,j)+(cdelu[k](2,1)+cdelu[k](1,1))*svect[1](i-1,j))*(svect[0](i-1,j)*m->gdel(i-1,j,0)+svect[1](i-1,j)*m->gdel(i-1,j,1)))
+					+ (u->get(i,j)-u->get(i-1,j))*(svect[0](i-1,j)*m->gdel(i-1,j,0)+svect[1](i-1,j)*m->gdel(i-1,j,1))/dels[0](i-1,j);
+				res[k](i,j) -= 0.5*((cdelu[k](2,0)+cdelu[k](0,0))*m->gdel(i,j-1,2)+(cdelu[k](2,1)+cdelu[k](0,1))*m->gdel(i,j-1,3) 
+					- ((cdelu[k](2,0)+cdelu[k](0,0))*svect[2](i,j-1)+(cdelu[k](2,1)+cdelu[k](0,1))*svect[3](i,j-1))*(svect[2](i,j-1)*m->gdel(i,j-1,2)+svect[3](i,j-1)*m->gdel(i,j-1,3)))
+					+ (u->get(i,j)-u->get(i,j-1))*(svect[2](i,j-1)*m->gdel(i,j-1,2)+svect[3](i,j-1)*m->gdel(i,j-1,3))/dels[1](i,j-1);
+				res[k](i,j) += 0.5*((cdelu[k](2,0)+cdelu[k](4,0))*m->gdel(i,j,2)+(cdelu[k](2,1)+cdelu[k](4,1))*m->gdel(i,j,3) 
+					- ((cdelu[k](2,0)+cdelu[k](4,0))*svect[2](i,j)+(cdelu[k](2,1)+cdelu[k](4,1))*svect[3](i,j))*(svect[2](i,j)*m->gdel(i,j,2)+svect[3](i,j)*m->gdel(i,j,3)))
+					+ (u->get(i,j+1)-u->get(i,j))*(svect[2](i,j)*m->gdel(i,j,2)+svect[3](i,j)*m->gdel(i,j,3))/dels[1](i,j);
+			}
 		}
 	
-	// boundary cells
-	// If it's a homogeneous Neumann boundary, the "second" ghost cell value is the same as the ghost cell value;
-	// If it's a Dirichlet boundary, the value is 2*bvalue - u(second interior cell).
-	// We take care of corner boundary cells during the treatment of boundaries 1 and 3 (the i=const boundaries).
-	// TODO: Implement this second ghost cell value for non-homogeneous Neumann condition.
+	/** For boundary cells:
+	 * For the "second layer" of ghost cells, we simply copy flow velocities from the first layer of ghost cells.
+	 * We take care of corner boundary cells during the treatment of boundaries 1 and 3 (the i=const boundaries).
+	 */
 	
 	// boundary 1
-	double secondghost;
-	double sg1, sg2, sg3, sg4;		// for corner boundary cells
 	vector<double> arvec(2);		// del for second ghost cells
-	vector<double> crvec(2);		// extra del required in the 4 corner boundary cells
+	vector<double> crvec(2);
 
-	if(bcflag[3] >= 1)	// Neumann
-	{
-		sg1 = u->get(m->gimx()-1,0);
-		sg3 = u->get(1,0);
-	}
-	else {
-		sg1 = 2*bvalue[3] - u->get(m->gimx()-1,2);
-		sg3 = 2*bvalue[3] - u->get(1,2);
-	}
-	
-	if(bcflag[1] >= 1)	// Neumann
-	{
-		sg2 = u->get(m->gimx()-1,m->gjmx());
-		sg4 = u->get(1,m->gjmx());
-	}
-	else {
-		sg2 = 2*bvalue[1] - u->get(m->gimx()-1,m->gjmx()-2);
-		sg4 = 2*bvalue[1] - u->get(1,m->gjmx()-2);
-	}
-
-	int i = m->gimx()-1;
+	i = m->gimx()-1;
 	crvec[0] = -(m->gy(i+1,0) - m->gy(i,0));
 	crvec[1] = m->gx(i+1,0) - m->gx(i,0);
-	for(int j = 1; j <= m->gjmx()-1; j++)
+	for(j = 1; j <= m->gjmx()-1; j++)
 	{
-		if(bcflag[0] >= 1)
-			secondghost = u->get(i+1,j);
-		else
-			secondghost = 2*bvalue[0] - u->get(i-1,j);
 		
 		for(d = 0; d < 2; d++)
 		{
-			// i,j-1
-			cdelu(0,d) = 0.5/m->gvol(i,j-1)*( (u->get(i,j-1)+u->get(i+1,j-1))*m->gdel(i,j-1,d) + (u->get(i,j-1)+u->get(i,j))*m->gdel(i,j-1,2+d)
-				- (u->get(i,j-1)+u->get(i-1,j-1))*m->gdel(i-1,j-1,d) - (u->get(i,j-1)+( j>1 ? u->get(i,j-2):sg1))*( j>1 ? m->gdel(i,j-2,2+d):crvec[d]));
-			//i-1,j
-			cdelu(1,d) = 0.5/m->gvol(i-1,j)*( (u->get(i-1,j)+u->get(i,j))*m->gdel(i-1,j,d) + (u->get(i-1,j)+u->get(i-1,j+1))*m->gdel(i-1,j,2+d)
-				- (u->get(i-1,j)+u->get(i-2,j))*m->gdel(i-2,j,d) - (u->get(i-1,j)+u->get(i-1,j-1))*m->gdel(i-1,j-1,2+d));
-			//i,j
-			cdelu(2,d) = 0.5/m->gvol(i,j)*( (u->get(i,j)+u->get(i+1,j))*m->gdel(i,j,d) + (u->get(i,j)+u->get(i,j+1))*m->gdel(i,j,2+d)
-				- (u->get(i,j)+u->get(i-1,j))*m->gdel(i-1,j,d) - (u->get(i,j)+u->get(i,j-1))*m->gdel(i,j-1,2+d));
-			//i+1,j
-			cdelu(3,d) = 0.5/m->gvol(i+1,j)*( (u->get(i+1,j)+secondghost)*m->gdel(i+1,j,d) + (u->get(i+1,j)+u->get(i+1,j+1))*m->gdel(i+1,j,2+d)
-				- (u->get(i+1,j)+u->get(i,j))*m->gdel(i,j,d) - (u->get(i+1,j)+u->get(i+1,j-1))*m->gdel(i+1,j-1,2+d));
-			//i,j+1
-			cdelu(4,d) = 0.5/m->gvol(i,j+1)*( (u->get(i,j+1)+u->get(i+1,j+1))*m->gdel(i,j+1,d) + (u->get(i,j+1)+( j < m->gjmx()-1 ? u->get(i,j+2):sg2))*m->gdel(i,j+1,2+d)
-				- (u->get(i,j+1)+u->get(i-1,j+1))*m->gdel(i-1,j+1,d) - (u->get(i,j+1)+u->get(i,j))*m->gdel(i,j,2+d));
+			for(k = 1; k < nvar; k++)
+			{
+				Array2d<double>* u =&(this->u[k]);
+				// i,j-1
+				cdelu[k](0,d) = 0.5/m->gvol(i,j-1)*( (u->get(i,j-1)+u->get(i+1,j-1))*m->gdel(i,j-1,d) + (u->get(i,j-1)+u->get(i,j))*m->gdel(i,j-1,2+d)
+					- (u->get(i,j-1)+u->get(i-1,j-1))*m->gdel(i-1,j-1,d) - (u->get(i,j-1)+( j>1 ? u->get(i,j-2):u->get(i,j-1)))*( j>1 ? m->gdel(i,j-2,2+d):m->gdel(i,j-1,2+d)));
+				//i-1,j
+				cdelu[k](1,d) = 0.5/m->gvol(i-1,j)*( (u->get(i-1,j)+u->get(i,j))*m->gdel(i-1,j,d) + (u->get(i-1,j)+u->get(i-1,j+1))*m->gdel(i-1,j,2+d)
+					- (u->get(i-1,j)+u->get(i-2,j))*m->gdel(i-2,j,d) - (u->get(i-1,j)+u->get(i-1,j-1))*m->gdel(i-1,j-1,2+d));
+				//i,j
+				cdelu[k](2,d) = 0.5/m->gvol(i,j)*( (u->get(i,j)+u->get(i+1,j))*m->gdel(i,j,d) + (u->get(i,j)+u->get(i,j+1))*m->gdel(i,j,2+d)
+					- (u->get(i,j)+u->get(i-1,j))*m->gdel(i-1,j,d) - (u->get(i,j)+u->get(i,j-1))*m->gdel(i,j-1,2+d));
+				//i+1,j
+				cdelu[k](3,d) = 0.5/m->gvol(i+1,j)*( (u->get(i+1,j)+u->get(i+1,j))*m->gdel(i+1,j,d) + (u->get(i+1,j)+u->get(i+1,j+1))*m->gdel(i+1,j,2+d)
+					- (u->get(i+1,j)+u->get(i,j))*m->gdel(i,j,d) - (u->get(i+1,j)+u->get(i+1,j-1))*m->gdel(i+1,j-1,2+d));
+				//i,j+1
+				cdelu[k](4,d) = 0.5/m->gvol(i,j+1)*( (u->get(i,j+1)+u->get(i+1,j+1))*m->gdel(i,j+1,d) + (u->get(i,j+1)+(j < m->gjmx()-1 ? u->get(i,j+2):u->get(i,j+1)))*m->gdel(i,j+1,2+d)
+					- (u->get(i,j+1)+u->get(i-1,j+1))*m->gdel(i-1,j+1,d) - (u->get(i,j+1)+u->get(i,j))*m->gdel(i,j,2+d));
+			}
 		}
 		
 		// now calculate contributions from the 4 faces
-		(*res)(i,j) += 0.5*((cdelu(2,0)+cdelu(3,0))*m->gdel(i,j,0)+(cdelu(2,1)+cdelu(3,1))*m->gdel(i,j,1) 
-			- ((cdelu(2,0)+cdelu(3,0))*svect[0](i,j)+(cdelu(2,1)+cdelu(3,1))*svect[1](i,j))*(svect[0](i,j)*m->gdel(i,j,0)+svect[1](i,j)*m->gdel(i,j,1)))
-			+ (u->get(i+1,j)-u->get(i,j))*(svect[0](i,j)*m->gdel(i,j,0)+svect[1](i,j)*m->gdel(i,j,1))/dels[0](i,j);
-		(*res)(i,j) -= 0.5*((cdelu(2,0)+cdelu(1,0))*m->gdel(i-1,j,0)+(cdelu(2,1)+cdelu(1,1))*m->gdel(i-1,j,1) 
-			- ((cdelu(2,0)+cdelu(1,0))*svect[0](i-1,j)+(cdelu(2,1)+cdelu(1,1))*svect[1](i-1,j))*(svect[0](i-1,j)*m->gdel(i-1,j,0)+svect[1](i-1,j)*m->gdel(i-1,j,1)))
-			+ (u->get(i,j)-u->get(i-1,j))*(svect[0](i-1,j)*m->gdel(i-1,j,0)+svect[1](i-1,j)*m->gdel(i-1,j,1))/dels[0](i-1,j);
-		(*res)(i,j) -= 0.5*((cdelu(2,0)+cdelu(0,0))*m->gdel(i,j-1,2)+(cdelu(2,1)+cdelu(0,1))*m->gdel(i,j-1,3) 
-			- ((cdelu(2,0)+cdelu(0,0))*svect[2](i,j-1)+(cdelu(2,1)+cdelu(0,1))*svect[3](i,j-1))*(svect[2](i,j-1)*m->gdel(i,j-1,2)+svect[3](i,j-1)*m->gdel(i,j-1,3)))
-			+ (u->get(i,j)-u->get(i,j-1))*(svect[2](i,j-1)*m->gdel(i,j-1,2)+svect[3](i,j-1)*m->gdel(i,j-1,3))/dels[1](i,j-1);
-		(*res)(i,j) += 0.5*((cdelu(2,0)+cdelu(4,0))*m->gdel(i,j,2)+(cdelu(2,1)+cdelu(4,1))*m->gdel(i,j,3) 
-			- ((cdelu(2,0)+cdelu(4,0))*svect[2](i,j)+(cdelu(2,1)+cdelu(4,1))*svect[3](i,j))*(svect[2](i,j)*m->gdel(i,j,2)+svect[3](i,j)*m->gdel(i,j,3)))
-			+ (u->get(i,j+1)-u->get(i,j))*(svect[2](i,j)*m->gdel(i,j,2)+svect[3](i,j)*m->gdel(i,j,3))/dels[1](i,j);
+		for(k = 1; k < nvar; k++)
+		{
+			Array2d<double>* u =&(this->u[k]);
+			res[k](i,j) += 0.5*((cdelu[k](2,0)+cdelu[k](3,0))*m->gdel(i,j,0)+(cdelu[k](2,1)+cdelu[k](3,1))*m->gdel(i,j,1) 
+				- ((cdelu[k](2,0)+cdelu[k](3,0))*svect[0](i,j)+(cdelu[k](2,1)+cdelu[k](3,1))*svect[1](i,j))*(svect[0](i,j)*m->gdel(i,j,0)+svect[1](i,j)*m->gdel(i,j,1)))
+				+ (u->get(i+1,j)-u->get(i,j))*(svect[0](i,j)*m->gdel(i,j,0)+svect[1](i,j)*m->gdel(i,j,1))/dels[0](i,j);
+			res[k](i,j) -= 0.5*((cdelu[k](2,0)+cdelu[k](1,0))*m->gdel(i-1,j,0)+(cdelu[k](2,1)+cdelu[k](1,1))*m->gdel(i-1,j,1) 
+				- ((cdelu[k](2,0)+cdelu[k](1,0))*svect[0](i-1,j)+(cdelu[k](2,1)+cdelu[k](1,1))*svect[1](i-1,j))*(svect[0](i-1,j)*m->gdel(i-1,j,0)+svect[1](i-1,j)*m->gdel(i-1,j,1)))
+				+ (u->get(i,j)-u->get(i-1,j))*(svect[0](i-1,j)*m->gdel(i-1,j,0)+svect[1](i-1,j)*m->gdel(i-1,j,1))/dels[0](i-1,j);
+			res[k](i,j) -= 0.5*((cdelu[k](2,0)+cdelu[k](0,0))*m->gdel(i,j-1,2)+(cdelu[k](2,1)+cdelu[k](0,1))*m->gdel(i,j-1,3) 
+				- ((cdelu[k](2,0)+cdelu[k](0,0))*svect[2](i,j-1)+(cdelu[k](2,1)+cdelu[k](0,1))*svect[3](i,j-1))*(svect[2](i,j-1)*m->gdel(i,j-1,2)+svect[3](i,j-1)*m->gdel(i,j-1,3)))
+				+ (u->get(i,j)-u->get(i,j-1))*(svect[2](i,j-1)*m->gdel(i,j-1,2)+svect[3](i,j-1)*m->gdel(i,j-1,3))/dels[1](i,j-1);
+			res[k](i,j) += 0.5*((cdelu[k](2,0)+cdelu[k](4,0))*m->gdel(i,j,2)+(cdelu[k](2,1)+cdelu[k](4,1))*m->gdel(i,j,3) 
+				- ((cdelu[k](2,0)+cdelu[k](4,0))*svect[2](i,j)+(cdelu[k](2,1)+cdelu[k](4,1))*svect[3](i,j))*(svect[2](i,j)*m->gdel(i,j,2)+svect[3](i,j)*m->gdel(i,j,3)))
+				+ (u->get(i,j+1)-u->get(i,j))*(svect[2](i,j)*m->gdel(i,j,2)+svect[3](i,j)*m->gdel(i,j,3))/dels[1](i,j);
+		}
 	}
 
 	// boundary 2
-	int j = m->gjmx()-1;
-	for(int i = 2; i <= m->gimx()-2; i++)
+	j = m->gjmx()-1;
+	for(i = 2; i <= m->gimx()-2; i++)
 	{
-		if(bcflag[1] >= 1)
-			secondghost = u->get(i,j+1);
-		else
-			secondghost = 2*bvalue[1] - u->get(i,j-1);
-		for(d = 0; d < 2; d++)
+		for(k = 1; k < nvar; k++)
 		{
-			// i,j-1
-			cdelu(0,d) = 0.5/m->gvol(i,j-1)*( (u->get(i,j-1)+u->get(i+1,j-1))*m->gdel(i,j-1,d) + (u->get(i,j-1)+u->get(i,j))*m->gdel(i,j-1,2+d)
-				- (u->get(i,j-1)+u->get(i-1,j-1))*m->gdel(i-1,j-1,d) - (u->get(i,j-1)+u->get(i,j-2))*m->gdel(i,j-2,2+d));
-			//i-1,j
-			cdelu(1,d) = 0.5/m->gvol(i-1,j)*( (u->get(i-1,j)+u->get(i,j))*m->gdel(i-1,j,d) + (u->get(i-1,j)+u->get(i-1,j+1))*m->gdel(i-1,j,2+d)
-				- (u->get(i-1,j)+u->get(i-2,j))*m->gdel(i-2,j,d) - (u->get(i-1,j)+u->get(i-1,j-1))*m->gdel(i-1,j-1,2+d));
-			//i,j
-			cdelu(2,d) = 0.5/m->gvol(i,j)*( (u->get(i,j)+u->get(i+1,j))*m->gdel(i,j,d) + (u->get(i,j)+u->get(i,j+1))*m->gdel(i,j,2+d)
-				- (u->get(i,j)+u->get(i-1,j))*m->gdel(i-1,j,d) - (u->get(i,j)+u->get(i,j-1))*m->gdel(i,j-1,2+d));
-			//i+1,j
-			cdelu(3,d) = 0.5/m->gvol(i+1,j)*( (u->get(i+1,j)+u->get(i+2,j))*m->gdel(i+1,j,d) + (u->get(i+1,j)+u->get(i+1,j+1))*m->gdel(i+1,j,2+d)
-				- (u->get(i+1,j)+u->get(i,j))*m->gdel(i,j,d) - (u->get(i+1,j)+u->get(i+1,j-1))*m->gdel(i+1,j-1,2+d));
-			//i,j+1
-			cdelu(4,d) = 0.5/m->gvol(i,j+1)*( (u->get(i,j+1)+u->get(i+1,j+1))*m->gdel(i,j+1,d) + (u->get(i,j+1)+secondghost)*m->gdel(i,j+1,2+d)
-				- (u->get(i,j+1)+u->get(i-1,j+1))*m->gdel(i-1,j+1,d) - (u->get(i,j+1)+u->get(i,j))*m->gdel(i,j,2+d));
+			Array2d<double>* u =&(this->u[k]);
+			for(d = 0; d < 2; d++)
+			{
+				// i,j-1
+				cdelu[k](0,d) = 0.5/m->gvol(i,j-1)*( (u->get(i,j-1)+u->get(i+1,j-1))*m->gdel(i,j-1,d) + (u->get(i,j-1)+u->get(i,j))*m->gdel(i,j-1,2+d)
+					- (u->get(i,j-1)+u->get(i-1,j-1))*m->gdel(i-1,j-1,d) - (u->get(i,j-1)+u->get(i,j-2))*m->gdel(i,j-2,2+d));
+				//i-1,j
+				cdelu[k](1,d) = 0.5/m->gvol(i-1,j)*( (u->get(i-1,j)+u->get(i,j))*m->gdel(i-1,j,d) + (u->get(i-1,j)+u->get(i-1,j+1))*m->gdel(i-1,j,2+d)
+					- (u->get(i-1,j)+u->get(i-2,j))*m->gdel(i-2,j,d) - (u->get(i-1,j)+u->get(i-1,j-1))*m->gdel(i-1,j-1,2+d));
+				//i,j
+				cdelu[k](2,d) = 0.5/m->gvol(i,j)*( (u->get(i,j)+u->get(i+1,j))*m->gdel(i,j,d) + (u->get(i,j)+u->get(i,j+1))*m->gdel(i,j,2+d)
+					- (u->get(i,j)+u->get(i-1,j))*m->gdel(i-1,j,d) - (u->get(i,j)+u->get(i,j-1))*m->gdel(i,j-1,2+d));
+				//i+1,j
+				cdelu[k](3,d) = 0.5/m->gvol(i+1,j)*( (u->get(i+1,j)+u->get(i+2,j))*m->gdel(i+1,j,d) + (u->get(i+1,j)+u->get(i+1,j+1))*m->gdel(i+1,j,2+d)
+					- (u->get(i+1,j)+u->get(i,j))*m->gdel(i,j,d) - (u->get(i+1,j)+u->get(i+1,j-1))*m->gdel(i+1,j-1,2+d));
+				//i,j+1
+				cdelu[k](4,d) = 0.5/m->gvol(i,j+1)*( (u->get(i,j+1)+u->get(i+1,j+1))*m->gdel(i,j+1,d) + (u->get(i,j+1)+u->get(i,j+1)*m->gdel(i,j+1,2+d)
+					- (u->get(i,j+1)+u->get(i-1,j+1))*m->gdel(i-1,j+1,d) - (u->get(i,j+1)+u->get(i,j))*m->gdel(i,j,2+d)));
+			}
+			
+			// now calculate contributions from the 4 faces
+			res[k](i,j) += 0.5*((cdelu[k](2,0)+cdelu[k](3,0))*m->gdel(i,j,0)+(cdelu[k](2,1)+cdelu[k](3,1))*m->gdel(i,j,1) 
+				- ((cdelu[k](2,0)+cdelu[k](3,0))*svect[0](i,j)+(cdelu[k](2,1)+cdelu[k](3,1))*svect[1](i,j))*(svect[0](i,j)*m->gdel(i,j,0)+svect[1](i,j)*m->gdel(i,j,1)))
+				+ (u->get(i+1,j)-u->get(i,j))*(svect[0](i,j)*m->gdel(i,j,0)+svect[1](i,j)*m->gdel(i,j,1))/dels[0](i,j);
+			res[k](i,j) -= 0.5*((cdelu[k](2,0)+cdelu[k](1,0))*m->gdel(i-1,j,0)+(cdelu[k](2,1)+cdelu[k](1,1))*m->gdel(i-1,j,1) 
+				- ((cdelu[k](2,0)+cdelu[k](1,0))*svect[0](i-1,j)+(cdelu[k](2,1)+cdelu[k](1,1))*svect[1](i-1,j))*(svect[0](i-1,j)*m->gdel(i-1,j,0)+svect[1](i-1,j)*m->gdel(i-1,j,1)))
+				+ (u->get(i,j)-u->get(i-1,j))*(svect[0](i-1,j)*m->gdel(i-1,j,0)+svect[1](i-1,j)*m->gdel(i-1,j,1))/dels[0](i-1,j);
+			res[k](i,j) -= 0.5*((cdelu[k](2,0)+cdelu[k](0,0))*m->gdel(i,j-1,2)+(cdelu[k](2,1)+cdelu[k](0,1))*m->gdel(i,j-1,3) 
+				- ((cdelu[k](2,0)+cdelu[k](0,0))*svect[2](i,j-1)+(cdelu[k](2,1)+cdelu[k](0,1))*svect[3](i,j-1))*(svect[2](i,j-1)*m->gdel(i,j-1,2)+svect[3](i,j-1)*m->gdel(i,j-1,3)))
+				+ (u->get(i,j)-u->get(i,j-1))*(svect[2](i,j-1)*m->gdel(i,j-1,2)+svect[3](i,j-1)*m->gdel(i,j-1,3))/dels[1](i,j-1);
+			res[k](i,j) += 0.5*((cdelu[k](2,0)+cdelu[k](4,0))*m->gdel(i,j,2)+(cdelu[k](2,1)+cdelu[k](4,1))*m->gdel(i,j,3) 
+				- ((cdelu[k](2,0)+cdelu[k](4,0))*svect[2](i,j)+(cdelu[k](2,1)+cdelu[k](4,1))*svect[3](i,j))*(svect[2](i,j)*m->gdel(i,j,2)+svect[3](i,j)*m->gdel(i,j,3)))
+				+ (u->get(i,j+1)-u->get(i,j))*(svect[2](i,j)*m->gdel(i,j,2)+svect[3](i,j)*m->gdel(i,j,3))/dels[1](i,j);
 		}
-		
-		// now calculate contributions from the 4 faces
-		(*res)(i,j) += 0.5*((cdelu(2,0)+cdelu(3,0))*m->gdel(i,j,0)+(cdelu(2,1)+cdelu(3,1))*m->gdel(i,j,1) 
-			- ((cdelu(2,0)+cdelu(3,0))*svect[0](i,j)+(cdelu(2,1)+cdelu(3,1))*svect[1](i,j))*(svect[0](i,j)*m->gdel(i,j,0)+svect[1](i,j)*m->gdel(i,j,1)))
-			+ (u->get(i+1,j)-u->get(i,j))*(svect[0](i,j)*m->gdel(i,j,0)+svect[1](i,j)*m->gdel(i,j,1))/dels[0](i,j);
-		(*res)(i,j) -= 0.5*((cdelu(2,0)+cdelu(1,0))*m->gdel(i-1,j,0)+(cdelu(2,1)+cdelu(1,1))*m->gdel(i-1,j,1) 
-			- ((cdelu(2,0)+cdelu(1,0))*svect[0](i-1,j)+(cdelu(2,1)+cdelu(1,1))*svect[1](i-1,j))*(svect[0](i-1,j)*m->gdel(i-1,j,0)+svect[1](i-1,j)*m->gdel(i-1,j,1)))
-			+ (u->get(i,j)-u->get(i-1,j))*(svect[0](i-1,j)*m->gdel(i-1,j,0)+svect[1](i-1,j)*m->gdel(i-1,j,1))/dels[0](i-1,j);
-		(*res)(i,j) -= 0.5*((cdelu(2,0)+cdelu(0,0))*m->gdel(i,j-1,2)+(cdelu(2,1)+cdelu(0,1))*m->gdel(i,j-1,3) 
-			- ((cdelu(2,0)+cdelu(0,0))*svect[2](i,j-1)+(cdelu(2,1)+cdelu(0,1))*svect[3](i,j-1))*(svect[2](i,j-1)*m->gdel(i,j-1,2)+svect[3](i,j-1)*m->gdel(i,j-1,3)))
-			+ (u->get(i,j)-u->get(i,j-1))*(svect[2](i,j-1)*m->gdel(i,j-1,2)+svect[3](i,j-1)*m->gdel(i,j-1,3))/dels[1](i,j-1);
-		(*res)(i,j) += 0.5*((cdelu(2,0)+cdelu(4,0))*m->gdel(i,j,2)+(cdelu(2,1)+cdelu(4,1))*m->gdel(i,j,3) 
-			- ((cdelu(2,0)+cdelu(4,0))*svect[2](i,j)+(cdelu(2,1)+cdelu(4,1))*svect[3](i,j))*(svect[2](i,j)*m->gdel(i,j,2)+svect[3](i,j)*m->gdel(i,j,3)))
-			+ (u->get(i,j+1)-u->get(i,j))*(svect[2](i,j)*m->gdel(i,j,2)+svect[3](i,j)*m->gdel(i,j,3))/dels[1](i,j);
 	}
 
 	// boundary 3
 	i = 1;
 	crvec[0] = -(m->gy(i+1,0) - m->gy(i,0));
 	crvec[1] = m->gx(i+1,0) - m->gx(i,0);
-	for(int j = 1; j <= m->gjmx()-1; j++)
+	for(j = 1; j <= m->gjmx()-1; j++)
 	{
-		if(bcflag[2] >= 1)
-			secondghost = u->get(i-1,j);
-		else
-			secondghost = 2*bvalue[2] - u->get(i+1,j);
 		arvec[0] = m->gy(i-1,j+1) - m->gy(i-1,j);
 		arvec[1] = -(m->gx(i-1,j+1) - m->gx(i-1,j));
-		for(d = 0; d < 2; d++)
+		for(k = 1; k < nvar; k++)
 		{
-			// i,j-1
-			cdelu(0,d) = 0.5/m->gvol(i,j-1)*( (u->get(i,j-1)+u->get(i+1,j-1))*m->gdel(i,j-1,d) + (u->get(i,j-1)+u->get(i,j))*m->gdel(i,j-1,2+d)
-				- (u->get(i,j-1)+u->get(i-1,j-1))*m->gdel(i-1,j-1,d) - (u->get(i,j-1)+(j>1 ? u->get(i,j-2):sg3))*(j>1 ? m->gdel(i,j-2,2+d):crvec[d]));
-			//i-1,j
-			cdelu(1,d) = 0.5/m->gvol(i-1,j)*( (u->get(i-1,j)+u->get(i,j))*m->gdel(i-1,j,d) + (u->get(i-1,j)+u->get(i-1,j+1))*m->gdel(i-1,j,2+d)
-				- (u->get(i-1,j)+secondghost)*arvec[d] - (u->get(i-1,j)+u->get(i-1,j-1))*m->gdel(i-1,j-1,2+d));
-			//i,j
-			cdelu(2,d) = 0.5/m->gvol(i,j)*( (u->get(i,j)+u->get(i+1,j))*m->gdel(i,j,d) + (u->get(i,j)+u->get(i,j+1))*m->gdel(i,j,2+d)
-				- (u->get(i,j)+u->get(i-1,j))*m->gdel(i-1,j,d) - (u->get(i,j)+u->get(i,j-1))*m->gdel(i,j-1,2+d));
-			//i+1,j
-			cdelu(3,d) = 0.5/m->gvol(i+1,j)*( (u->get(i+1,j)+u->get(i+2,j))*m->gdel(i+1,j,d) + (u->get(i+1,j)+u->get(i+1,j+1))*m->gdel(i+1,j,2+d)
-				- (u->get(i+1,j)+u->get(i,j))*m->gdel(i,j,d) - (u->get(i+1,j)+u->get(i+1,j-1))*m->gdel(i+1,j-1,2+d));
-			//i,j+1
-			cdelu(4,d) = 0.5/m->gvol(i,j+1)*( (u->get(i,j+1)+u->get(i+1,j+1))*m->gdel(i,j+1,d) + (u->get(i,j+1)+(j<m->gjmx()-1 ? u->get(i,j+2):sg4))*m->gdel(i,j+1,2+d)
-				- (u->get(i,j+1)+u->get(i-1,j+1))*m->gdel(i-1,j+1,d) - (u->get(i,j+1)+u->get(i,j))*m->gdel(i,j,2+d));
+			Array2d<double>* u =&(this->u[k]);
+			for(d = 0; d < 2; d++)
+			{
+				// i,j-1
+				cdelu[k](0,d) = 0.5/m->gvol(i,j-1)*( (u->get(i,j-1)+u->get(i+1,j-1))*m->gdel(i,j-1,d) + (u->get(i,j-1)+u->get(i,j))*m->gdel(i,j-1,2+d)
+					- (u->get(i,j-1)+u->get(i-1,j-1))*m->gdel(i-1,j-1,d) - (u->get(i,j-1)+(j>1 ? u->get(i,j-2):u->get(i,j-1)))*(j>1 ? m->gdel(i,j-2,2+d):m->gdel(i,j-1,2+d)));
+				//i-1,j
+				cdelu[k](1,d) = 0.5/m->gvol(i-1,j)*( (u->get(i-1,j)+u->get(i,j))*m->gdel(i-1,j,d) + (u->get(i-1,j)+u->get(i-1,j+1))*m->gdel(i-1,j,2+d)
+					- (u->get(i-1,j)+u->get(i-1,j))*arvec[d] - (u->get(i-1,j)+u->get(i-1,j-1))*m->gdel(i-1,j-1,2+d));
+				//i,j
+				cdelu[k](2,d) = 0.5/m->gvol(i,j)*( (u->get(i,j)+u->get(i+1,j))*m->gdel(i,j,d) + (u->get(i,j)+u->get(i,j+1))*m->gdel(i,j,2+d)
+					- (u->get(i,j)+u->get(i-1,j))*m->gdel(i-1,j,d) - (u->get(i,j)+u->get(i,j-1))*m->gdel(i,j-1,2+d));
+				//i+1,j
+				cdelu[k](3,d) = 0.5/m->gvol(i+1,j)*( (u->get(i+1,j)+u->get(i+2,j))*m->gdel(i+1,j,d) + (u->get(i+1,j)+u->get(i+1,j+1))*m->gdel(i+1,j,2+d)
+					- (u->get(i+1,j)+u->get(i,j))*m->gdel(i,j,d) - (u->get(i+1,j)+u->get(i+1,j-1))*m->gdel(i+1,j-1,2+d));
+				//i,j+1
+				cdelu[k](4,d) = 0.5/m->gvol(i,j+1)*( (u->get(i,j+1)+u->get(i+1,j+1))*m->gdel(i,j+1,d) + (u->get(i,j+1)+(j<m->gjmx()-1 ? u->get(i,j+2):u->get(i,j+1)))*m->gdel(i,j+1,2+d)
+					- (u->get(i,j+1)+u->get(i-1,j+1))*m->gdel(i-1,j+1,d) - (u->get(i,j+1)+u->get(i,j))*m->gdel(i,j,2+d));
+			}
+			
+			// now calculate contributions from the 4 faces
+			res[k](i,j) += 0.5*((cdelu[k](2,0)+cdelu[k](3,0))*m->gdel(i,j,0)+(cdelu[k](2,1)+cdelu[k](3,1))*m->gdel(i,j,1) 
+				- ((cdelu[k](2,0)+cdelu[k](3,0))*svect[0](i,j)+(cdelu[k](2,1)+cdelu[k](3,1))*svect[1](i,j))*(svect[0](i,j)*m->gdel(i,j,0)+svect[1](i,j)*m->gdel(i,j,1)))
+				+ (u->get(i+1,j)-u->get(i,j))*(svect[0](i,j)*m->gdel(i,j,0)+svect[1](i,j)*m->gdel(i,j,1))/dels[0](i,j);
+			res[k](i,j) -= 0.5*((cdelu[k](2,0)+cdelu[k](1,0))*m->gdel(i-1,j,0)+(cdelu[k](2,1)+cdelu[k](1,1))*m->gdel(i-1,j,1) 
+				- ((cdelu[k](2,0)+cdelu[k](1,0))*svect[0](i-1,j)+(cdelu[k](2,1)+cdelu[k](1,1))*svect[1](i-1,j))*(svect[0](i-1,j)*m->gdel(i-1,j,0)+svect[1](i-1,j)*m->gdel(i-1,j,1)))
+				+ (u->get(i,j)-u->get(i-1,j))*(svect[0](i-1,j)*m->gdel(i-1,j,0)+svect[1](i-1,j)*m->gdel(i-1,j,1))/dels[0](i-1,j);
+			res[k](i,j) -= 0.5*((cdelu[k](2,0)+cdelu[k](0,0))*m->gdel(i,j-1,2)+(cdelu[k](2,1)+cdelu[k](0,1))*m->gdel(i,j-1,3) 
+				- ((cdelu[k](2,0)+cdelu[k](0,0))*svect[2](i,j-1)+(cdelu[k](2,1)+cdelu[k](0,1))*svect[3](i,j-1))*(svect[2](i,j-1)*m->gdel(i,j-1,2)+svect[3](i,j-1)*m->gdel(i,j-1,3)))
+				+ (u->get(i,j)-u->get(i,j-1))*(svect[2](i,j-1)*m->gdel(i,j-1,2)+svect[3](i,j-1)*m->gdel(i,j-1,3))/dels[1](i,j-1);
+			res[k](i,j) += 0.5*((cdelu[k](2,0)+cdelu[k](4,0))*m->gdel(i,j,2)+(cdelu[k](2,1)+cdelu[k](4,1))*m->gdel(i,j,3) 
+				- ((cdelu[k](2,0)+cdelu[k](4,0))*svect[2](i,j)+(cdelu[k](2,1)+cdelu[k](4,1))*svect[3](i,j))*(svect[2](i,j)*m->gdel(i,j,2)+svect[3](i,j)*m->gdel(i,j,3)))
+				+ (u->get(i,j+1)-u->get(i,j))*(svect[2](i,j)*m->gdel(i,j,2)+svect[3](i,j)*m->gdel(i,j,3))/dels[1](i,j);
 		}
-		
-		// now calculate contributions from the 4 faces
-		(*res)(i,j) += 0.5*((cdelu(2,0)+cdelu(3,0))*m->gdel(i,j,0)+(cdelu(2,1)+cdelu(3,1))*m->gdel(i,j,1) 
-			- ((cdelu(2,0)+cdelu(3,0))*svect[0](i,j)+(cdelu(2,1)+cdelu(3,1))*svect[1](i,j))*(svect[0](i,j)*m->gdel(i,j,0)+svect[1](i,j)*m->gdel(i,j,1)))
-			+ (u->get(i+1,j)-u->get(i,j))*(svect[0](i,j)*m->gdel(i,j,0)+svect[1](i,j)*m->gdel(i,j,1))/dels[0](i,j);
-		(*res)(i,j) -= 0.5*((cdelu(2,0)+cdelu(1,0))*m->gdel(i-1,j,0)+(cdelu(2,1)+cdelu(1,1))*m->gdel(i-1,j,1) 
-			- ((cdelu(2,0)+cdelu(1,0))*svect[0](i-1,j)+(cdelu(2,1)+cdelu(1,1))*svect[1](i-1,j))*(svect[0](i-1,j)*m->gdel(i-1,j,0)+svect[1](i-1,j)*m->gdel(i-1,j,1)))
-			+ (u->get(i,j)-u->get(i-1,j))*(svect[0](i-1,j)*m->gdel(i-1,j,0)+svect[1](i-1,j)*m->gdel(i-1,j,1))/dels[0](i-1,j);
-		(*res)(i,j) -= 0.5*((cdelu(2,0)+cdelu(0,0))*m->gdel(i,j-1,2)+(cdelu(2,1)+cdelu(0,1))*m->gdel(i,j-1,3) 
-			- ((cdelu(2,0)+cdelu(0,0))*svect[2](i,j-1)+(cdelu(2,1)+cdelu(0,1))*svect[3](i,j-1))*(svect[2](i,j-1)*m->gdel(i,j-1,2)+svect[3](i,j-1)*m->gdel(i,j-1,3)))
-			+ (u->get(i,j)-u->get(i,j-1))*(svect[2](i,j-1)*m->gdel(i,j-1,2)+svect[3](i,j-1)*m->gdel(i,j-1,3))/dels[1](i,j-1);
-		(*res)(i,j) += 0.5*((cdelu(2,0)+cdelu(4,0))*m->gdel(i,j,2)+(cdelu(2,1)+cdelu(4,1))*m->gdel(i,j,3) 
-			- ((cdelu(2,0)+cdelu(4,0))*svect[2](i,j)+(cdelu(2,1)+cdelu(4,1))*svect[3](i,j))*(svect[2](i,j)*m->gdel(i,j,2)+svect[3](i,j)*m->gdel(i,j,3)))
-			+ (u->get(i,j+1)-u->get(i,j))*(svect[2](i,j)*m->gdel(i,j,2)+svect[3](i,j)*m->gdel(i,j,3))/dels[1](i,j);
 	}
 
 	// boundary 4
 	j = 1;
-	for(int i = 2; i <= m->gjmx()-2; i++)
+	for(i = 2; i <= m->gjmx()-2; i++)
 	{
-		if(bcflag[3] >= 1)
-			secondghost = u->get(i,j-1);
-		else
-			secondghost = 2*bvalue[3] - u->get(i,j+1);
 		arvec[0] = -(m->gy(i+1,j-1) - m->gy(i,j-1));
 		arvec[1] = m->gx(i+1,j-1) - m->gx(i,j-1);
-		for(d = 0; d < 2; d++)
+		for(k = 1; k < nvar; k++)
 		{
-			// i,j-1
-			cdelu(0,d) = 0.5/m->gvol(i,j-1)*( (u->get(i,j-1)+u->get(i+1,j-1))*m->gdel(i,j-1,d) + (u->get(i,j-1)+u->get(i,j))*m->gdel(i,j-1,2+d)
-				- (u->get(i,j-1)+u->get(i-1,j-1))*m->gdel(i-1,j-1,d) - (u->get(i,j-1)+secondghost)*arvec[d]);
-			//i-1,j
-			cdelu(1,d) = 0.5/m->gvol(i-1,j)*( (u->get(i-1,j)+u->get(i,j))*m->gdel(i-1,j,d) + (u->get(i-1,j)+u->get(i-1,j+1))*m->gdel(i-1,j,2+d)
-				- (u->get(i-1,j)+u->get(i-2,j))*m->gdel(i-2,j,d) - (u->get(i-1,j)+u->get(i-1,j-1))*m->gdel(i-1,j-1,2+d));
-			//i,j
-			cdelu(2,d) = 0.5/m->gvol(i,j)*( (u->get(i,j)+u->get(i+1,j))*m->gdel(i,j,d) + (u->get(i,j)+u->get(i,j+1))*m->gdel(i,j,2+d)
-				- (u->get(i,j)+u->get(i-1,j))*m->gdel(i-1,j,d) - (u->get(i,j)+u->get(i,j-1))*m->gdel(i,j-1,2+d));
-			//i+1,j
-			cdelu(3,d) = 0.5/m->gvol(i+1,j)*( (u->get(i+1,j)+u->get(i+2,j))*m->gdel(i+1,j,d) + (u->get(i+1,j)+u->get(i+1,j+1))*m->gdel(i+1,j,2+d)
-				- (u->get(i+1,j)+u->get(i,j))*m->gdel(i,j,d) - (u->get(i+1,j)+u->get(i+1,j-1))*m->gdel(i+1,j-1,2+d));
-			//i,j+1
-			cdelu(4,d) = 0.5/m->gvol(i,j+1)*( (u->get(i,j+1)+u->get(i+1,j+1))*m->gdel(i,j+1,d) + (u->get(i,j+1)+u->get(i,j+2))*m->gdel(i,j+1,2+d)
-				- (u->get(i,j+1)+u->get(i-1,j+1))*m->gdel(i-1,j+1,d) - (u->get(i,j+1)+u->get(i,j))*m->gdel(i,j,2+d));
+			Array2d<double>* u =&(this->u[k]);
+			for(d = 0; d < 2; d++)
+			{
+				// i,j-1
+				cdelu[k](0,d) = 0.5/m->gvol(i,j-1)*( (u->get(i,j-1)+u->get(i+1,j-1))*m->gdel(i,j-1,d) + (u->get(i,j-1)+u->get(i,j))*m->gdel(i,j-1,2+d)
+					- (u->get(i,j-1)+u->get(i-1,j-1))*m->gdel(i-1,j-1,d) - (u->get(i,j-1)+u->get(i,j-1))*arvec[d]);
+				//i-1,j
+				cdelu[k](1,d) = 0.5/m->gvol(i-1,j)*( (u->get(i-1,j)+u->get(i,j))*m->gdel(i-1,j,d) + (u->get(i-1,j)+u->get(i-1,j+1))*m->gdel(i-1,j,2+d)
+					- (u->get(i-1,j)+u->get(i-2,j))*m->gdel(i-2,j,d) - (u->get(i-1,j)+u->get(i-1,j-1))*m->gdel(i-1,j-1,2+d));
+				//i,j
+				cdelu[k](2,d) = 0.5/m->gvol(i,j)*( (u->get(i,j)+u->get(i+1,j))*m->gdel(i,j,d) + (u->get(i,j)+u->get(i,j+1))*m->gdel(i,j,2+d)
+					- (u->get(i,j)+u->get(i-1,j))*m->gdel(i-1,j,d) - (u->get(i,j)+u->get(i,j-1))*m->gdel(i,j-1,2+d));
+				//i+1,j
+				cdelu[k](3,d) = 0.5/m->gvol(i+1,j)*( (u->get(i+1,j)+u->get(i+2,j))*m->gdel(i+1,j,d) + (u->get(i+1,j)+u->get(i+1,j+1))*m->gdel(i+1,j,2+d)
+					- (u->get(i+1,j)+u->get(i,j))*m->gdel(i,j,d) - (u->get(i+1,j)+u->get(i+1,j-1))*m->gdel(i+1,j-1,2+d));
+				//i,j+1
+				cdelu[k](4,d) = 0.5/m->gvol(i,j+1)*( (u->get(i,j+1)+u->get(i+1,j+1))*m->gdel(i,j+1,d) + (u->get(i,j+1)+u->get(i,j+2))*m->gdel(i,j+1,2+d)
+					- (u->get(i,j+1)+u->get(i-1,j+1))*m->gdel(i-1,j+1,d) - (u->get(i,j+1)+u->get(i,j))*m->gdel(i,j,2+d));
+			}
+			
+			// now calculate contributions from the 4 faces
+			res[k](i,j) += 0.5*((cdelu[k](2,0)+cdelu[k](3,0))*m->gdel(i,j,0)+(cdelu[k](2,1)+cdelu[k](3,1))*m->gdel(i,j,1) 
+				- ((cdelu[k](2,0)+cdelu[k](3,0))*svect[0](i,j)+(cdelu[k](2,1)+cdelu[k](3,1))*svect[1](i,j))*(svect[0](i,j)*m->gdel(i,j,0)+svect[1](i,j)*m->gdel(i,j,1)))
+				+ (u->get(i+1,j)-u->get(i,j))*(svect[0](i,j)*m->gdel(i,j,0)+svect[1](i,j)*m->gdel(i,j,1))/dels[0](i,j);
+			res[k](i,j) -= 0.5*((cdelu[k](2,0)+cdelu[k](1,0))*m->gdel(i-1,j,0)+(cdelu[k](2,1)+cdelu[k](1,1))*m->gdel(i-1,j,1) 
+				- ((cdelu[k](2,0)+cdelu[k](1,0))*svect[0](i-1,j)+(cdelu[k](2,1)+cdelu[k](1,1))*svect[1](i-1,j))*(svect[0](i-1,j)*m->gdel(i-1,j,0)+svect[1](i-1,j)*m->gdel(i-1,j,1)))
+				+ (u->get(i,j)-u->get(i-1,j))*(svect[0](i-1,j)*m->gdel(i-1,j,0)+svect[1](i-1,j)*m->gdel(i-1,j,1))/dels[0](i-1,j);
+			res[k](i,j) -= 0.5*((cdelu[k](2,0)+cdelu[k](0,0))*m->gdel(i,j-1,2)+(cdelu[k](2,1)+cdelu[k](0,1))*m->gdel(i,j-1,3) 
+				- ((cdelu[k](2,0)+cdelu[k](0,0))*svect[2](i,j-1)+(cdelu[k](2,1)+cdelu[k](0,1))*svect[3](i,j-1))*(svect[2](i,j-1)*m->gdel(i,j-1,2)+svect[3](i,j-1)*m->gdel(i,j-1,3)))
+				+ (u->get(i,j)-u->get(i,j-1))*(svect[2](i,j-1)*m->gdel(i,j-1,2)+svect[3](i,j-1)*m->gdel(i,j-1,3))/dels[1](i,j-1);
+			res[k](i,j) += 0.5*((cdelu[k](2,0)+cdelu[k](4,0))*m->gdel(i,j,2)+(cdelu[k](2,1)+cdelu[k](4,1))*m->gdel(i,j,3) 
+				- ((cdelu[k](2,0)+cdelu[k](4,0))*svect[2](i,j)+(cdelu[k](2,1)+cdelu[k](4,1))*svect[3](i,j))*(svect[2](i,j)*m->gdel(i,j,2)+svect[3](i,j)*m->gdel(i,j,3)))
+				+ (u->get(i,j+1)-u->get(i,j))*(svect[2](i,j)*m->gdel(i,j,2)+svect[3](i,j)*m->gdel(i,j,3))/dels[1](i,j);
 		}
-		
-		// now calculate contributions from the 4 faces
-		(*res)(i,j) += 0.5*((cdelu(2,0)+cdelu(3,0))*m->gdel(i,j,0)+(cdelu(2,1)+cdelu(3,1))*m->gdel(i,j,1) 
-			- ((cdelu(2,0)+cdelu(3,0))*svect[0](i,j)+(cdelu(2,1)+cdelu(3,1))*svect[1](i,j))*(svect[0](i,j)*m->gdel(i,j,0)+svect[1](i,j)*m->gdel(i,j,1)))
-			+ (u->get(i+1,j)-u->get(i,j))*(svect[0](i,j)*m->gdel(i,j,0)+svect[1](i,j)*m->gdel(i,j,1))/dels[0](i,j);
-		(*res)(i,j) -= 0.5*((cdelu(2,0)+cdelu(1,0))*m->gdel(i-1,j,0)+(cdelu(2,1)+cdelu(1,1))*m->gdel(i-1,j,1) 
-			- ((cdelu(2,0)+cdelu(1,0))*svect[0](i-1,j)+(cdelu(2,1)+cdelu(1,1))*svect[1](i-1,j))*(svect[0](i-1,j)*m->gdel(i-1,j,0)+svect[1](i-1,j)*m->gdel(i-1,j,1)))
-			+ (u->get(i,j)-u->get(i-1,j))*(svect[0](i-1,j)*m->gdel(i-1,j,0)+svect[1](i-1,j)*m->gdel(i-1,j,1))/dels[0](i-1,j);
-		(*res)(i,j) -= 0.5*((cdelu(2,0)+cdelu(0,0))*m->gdel(i,j-1,2)+(cdelu(2,1)+cdelu(0,1))*m->gdel(i,j-1,3) 
-			- ((cdelu(2,0)+cdelu(0,0))*svect[2](i,j-1)+(cdelu(2,1)+cdelu(0,1))*svect[3](i,j-1))*(svect[2](i,j-1)*m->gdel(i,j-1,2)+svect[3](i,j-1)*m->gdel(i,j-1,3)))
-			+ (u->get(i,j)-u->get(i,j-1))*(svect[2](i,j-1)*m->gdel(i,j-1,2)+svect[3](i,j-1)*m->gdel(i,j-1,3))/dels[1](i,j-1);
-		(*res)(i,j) += 0.5*((cdelu(2,0)+cdelu(4,0))*m->gdel(i,j,2)+(cdelu(2,1)+cdelu(4,1))*m->gdel(i,j,3) 
-			- ((cdelu(2,0)+cdelu(4,0))*svect[2](i,j)+(cdelu(2,1)+cdelu(4,1))*svect[3](i,j))*(svect[2](i,j)*m->gdel(i,j,2)+svect[3](i,j)*m->gdel(i,j,3)))
-			+ (u->get(i,j+1)-u->get(i,j))*(svect[2](i,j)*m->gdel(i,j,2)+svect[3](i,j)*m->gdel(i,j,3))/dels[1](i,j);
 	}
+	delete [] cdelu;
+
+	for(i = 1; i <= m->gimx()-1; i++)
+		for(j = 1; j <= m->gjmx()-1; j++)
+			for(k = 1; k < nvar; k++)
+				res[k](i,j) *= mu;
 }
 
 }

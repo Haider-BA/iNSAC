@@ -26,8 +26,8 @@ class Steady_insac
 	double rho;						///< Density
 	double mu;						///< Viscosity
 
-	InviscidFlux invf;				///< Inviscid flux object
-	GradientSchemeIns grad;			///< Gradient reconstruction object for viscous flux
+	InviscidFlux* invf;				///< Inviscid flux object
+	GradientSchemeIns* grad;		///< Gradient reconstruction object for viscous flux
 	Array2d<double>* visc_lhs;		///< Required for gradient reconstruction.
 
 	string pressurescheme;			///< Denotes which pressure reconstruction scheme to use in mass flux.
@@ -51,7 +51,7 @@ public:
 	\param tolerance is the relative tolerance
 	\param maxiters is the maximum number of time steps
 	*/
-	void setup(Structmesh2d* mesh, double dens, double visc, vector<int> _bcflags, vector<vector<int>> _bvalues, string gradscheme, string pressure_scheme, double refvel, double CFL, double tolerance, int maxiters);
+	void setup(Structmesh2d* mesh, double dens, double visc, vector<int> _bcflags, vector<vector<double>> _bvalues, string gradscheme, string pressure_scheme, double refvel, double CFL, double tolerance, int maxiters);
 
 	~Steady_insac();
 
@@ -65,7 +65,7 @@ public:
 	void solve();
 };
 
-void Steady_insac::setup(Structmesh2d* mesh, double dens, double visc, vector<int> _bcflags, vector<vector<int>> _bvalues, string gradscheme, string pressure_scheme, double refvel, double CFL, double tolerance, int maxiters)
+void Steady_insac::setup(Structmesh2d* mesh, double dens, double visc, vector<int> _bcflags, vector<vector<double>> _bvalues, string gradscheme, string pressure_scheme, double refvel, double CFL, double tolerance, int maxiters)
 {
 	ndim = 2;
 	m = mesh;
@@ -97,8 +97,8 @@ void Steady_insac::setup(Structmesh2d* mesh, double dens, double visc, vector<in
 	maxiter = maxiters;
 	
 	cout << "Steady_insac: setup(): Setting up inviscid flux object" << endl;
-	invf->setup(m, u, res, &beta, rho, pressure_scheme, _bcflag, _bvalues);
-	grad->setup(m,u,res,visc_lhs);
+	invf->setup(m, u, res, &beta, rho, pressure_scheme, _bcflags, _bvalues);
+	grad->setup(m,u,res,visc_lhs, mu);
 }
 
 Steady_insac::~Steady_insac()
@@ -110,7 +110,7 @@ Steady_insac::~Steady_insac()
 
 /** We currently do not consider viscosity in calculating the artificial compressibility [beta](@ref beta).
 */
-void compute_beta()
+void Steady_insac::compute_beta()
 {
 	int i,j; double vmag;
 	for(i = 0; i <= m->gimx(); i++)
@@ -124,13 +124,13 @@ void compute_beta()
 		}
 }
 
-/** Note that for an inlet boundary, a parabolic profile is imposed with maximum velocity as that given by the [bvalues](@ref bvalues) entries.
-* We assume that the respective boundaries are parallel to x- or y-axis, so the inlets work only for straight boundaries parallel to the axes.
+/** Note that for an inlet boundary, a parabolic profile is imposed with maximum velocity as that given by the [bvalues](@ref bvalues) entries. We assume that the respective boundaries are parallel to x- or y-axis, so the inlets work only for straight boundaries parallel to the axes.
 * \note For the time being, inlet is only allowed for boundary 2, ie, for the i=1 boundary.
+* \note The corner ghost cells are not directly given values; they are just set as the average of their neighboring ghost cells.
 */
 void Steady_insac::setBCs()
 {
-	int i,j;
+	int i,j,k;
 	double vdotn;
 
 	// boundary 0
@@ -156,7 +156,7 @@ void Steady_insac::setBCs()
 	
 	// boundary 2
 	i = 0;
-	if(bcflag[2] == 0)			// parabolic velocity inlet
+	if(bcflags[2] == 0)			// parabolic velocity inlet
 	{
 		double a,b,c, rm;
 		rm = (m->gy(1,1) + m->gy(1,m->gjmx()))/2.0;		// mid point
@@ -229,7 +229,13 @@ void Steady_insac::setBCs()
 			u[2](i,j) = u[2](i,j+1) - 2.0*vdotn*m->gdel(i,j,3);
 		}
 
-	/// \todo TODO: set values for corner boundary cells!
+	for(k = 0; k < nvar; k++)
+	{
+		u[k](0,0) = 0.5*(u[k](1,0)+u[k](0,1));
+		u[k](0,m->gjmx()) = 0.5*(u[k](1,m->gjmx())+u[k](0,m->gjmx()-1));
+		u[k](m->gimx(),0) = 0.5*(u[k](m->gimx(),1)+u[k](m->gimx()-1,0));
+		u[k](m->gimx(),m->gjmx()) = 0.5*(u[k](m->gimx()-1,m->gjmx())+u[k](m->gimx(),m->gjmx()-1));
+	}
 }
 
 /** Computes local time-step for each cell using characteristics of the system in the normal directions.
@@ -271,7 +277,7 @@ void Steady_insac::compute_timesteps()
 }
 
 /** Sets all quantities in all cells to zero. */
-void Steady_insac::setInitialConidtions()
+void Steady_insac::setInitialConditions()
 {
 	int i,j,k;
 	for(i = 0; i <= m->gimx(); i++)
@@ -285,7 +291,7 @@ void Steady_insac::setInitialConidtions()
 		}
 }
 
-/** Make sure the [Steady_insac](@ref Steady_insac) object has been [setup](@ref setup) and initialized with some [initial condition](@ref setInitialConditions).
+/** Make sure the [Steady_insac](@ref Steady_insac) object has been [setup](@ref setup) and initialized with some [initial condition](@ref setInitialConditions). Both the momentum-magnitude residual and the mass flux are taken as convergence criteria; the tolerance for the mass flux is the square-root of the tolerance for the relative momentum-magnitude residual. [tol](@ref tol) is the latter.
 */
 void Steady_insac::solve()
 {
@@ -302,19 +308,22 @@ void Steady_insac::solve()
 		// compute fluxes
 		for(k = 0; k < nvar; k++)
 			res[k].zeros();
-		invf->compute_flux();
-		grad->compute_flux();
+		invf->compute_fluxes();
+		grad->compute_fluxes();
 
 		// check convergence
 		resnorm = 0; massflux = 0;
 		for(i = 1; i <= m->gimx()-1; i++)
 			for(j = 1; j <= m->gjmx()-1; j++)
+			{
 				resnorm += res[1].get(i,j)*res[1].get(i,j) + res[2].get(i,j)*res[2].get(i,j);
+				massflux += res[0].get(i,j);
+			}
 		if(n == 0) resnorm0 = resnorm;
-		if(n == 1 || n%10 == 0) cout << "Steady_insac: solve(): Iteration " << n << ":relative  l2 norm of residual = " << resnorm/resnorm0;
-		if(resnorm/resnorm0 < tol) 
+		if(n == 1 || n%10 == 0) cout << "Steady_insac: solve(): Iteration " << n << ":relative  l2 norm of residual = " << resnorm/resnorm0 << ", net mass flux = " << massflux << endl;
+		if(resnorm/resnorm0 < tol && fabs(massflux) < sqrt(tol)) 
 		{
-			cout << "Steady_insac: solve(): Converged in " << n << " iterations. Norm of final residual = " << resnorm << endl;
+			cout << "Steady_insac: solve(): Converged in " << n << " iterations. Norm of final residual = " << resnorm << ", final net mass flux = " << massflux << endl;
 			break;
 		}
 
@@ -322,7 +331,7 @@ void Steady_insac::solve()
 		for(i = 1; i <= m->gimx()-1; i++)
 			for(j = 1; j <= m->gjmx()-1; j++)
 			{
-				u[0](i,j) = u[0].get(i,j) - res[0].get(i,j)*beta.get(i,j)*beta.get(i,j)*dt.get(i,j)/m-gvol(i,j);
+				u[0](i,j) = u[0].get(i,j) - res[0].get(i,j)*beta.get(i,j)*beta.get(i,j)*dt.get(i,j)/m->gvol(i,j);
 				for(k = 1; k < nvar; k++)
 					u[k](i,j) = u[k].get(i,j) - res[k].get(i,j)*dt.get(i,j)/(rho*m->gvol(i,j));
 			}

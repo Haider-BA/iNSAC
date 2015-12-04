@@ -1,4 +1,6 @@
-/** Provides a class to manage output of mesh data to VTK-type files.
+/** @file aoutput_struct.hpp
+ * @brief Provides a class to manage output of mesh data to VTK-type files.
+ * @author Aditya Kashi
 */
 
 #ifndef _GLIBCXX_IOSTREAM
@@ -47,6 +49,7 @@ class Structdata2d
 public:
 	Structdata2d(Structmesh2d* mesh, int n_scalars, Array2d<double>* _scalars, string* scalar_names, int n_vectors, Array2d<double>** _vectors, string* vector_names, string title);
 
+	/// Writes data to a file in legacy VTK format
 	void writevtk(string fname);
 };
 
@@ -102,7 +105,6 @@ void Structdata2d::writevtk(string fname)
 				}
 		}
 	}
-	//Done.
 }
 
 }

@@ -6,7 +6,11 @@
 #endif
 
 #ifndef __STRUCTMESH2D_H
-#include <structmesh.h>
+#include <structmesh2d.hpp>
+#endif
+
+#ifndef _GLIBCXX_VECTOR
+#include <vector>
 #endif
 
 #define __INVISCIDFLUX_H 1
@@ -30,6 +34,7 @@ double minmod_avg(double a, double b)
 /// Compute pressure difference dp across each face as (p_L - p_R)
 class PressureReconstruction
 {
+protected:
 	Structmesh2d* m;
 	Array2d<double>* u;
 	Array2d<double>* dp;
@@ -38,7 +43,7 @@ public:
 	virtual void compute_pressure_difference() = 0;
 };
 
-void PressureReconstrucion::setup(Structmesh2d* mesh, Array2d<double>* unknowns, Array2d<double>* delp)
+void PressureReconstruction::setup(Structmesh2d* mesh, Array2d<double>* unknowns, Array2d<double>* delp)
 {
 	m = mesh;
 	u = unknowns;
@@ -92,8 +97,8 @@ void TVDPR::compute_pressure_difference()
 		dp[0](m->gimx()-1,j) = dp[0](m->gimx()-2,j);
 		dp[1](0,j) = u[0].get(0,j) +0.5*minmod_avg(u[0].get(0,j+1)-u[0](0,j), u[0].get(0,j)-u[0].get(0,j-1));				// p_down
 		dp[1](0,j) -= u[0].get(0,j+1) - 0.5*minmod_avg(u[0].get(0,j+1)-u[0].get(0,j), u[0].get(0,j+2)-u[0].get(0,j+1));		// p_up
-		dp[1](m->gimx()-1,j) = u[0].get(,j) +0.5*minmod_avg(u[0].get(,j+1)-u[0](,j), u[0].get(,j)-u[0].get(,j-1));
-		dp[1](m->gimx()-1,j) -= u[0].get(m->gimx()-1,j+1) - 0.5*minmod_avg(u[0].get(m->gimx()-1,j+1)-u[0].get(m->gimx()-1,j), u[0].get(m->gimx()-1,j+2)-u[0].get(m->gimx()-1,j+1));
+		dp[1](m->gimx()-1,j) = u[0].get(m->gimx()-1,j) +0.5*minmod_avg(u[0].get(m->gimx()-1,j+1)-u[0](m->gimx()-1,j), u[0].get(m->gimx()-1,j)-u[0].get(m->gimx()-1,j-1));
+		dp[1](m->gimx()-1,j) -= u[0].get(m->gimx()-1,j+1) -0.5*minmod_avg(u[0].get(m->gimx()-1,j+1)-u[0].get(m->gimx()-1,j), u[0].get(m->gimx()-1,j+2)-u[0].get(m->gimx()-1,j+1));
 	}
 	for(i = 1; i <= m->gimx()-2; i++)
 	{
@@ -138,13 +143,13 @@ class InviscidFlux
 	*/
 	vector<vector<double>> bvalues;
 public:
-	void setup(Structmesh2d* mesh, Array2d<double>* unknown, Array2d<double>* residuals, Array2d<double>* _beta, double _rho, string pressurereconstruction, vector<int> _bcflag, vector<vector<double> _bvalues);
+	void setup(Structmesh2d* mesh, Array2d<double>* unknown, Array2d<double>* residuals, Array2d<double>* _beta, double _rho, string pressurereconstruction, vector<int> _bcflag, vector<vector<double>> _bvalues);
 	~InviscidFlux();
 	/// Add the inviscid flux contribution to the [residual](@ref res)
-	void compute_flux();
+	void compute_fluxes();
 };
 
-void InviscidFlux::setup(Structmesh2d* mesh, Array2d<double>* unknown, Array2d<double>* residuals, Array2d<double>* _beta, double _rho, string pressurereconstruction, vector<int> _bcflag, vector<vector<double> _bvalues)
+void InviscidFlux::setup(Structmesh2d* mesh, Array2d<double>* unknown, Array2d<double>* residuals, Array2d<double>* _beta, double _rho, string pressurereconstruction, vector<int> _bcflag, vector<vector<double>> _bvalues)
 {
 	m = mesh;
 	u = unknown;
@@ -153,26 +158,25 @@ void InviscidFlux::setup(Structmesh2d* mesh, Array2d<double>* unknown, Array2d<d
 	rho = _rho;
 	bvalues = _bvalues;
 	bcflags = _bcflag;
-	dp = new Array2d<double>(2);
+	dp = new Array2d<double>[2];
 	for(int i = 0; i<2; i++)
 		dp[i].setup(m->gimx()+1, m->gjmx()+1);
 	isallocdp = true;
+	
 	/// Sets the pressure reconstruction scheme to be used based on the last argument - "basic" or "TVD".
-	switch(pressurereconstruction)
-	{
-		case "basic":
-			pr = new BasicPR();
-			break;
-		case "TVD":
-			pr = new TVDPR();
-			break;
-		default:
-			cout << "InviscidFlux: setup(): Pressure reconstruction scheme requested does not exist. Choosing basic first-order scheme." << endl;
-			pr = new BasicPR();
+	if(pressurereconstruction=="basic")
+		pr = new BasicPR();
+	else if(pressurereconstruction=="tvd")
+		pr = new TVDPR();
+	else {
+		cout << "InviscidFlux: setup(): Pressure reconstruction scheme requested does not exist. Choosing basic first-order scheme." << endl;
+		pr = new BasicPR();
 	}
-	pr->setup(mesh, unkown, dp);
+	pr->setup(mesh, unknown, dp);
+	
 	/// Rhie-Chow constant [c](@ref c) is set as 0.5.
 	c = 0.5;
+	
 	nvar = 3;
 }
 
@@ -184,7 +188,7 @@ InviscidFlux::~InviscidFlux()
 	}
 }
 
-void InviscidFlux::compute_flux()
+void InviscidFlux::compute_fluxes()
 {
 	pr->compute_pressure_difference();
 
@@ -213,7 +217,7 @@ void InviscidFlux::compute_flux()
 			ny = m->gdel(i,j,1)/area;
 			for(k = 0; k < nvar; k++)
 				uhalf[k] = 0.5*(u[k](i,j) + u[k](i+1,j));
-			bhalf = 0.5*(beta->get(i,j) + beta->get(i+1,j);
+			bhalf = 0.5*(beta->get(i,j) + beta->get(i+1,j));
 			vdotn = uhalf[1]*nx + uhalf[2]*ny;
 			// now get eigenvalue for Rhie-Chow
 			eigen = 0.5*( fabs(vdotn) + sqrt(vdotn*vdotn + 4*bhalf*bhalf) );
@@ -255,7 +259,7 @@ void InviscidFlux::compute_flux()
 			ny = m->gdel(i,j,3)/area;
 			for(k = 0; k < nvar; k++)
 				uhalf[k] = 0.5*(u[k](i,j) + u[k](i,j+1));
-			bhalf = 0.5*(beta->get(i,j) + beta(i,j+1));
+			bhalf = 0.5*(beta->get(i,j) + beta->get(i,j+1));
 			vdotn = uhalf[1]*nx + uhalf[2]*ny;
 			eigen = 0.5*( fabs(vdotn) + sqrt(vdotn*vdotn + 4*bhalf*bhalf) );
 			
