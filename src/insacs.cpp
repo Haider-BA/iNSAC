@@ -22,7 +22,7 @@ int main(int argc, char* argv[])
 	vector<vector<double>> bvalues(4);
 	for(int i = 0; i < 4; i++)
 		bvalues[i].resize(2);
-	
+
 	ifstream conf(argv[1]);
 
 	// read control file
@@ -59,6 +59,7 @@ int main(int argc, char* argv[])
 
 	Steady_insac ins;
 	ins.setup(&m, rho, mu, bcflags, bvalues, gradscheme, pressurescheme, refvel, cfl, tol, maxiter);
+	ins.solve();
 
 	cout << endl;
 	return 0;

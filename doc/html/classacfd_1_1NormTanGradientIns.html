@@ -123,8 +123,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="separator:aea796158e85bfe554da788ba4bd524da"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad058161f67d3b45ad6803dbafdaf2535"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classacfd_1_1NormTanGradientIns.html#ad058161f67d3b45ad6803dbafdaf2535">compute_lhs</a> ()</td></tr>
 <tr class="separator:ad058161f67d3b45ad6803dbafdaf2535"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1eef8723454e6feb27896a17fd6be6da"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1eef8723454e6feb27896a17fd6be6da"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>compute_fluxes</b> ()</td></tr>
+<tr class="memitem:a1eef8723454e6feb27896a17fd6be6da"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classacfd_1_1NormTanGradientIns.html#a1eef8723454e6feb27896a17fd6be6da">compute_fluxes</a> ()</td></tr>
 <tr class="separator:a1eef8723454e6feb27896a17fd6be6da"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classacfd_1_1GradientSchemeIns"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classacfd_1_1GradientSchemeIns')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classacfd_1_1GradientSchemeIns.html">acfd::GradientSchemeIns</a></td></tr>
 <tr class="memitem:a340374871701210de20b22be19e62fdd inherit pub_methods_classacfd_1_1GradientSchemeIns"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a340374871701210de20b22be19e62fdd"></a>
@@ -178,11 +177,36 @@ double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cl
 <div class="textblock"><p>Computes LHS and residual for FVM solution of Poisson equation using Normal-tangent gradient decomposition model. </p>
 <p>Applied properly, the scheme is non-compact and has 13 terms in the LHS for each cell. However, we implement only the 5 compact terms for the LHS. But we treat the residual fully. This requires specification of more than one layer of ghost cells. This is taken care of without introducing another layer; rather, we compute a `ghost state' on-the-fly using the BCs. </p><dl class="todo"><dt><b><a class="el" href="todo.html#_todo000001">Todo:</a></b></dt><dd>TODO : This class is not yet ready for iNS:<ul>
 <li>Implement for a vector unknown</li>
-<li>Multiply by viscosity at appropriate places</li>
-<li>Remove boundary-condition treatment, and do something about the extended stencil for the real boundary cells. </li>
+<li>Multiply by viscosity at appropriate places </li>
 </ul>
 </dd></dl>
 </div><h2 class="groupheader">Member Function Documentation</h2>
+<a class="anchor" id="a1eef8723454e6feb27896a17fd6be6da"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void acfd::NormTanGradientIns::compute_fluxes </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>For boundary cells: For the "second layer" of ghost cells, we simply copy flow velocities from the first layer of ghost cells. We take care of corner boundary cells during the treatment of boundaries 1 and 3 (the i=const boundaries).</p>
+
+<p>Implements <a class="el" href="classacfd_1_1GradientSchemeIns.html">acfd::GradientSchemeIns</a>.</p>
+
+</div>
+</div>
 <a class="anchor" id="ad058161f67d3b45ad6803dbafdaf2535"></a>
 <div class="memitem">
 <div class="memproto">
@@ -262,7 +286,7 @@ double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cl
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Dec 2 2015 00:50:05 for iNSAC by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Dec 4 2015 23:28:45 for iNSAC by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.7
 </small></address>

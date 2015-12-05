@@ -101,23 +101,21 @@ Collaboration diagram for Steady_insac:</div>
 <div class="dyncontent">
 <div class="center"><img src="classSteady__insac__coll__graph.png" border="0" usemap="#Steady__insac_coll__map" alt="Collaboration graph"/></div>
 <map name="Steady__insac_coll__map" id="Steady__insac_coll__map">
-<area shape="rect" id="node2" href="classacfd_1_1Structmesh2d.html" title="This class encapsulates the 2D structured mesh. " alt="" coords="240,257,376,284"/><area shape="rect" id="node4" href="classacfd_1_1InviscidFlux.html" title="Class to add contributions of inviscid fluxes to the residual. " alt="" coords="712,220,837,247"/><area shape="rect" id="node5" href="classacfd_1_1PressureReconstruction.html" title="Compute pressure difference dp across each face as (p_L &#45; p_R) " alt="" coords="453,257,648,284"/><area shape="rect" id="node6" href="classacfd_1_1GradientSchemeIns.html" title="Base class for gradient reconstruction schemes for AC formulation of iNS equations. " alt="" coords="465,360,636,387"/><area shape="rect" id="node3" href="classamat_1_1Array2d.html" title="amat::Array2d\&lt; double \&gt;" alt="" coords="6,200,173,227"/></map>
+<area shape="rect" id="node2" href="classacfd_1_1Structmesh2d.html" title="This class encapsulates the 2D structured mesh. " alt="" coords="240,257,376,284"/><area shape="rect" id="node4" href="classacfd_1_1InviscidFlux.html" title="Class to add contributions of inviscid fluxes to the residual. " alt="" coords="712,295,837,321"/><area shape="rect" id="node5" href="classacfd_1_1PressureReconstruction.html" title="Compute pressure difference dp across each face as (p_L &#45; p_R) " alt="" coords="453,324,648,351"/><area shape="rect" id="node6" href="classacfd_1_1GradientSchemeIns.html" title="Base class for gradient reconstruction schemes for AC formulation of iNS equations. " alt="" coords="465,211,636,237"/><area shape="rect" id="node3" href="classamat_1_1Array2d.html" title="amat::Array2d\&lt; double \&gt;" alt="" coords="6,257,173,284"/></map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ac364b7937e6ed544ca6a7b64b06872a3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSteady__insac.html#ac364b7937e6ed544ca6a7b64b06872a3">setup</a> (<a class="el" href="classacfd_1_1Structmesh2d.html">Structmesh2d</a> *mesh, double dens, double visc, vector&lt; int &gt; _bcflags, vector&lt; vector&lt; int &gt;&gt; _bvalues, string gradscheme, string pressure_scheme, double refvel, double CFL, double tolerance, int maxiters)</td></tr>
-<tr class="memdesc:ac364b7937e6ed544ca6a7b64b06872a3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets up the iNS problem.  <a href="#ac364b7937e6ed544ca6a7b64b06872a3">More...</a><br /></td></tr>
-<tr class="separator:ac364b7937e6ed544ca6a7b64b06872a3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a101431f6e083a161d188c2738b9e6513"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a101431f6e083a161d188c2738b9e6513"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSteady__insac.html#a101431f6e083a161d188c2738b9e6513">compute_beta</a> ()</td></tr>
-<tr class="memdesc:a101431f6e083a161d188c2738b9e6513"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes artificial conmpressibility (<a class="el" href="classSteady__insac.html#a803a61f879dfa92dce34fd8b0be5f193">beta</a> ) for each cell. <br /></td></tr>
+<tr class="memitem:a00b6d0ee352825a809773cda60da727f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSteady__insac.html#a00b6d0ee352825a809773cda60da727f">setup</a> (<a class="el" href="classacfd_1_1Structmesh2d.html">Structmesh2d</a> *mesh, double dens, double visc, vector&lt; int &gt; _bcflags, vector&lt; vector&lt; double &gt;&gt; _bvalues, string gradscheme, string pressure_scheme, double refvel, double CFL, double tolerance, int maxiters)</td></tr>
+<tr class="memdesc:a00b6d0ee352825a809773cda60da727f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets up the iNS problem.  <a href="#a00b6d0ee352825a809773cda60da727f">More...</a><br /></td></tr>
+<tr class="separator:a00b6d0ee352825a809773cda60da727f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a101431f6e083a161d188c2738b9e6513"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSteady__insac.html#a101431f6e083a161d188c2738b9e6513">compute_beta</a> ()</td></tr>
+<tr class="memdesc:a101431f6e083a161d188c2738b9e6513"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes artificial conmpressibility (<a class="el" href="classSteady__insac.html#a803a61f879dfa92dce34fd8b0be5f193">beta</a> ) for each cell.  <a href="#a101431f6e083a161d188c2738b9e6513">More...</a><br /></td></tr>
 <tr class="separator:a101431f6e083a161d188c2738b9e6513"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8ddcc2ec645e8a21e231bc634fc4d9cc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSteady__insac.html#a8ddcc2ec645e8a21e231bc634fc4d9cc">setBCs</a> ()</td></tr>
 <tr class="memdesc:a8ddcc2ec645e8a21e231bc634fc4d9cc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets quantities to ghost cells.  <a href="#a8ddcc2ec645e8a21e231bc634fc4d9cc">More...</a><br /></td></tr>
 <tr class="separator:a8ddcc2ec645e8a21e231bc634fc4d9cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3758fb469efa41272230b92a54944f9b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3758fb469efa41272230b92a54944f9b"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>setInitialConditions</b> ()</td></tr>
+<tr class="memitem:a3758fb469efa41272230b92a54944f9b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSteady__insac.html#a3758fb469efa41272230b92a54944f9b">setInitialConditions</a> ()</td></tr>
 <tr class="separator:a3758fb469efa41272230b92a54944f9b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aadd17629d9de3d3b5ba44d344f77d75c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSteady__insac.html#aadd17629d9de3d3b5ba44d344f77d75c">compute_timesteps</a> ()</td></tr>
 <tr class="separator:aadd17629d9de3d3b5ba44d344f77d75c"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -171,14 +169,14 @@ double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cl
 double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSteady__insac.html#a560520d539292e45dfb870691468c8b1">mu</a></td></tr>
 <tr class="memdesc:a560520d539292e45dfb870691468c8b1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Viscosity. <br /></td></tr>
 <tr class="separator:a560520d539292e45dfb870691468c8b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae1425bcaf76fca9ff8fa67ead043f308"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae1425bcaf76fca9ff8fa67ead043f308"></a>
-<a class="el" href="classacfd_1_1InviscidFlux.html">InviscidFlux</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSteady__insac.html#ae1425bcaf76fca9ff8fa67ead043f308">invf</a></td></tr>
-<tr class="memdesc:ae1425bcaf76fca9ff8fa67ead043f308"><td class="mdescLeft">&#160;</td><td class="mdescRight">Inviscid flux object. <br /></td></tr>
-<tr class="separator:ae1425bcaf76fca9ff8fa67ead043f308"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a04866ae46ad003763b30612266950c9f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a04866ae46ad003763b30612266950c9f"></a>
-<a class="el" href="classacfd_1_1GradientSchemeIns.html">GradientSchemeIns</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSteady__insac.html#a04866ae46ad003763b30612266950c9f">grad</a></td></tr>
-<tr class="memdesc:a04866ae46ad003763b30612266950c9f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gradient reconstruction object for viscous flux. <br /></td></tr>
-<tr class="separator:a04866ae46ad003763b30612266950c9f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a736f4da147d054d053f041d7ffdd6d41"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a736f4da147d054d053f041d7ffdd6d41"></a>
+<a class="el" href="classacfd_1_1InviscidFlux.html">InviscidFlux</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSteady__insac.html#a736f4da147d054d053f041d7ffdd6d41">invf</a></td></tr>
+<tr class="memdesc:a736f4da147d054d053f041d7ffdd6d41"><td class="mdescLeft">&#160;</td><td class="mdescRight">Inviscid flux object. <br /></td></tr>
+<tr class="separator:a736f4da147d054d053f041d7ffdd6d41"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2a1c7cc6ef53e792cf45d704e6c05c78"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2a1c7cc6ef53e792cf45d704e6c05c78"></a>
+<a class="el" href="classacfd_1_1GradientSchemeIns.html">GradientSchemeIns</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSteady__insac.html#a2a1c7cc6ef53e792cf45d704e6c05c78">grad</a></td></tr>
+<tr class="memdesc:a2a1c7cc6ef53e792cf45d704e6c05c78"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gradient reconstruction object for viscous flux. <br /></td></tr>
+<tr class="separator:a2a1c7cc6ef53e792cf45d704e6c05c78"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3068b2de1d5e18ef0ff74214234c87b0"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3068b2de1d5e18ef0ff74214234c87b0"></a>
 <a class="el" href="classamat_1_1Array2d.html">Array2d</a>&lt; double &gt; *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSteady__insac.html#a3068b2de1d5e18ef0ff74214234c87b0">visc_lhs</a></td></tr>
 <tr class="memdesc:a3068b2de1d5e18ef0ff74214234c87b0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Required for gradient reconstruction. <br /></td></tr>
@@ -203,10 +201,31 @@ double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cl
 int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSteady__insac.html#a1851717f13031328df384ea30e82c75f">maxiter</a></td></tr>
 <tr class="memdesc:a1851717f13031328df384ea30e82c75f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Max number of time steps. <br /></td></tr>
 <tr class="separator:a1851717f13031328df384ea30e82c75f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a632dde0a9cc9896df5d3ca03505cfdd9"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a632dde0a9cc9896df5d3ca03505cfdd9"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>isalloc</b></td></tr>
+<tr class="separator:a632dde0a9cc9896df5d3ca03505cfdd9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Implements the main solution loop of stead-state iNS equations in artificial compressibility form. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
+<a class="anchor" id="a101431f6e083a161d188c2738b9e6513"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Steady_insac::compute_beta </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Computes artificial conmpressibility (<a class="el" href="classSteady__insac.html#a803a61f879dfa92dce34fd8b0be5f193">beta</a> ) for each cell. </p>
+<p>We currently do not consider viscosity in calculating the artificial compressibility <a class="el" href="classSteady__insac.html#a803a61f879dfa92dce34fd8b0be5f193">beta</a>. </p>
+
+</div>
+</div>
 <a class="anchor" id="aadd17629d9de3d3b5ba44d344f77d75c"></a>
 <div class="memitem">
 <div class="memproto">
@@ -237,12 +256,29 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class
 </div><div class="memdoc">
 
 <p>Sets quantities to ghost cells. </p>
-<p>Note that for an inlet boundary, a parabolic profile is imposed with maximum velocity as that given by the <a class="el" href="classSteady__insac.html#a85285261b667bb89b10a9d5374c0a6ca">bvalues</a> entries. We assume that the respective boundaries are parallel to x- or y-axis, so the inlets work only for straight boundaries parallel to the axes. </p><dl class="section note"><dt>Note</dt><dd>For the time being, inlet is only allowed for boundary 2, ie, for the i=1 boundary. </dd></dl>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000002">Todo:</a></b></dt><dd>TODO: set values for corner boundary cells! </dd></dl>
+<p>Note that for an inlet boundary, a parabolic profile is imposed with maximum velocity as that given by the <a class="el" href="classSteady__insac.html#a85285261b667bb89b10a9d5374c0a6ca">bvalues</a> entries. We assume that the respective boundaries are parallel to x- or y-axis, so the inlets work only for straight boundaries parallel to the axes. </p><dl class="section note"><dt>Note</dt><dd>For the time being, inlet is only allowed for boundary 2, ie, for the i=1 boundary. </dd>
+<dd>
+The corner ghost cells are not directly given values; they are just set as the average of their neighboring ghost cells. </dd></dl>
 
 </div>
 </div>
-<a class="anchor" id="ac364b7937e6ed544ca6a7b64b06872a3"></a>
+<a class="anchor" id="a3758fb469efa41272230b92a54944f9b"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Steady_insac::setInitialConditions </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Sets all quantities in all cells to zero. </p>
+
+</div>
+</div>
+<a class="anchor" id="a00b6d0ee352825a809773cda60da727f"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -273,7 +309,7 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">vector&lt; vector&lt; int &gt;&gt;&#160;</td>
+          <td class="paramtype">vector&lt; vector&lt; double &gt;&gt;&#160;</td>
           <td class="paramname"><em>_bvalues</em>, </td>
         </tr>
         <tr>
@@ -357,7 +393,7 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class
 </div><div class="memdoc">
 
 <p>Contains the main solver time loop. </p>
-<p>Make sure the <a class="el" href="classSteady__insac.html">Steady_insac</a> object has been <a class="el" href="classSteady__insac.html#ac364b7937e6ed544ca6a7b64b06872a3">setup</a> and initialized with some initial condition. </p>
+<p>Make sure the <a class="el" href="classSteady__insac.html">Steady_insac</a> object has been <a class="el" href="classSteady__insac.html#a00b6d0ee352825a809773cda60da727f">setup</a> and initialized with some <a class="el" href="classSteady__insac.html#a3758fb469efa41272230b92a54944f9b">initial condition</a>. Both the momentum-magnitude residual and the mass flux are taken as convergence criteria; the tolerance for the mass flux is the square-root of the tolerance for the relative momentum-magnitude residual. <a class="el" href="classSteady__insac.html#a325ac8b1950528cdb1288cc59fe2efb9">tol</a> is the latter. </p>
 
 </div>
 </div>
@@ -367,7 +403,7 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Dec 2 2015 00:50:05 for iNSAC by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Dec 4 2015 23:28:45 for iNSAC by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.7
 </small></address>

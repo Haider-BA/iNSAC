@@ -89,7 +89,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#pri-attribs">Private Attributes</a> &#124;
+<a href="#pro-attribs">Protected Attributes</a> &#124;
 <a href="classacfd_1_1PressureReconstruction-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">acfd::PressureReconstruction Class Reference<span class="mlabels"><span class="mlabel">abstract</span></span></div>  </div>
@@ -112,28 +112,28 @@ Collaboration diagram for acfd::PressureReconstruction:</div>
 <div class="dyncontent">
 <div class="center"><img src="classacfd_1_1PressureReconstruction__coll__graph.png" border="0" usemap="#acfd_1_1PressureReconstruction_coll__map" alt="Collaboration graph"/></div>
 <map name="acfd_1_1PressureReconstruction_coll__map" id="acfd_1_1PressureReconstruction_coll__map">
-<area shape="rect" id="node2" href="classacfd_1_1Structmesh2d.html" title="This class encapsulates the 2D structured mesh. " alt="" coords="35,168,169,195"/><area shape="rect" id="node3" href="classamat_1_1Array2d.html" title="amat::Array2d\&lt; double \&gt;" alt="" coords="19,5,185,32"/></map>
+<area shape="rect" id="node2" href="classacfd_1_1Structmesh2d.html" title="This class encapsulates the 2D structured mesh. " alt="" coords="107,169,241,196"/><area shape="rect" id="node3" href="classamat_1_1Array2d.html" title="amat::Array2d\&lt; double \&gt;" alt="" coords="19,5,185,32"/></map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:ad954cc6f6aa589088f555a7cae643cfc"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad954cc6f6aa589088f555a7cae643cfc"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>setup</b> (<a class="el" href="classacfd_1_1Structmesh2d.html">Structmesh2d</a> *mesh, Array2d&lt; double &gt; *unknowns, Array2d&lt; double &gt; *delp)</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>setup</b> (<a class="el" href="classacfd_1_1Structmesh2d.html">Structmesh2d</a> *mesh, <a class="el" href="classamat_1_1Array2d.html">Array2d</a>&lt; double &gt; *unknowns, <a class="el" href="classamat_1_1Array2d.html">Array2d</a>&lt; double &gt; *delp)</td></tr>
 <tr class="separator:ad954cc6f6aa589088f555a7cae643cfc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a63859ba4ba211cec3121e84b302af77b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a63859ba4ba211cec3121e84b302af77b"></a>
 virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>compute_pressure_difference</b> ()=0</td></tr>
 <tr class="separator:a63859ba4ba211cec3121e84b302af77b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
-Private Attributes</h2></td></tr>
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
+Protected Attributes</h2></td></tr>
 <tr class="memitem:aaa6b1f3b16122b847d9d47c594af9235"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aaa6b1f3b16122b847d9d47c594af9235"></a>
 <a class="el" href="classacfd_1_1Structmesh2d.html">Structmesh2d</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>m</b></td></tr>
 <tr class="separator:aaa6b1f3b16122b847d9d47c594af9235"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1ef4790190a998488d7bb437da73fb39"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1ef4790190a998488d7bb437da73fb39"></a>
-Array2d&lt; double &gt; *&#160;</td><td class="memItemRight" valign="bottom"><b>u</b></td></tr>
+<a class="el" href="classamat_1_1Array2d.html">Array2d</a>&lt; double &gt; *&#160;</td><td class="memItemRight" valign="bottom"><b>u</b></td></tr>
 <tr class="separator:a1ef4790190a998488d7bb437da73fb39"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2cdf2f0e4b2cadc0093c4a32f899bda8"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2cdf2f0e4b2cadc0093c4a32f899bda8"></a>
-Array2d&lt; double &gt; *&#160;</td><td class="memItemRight" valign="bottom"><b>dp</b></td></tr>
+<a class="el" href="classamat_1_1Array2d.html">Array2d</a>&lt; double &gt; *&#160;</td><td class="memItemRight" valign="bottom"><b>dp</b></td></tr>
 <tr class="separator:a2cdf2f0e4b2cadc0093c4a32f899bda8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -144,7 +144,7 @@ Array2d&lt; double &gt; *&#160;</td><td class="memItemRight" valign="bottom"><b>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Dec 2 2015 00:50:05 for iNSAC by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Dec 4 2015 23:28:45 for iNSAC by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.7
 </small></address>

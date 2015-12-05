@@ -17,11 +17,11 @@ thinlayer
 basic
 
 -CFL-number
-0.5
+0.1
 -Relative-tolerance-momentum
 1e-4
 -Max-time-steps
-5000
+100
 
 -Boundary-flags
 2 2 2 2
@@ -30,4 +30,3 @@ basic
 1.0 0.0
 0.0 0.0
 0.0 0.0
-

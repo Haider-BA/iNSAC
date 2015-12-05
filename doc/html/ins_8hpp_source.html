@@ -114,8 +114,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00026"></a><span class="lineno"><a class="line" href="classSteady__insac.html#a61029030a89582afdac5fe92361fec3c">   26</a></span>&#160;    <span class="keywordtype">double</span> <a class="code" href="classSteady__insac.html#a61029030a89582afdac5fe92361fec3c">rho</a>;                     </div>
 <div class="line"><a name="l00027"></a><span class="lineno"><a class="line" href="classSteady__insac.html#a560520d539292e45dfb870691468c8b1">   27</a></span>&#160;    <span class="keywordtype">double</span> <a class="code" href="classSteady__insac.html#a560520d539292e45dfb870691468c8b1">mu</a>;                      </div>
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;</div>
-<div class="line"><a name="l00029"></a><span class="lineno"><a class="line" href="classSteady__insac.html#ae1425bcaf76fca9ff8fa67ead043f308">   29</a></span>&#160;    <a class="code" href="classacfd_1_1InviscidFlux.html">InviscidFlux</a> <a class="code" href="classSteady__insac.html#ae1425bcaf76fca9ff8fa67ead043f308">invf</a>;              </div>
-<div class="line"><a name="l00030"></a><span class="lineno"><a class="line" href="classSteady__insac.html#a04866ae46ad003763b30612266950c9f">   30</a></span>&#160;    <a class="code" href="classacfd_1_1GradientSchemeIns.html">GradientSchemeIns</a> <a class="code" href="classSteady__insac.html#a04866ae46ad003763b30612266950c9f">grad</a>;         </div>
+<div class="line"><a name="l00029"></a><span class="lineno"><a class="line" href="classSteady__insac.html#a736f4da147d054d053f041d7ffdd6d41">   29</a></span>&#160;    <a class="code" href="classacfd_1_1InviscidFlux.html">InviscidFlux</a>* <a class="code" href="classSteady__insac.html#a736f4da147d054d053f041d7ffdd6d41">invf</a>;             </div>
+<div class="line"><a name="l00030"></a><span class="lineno"><a class="line" href="classSteady__insac.html#a2a1c7cc6ef53e792cf45d704e6c05c78">   30</a></span>&#160;    <a class="code" href="classacfd_1_1GradientSchemeIns.html">GradientSchemeIns</a>* <a class="code" href="classSteady__insac.html#a2a1c7cc6ef53e792cf45d704e6c05c78">grad</a>;        </div>
 <div class="line"><a name="l00031"></a><span class="lineno"><a class="line" href="classSteady__insac.html#a3068b2de1d5e18ef0ff74214234c87b0">   31</a></span>&#160;    <a class="code" href="classamat_1_1Array2d.html">Array2d&lt;double&gt;</a>* <a class="code" href="classSteady__insac.html#a3068b2de1d5e18ef0ff74214234c87b0">visc_lhs</a>;      </div>
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;</div>
 <div class="line"><a name="l00033"></a><span class="lineno"><a class="line" href="classSteady__insac.html#a9fda1fdd9bcc52a26639abf224254d3b">   33</a></span>&#160;    <span class="keywordtype">string</span> <a class="code" href="classSteady__insac.html#a9fda1fdd9bcc52a26639abf224254d3b">pressurescheme</a>;          </div>
@@ -124,303 +124,331 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00036"></a><span class="lineno"><a class="line" href="classSteady__insac.html#a325ac8b1950528cdb1288cc59fe2efb9">   36</a></span>&#160;    <span class="keywordtype">double</span> <a class="code" href="classSteady__insac.html#a325ac8b1950528cdb1288cc59fe2efb9">tol</a>;                     </div>
 <div class="line"><a name="l00037"></a><span class="lineno"><a class="line" href="classSteady__insac.html#a1851717f13031328df384ea30e82c75f">   37</a></span>&#160;    <span class="keywordtype">int</span> <a class="code" href="classSteady__insac.html#a1851717f13031328df384ea30e82c75f">maxiter</a>;                    </div>
 <div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;    <span class="keywordtype">void</span> setup(<a class="code" href="classacfd_1_1Structmesh2d.html">Structmesh2d</a>* mesh, <span class="keywordtype">double</span> dens, <span class="keywordtype">double</span> visc, vector&lt;int&gt; _bcflags, vector&lt;vector&lt;int&gt;&gt; _bvalues, <span class="keywordtype">string</span> gradscheme, <span class="keywordtype">string</span> pressure_scheme, <span class="keywordtype">double</span> refvel, <span class="keywordtype">double</span> CFL, <span class="keywordtype">double</span> tolerance, <span class="keywordtype">int</span> maxiters);</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    ~<a class="code" href="classSteady__insac.html">Steady_insac</a>();</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    <span class="keywordtype">void</span> compute_beta();</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    <span class="keywordtype">void</span> setBCs();</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    <span class="keywordtype">void</span> setInitialConditions();</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    <span class="keywordtype">void</span> compute_timesteps();</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    <span class="keywordtype">void</span> solve();</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;};</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;</div>
-<div class="line"><a name="l00068"></a><span class="lineno"><a class="line" href="classSteady__insac.html#ac364b7937e6ed544ca6a7b64b06872a3">   68</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="classSteady__insac.html#ac364b7937e6ed544ca6a7b64b06872a3">Steady_insac::setup</a>(<a class="code" href="classacfd_1_1Structmesh2d.html">Structmesh2d</a>* mesh, <span class="keywordtype">double</span> dens, <span class="keywordtype">double</span> visc, vector&lt;int&gt; _bcflags, vector&lt;vector&lt;int&gt;&gt; _bvalues, <span class="keywordtype">string</span> gradscheme, <span class="keywordtype">string</span> pressure_scheme, <span class="keywordtype">double</span> refvel, <span class="keywordtype">double</span> CFL, <span class="keywordtype">double</span> tolerance, <span class="keywordtype">int</span> maxiters)</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;{</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;    ndim = 2;</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;    m = mesh;</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    nvar = 3;</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    rho = dens;</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;    mu = visc;</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    bcflags = _bcflags;</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;    bvalues = _bvalues;</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;    pressurescheme = pressure_scheme;</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;    uref = refvel;</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    <span class="keywordflow">if</span>(gradscheme == <span class="stringliteral">&quot;thinlayer&quot;</span>)</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;        grad = <span class="keyword">new</span> <a class="code" href="classacfd_1_1ThinLayerGradientIns.html">ThinLayerGradientIns</a>;</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    </div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;    u = <span class="keyword">new</span> <a class="code" href="classamat_1_1Array2d.html">Array2d&lt;double&gt;</a>[nvar];</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    res = <span class="keyword">new</span> <a class="code" href="classamat_1_1Array2d.html">Array2d&lt;double&gt;</a>[nvar];</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    visc_lhs = <span class="keyword">new</span> <a class="code" href="classamat_1_1Array2d.html">Array2d&lt;double&gt;</a>[5];</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i = 0; i &lt; nvar; i++)</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    {</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;        u[i].<a class="code" href="classamat_1_1Array2d.html#ab1a5ad56d9a01f92fe1b8dcab28233c3">setup</a>(m-&gt;gimx()+1, m-&gt;gjmx()+1);</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;        res[i].setup(m-&gt;gimx()+1, m-&gt;gjmx()+1);</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;    }</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;    <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i = 0; i &lt; 5; i++)</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;        visc_lhs[i].setup(m-&gt;gimx()+1, m-&gt;gjmx()+1);</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;    beta.setup(m-&gt;gimx()+1,m-&gt;gjmx()+1);</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;    dt.setup(m-&gt;gimx()+1,m-&gt;gjmx()+1);</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;    cfl = CFL;</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    tol = tolerance;</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;    maxiter = maxiters;</div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;    </div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;    cout &lt;&lt; <span class="stringliteral">&quot;Steady_insac: setup(): Setting up inviscid flux object&quot;</span> &lt;&lt; endl;</div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;    invf-&gt;setup(m, u, res, &amp;beta, rho, pressure_scheme, _bcflag, _bvalues);</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;    grad-&gt;setup(m,u,res,visc_lhs);</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;}</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;</div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;Steady_insac::~Steady_insac()</div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;{</div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;    <span class="keyword">delete</span> [] u;</div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;    <span class="keyword">delete</span> [] res;</div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;    <span class="keyword">delete</span> [] visc_lhs;</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;}</div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;</div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;<span class="keywordtype">void</span> compute_beta()</div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;{</div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;    <span class="keywordtype">int</span> i,j; <span class="keywordtype">double</span> vmag;</div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;    <span class="keywordflow">for</span>(i = 0; i &lt;= m-&gt;gimx(); i++)</div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;        <span class="keywordflow">for</span>(j = 0; j &lt;= m-&gt;gjmx(); j++)</div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;        {</div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;            vmag = sqrt(u[1].<span class="keyword">get</span>(i,j)*u[1].<span class="keyword">get</span>(i,j) + u[2].<span class="keyword">get</span>(i,j)*u[2].<span class="keyword">get</span>(i,j));</div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;            <span class="keywordflow">if</span>(vmag &gt;= uref)</div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;                beta(i,j) = vmag;</div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;            <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;                beta(i,j) = uref;</div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;        }</div>
-<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;}</div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;</div>
-<div class="line"><a name="l00131"></a><span class="lineno"><a class="line" href="classSteady__insac.html#a8ddcc2ec645e8a21e231bc634fc4d9cc">  131</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="classSteady__insac.html#a8ddcc2ec645e8a21e231bc634fc4d9cc">Steady_insac::setBCs</a>()</div>
-<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;{</div>
-<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;    <span class="keywordtype">int</span> i,j;</div>
-<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;    <span class="keywordtype">double</span> vdotn;</div>
-<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;</div>
-<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;    <span class="comment">// boundary 0</span></div>
-<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;    i = m-&gt;gimx();</div>
-<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;    <span class="keywordflow">if</span>(bcflags[0] == 1)     <span class="comment">// pressure outlet</span></div>
-<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;        <span class="keywordflow">for</span>(j = 1; j &lt;= m-&gt;gjmx()-1; j++)</div>
-<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;            u[0](i,j) = bvalues[0][0];</div>
-<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;    <span class="keywordflow">else</span> <span class="keywordflow">if</span>(bcflags[0] == 2)    <span class="comment">// no-slip wall</span></div>
-<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;        <span class="keywordflow">for</span>(j = 1; j &lt;= m-&gt;gjmx()-1; j++)</div>
-<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;        {</div>
-<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;            u[0](i,j) = u[0](i-1,j);</div>
-<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;            u[1](i,j) = 2.0*bvalues[0][0] - u[1](i-1,j);</div>
-<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;            u[2](i,j) = 2.0*bvalues[0][1] - u[2](i-1,j);</div>
-<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;        }</div>
-<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;    <span class="keywordflow">else</span>            <span class="comment">// slip-wall</span></div>
-<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;        <span class="keywordflow">for</span>(j = 1; j &lt;= m-&gt;gjmx()-1; j++)</div>
-<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;        {</div>
-<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;            u[0](i,j) = u[0](i-1,j);</div>
-<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;            vdotn = u[1](i-1,j)*m-&gt;gdel(i-1,j,0) + u[2](i-1,j)*m-&gt;gdel(i-1,j,1);</div>
-<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;            u[1](i,j) = u[1](i-1,j) - 2*vdotn*m-&gt;gdel(i-1,j,0);</div>
-<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;            u[2](i,j) = u[2](i-1,j) - 2*vdotn*m-&gt;gdel(i-1,j,1);</div>
-<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;        }</div>
-<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;    </div>
-<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;    <span class="comment">// boundary 2</span></div>
-<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;    i = 0;</div>
-<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;    <span class="keywordflow">if</span>(bcflag[2] == 0)          <span class="comment">// parabolic velocity inlet</span></div>
-<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;    {</div>
-<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;        <span class="keywordtype">double</span> a,b,c, rm;</div>
-<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;        rm = (m-&gt;gy(1,1) + m-&gt;gy(1,m-&gt;gjmx()))/2.0;     <span class="comment">// mid point</span></div>
-<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;        a = bvalues[2][0] / ( rm*rm - 2.0*rm*rm + m-&gt;gy(1,1)*m-&gt;gy(1,m-&gt;gjmx()) );</div>
-<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;        b = -a*2.0*rm;</div>
-<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;        c = -a*m-&gt;gy(1,1)*m-&gt;gy(1,1) - b*m-&gt;gy(1,1);</div>
-<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;        <span class="keywordflow">for</span>(j = 1; j &lt;= m-&gt;gjmx()-1; j++)</div>
-<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;            u[1](i,j) = a*m-&gt;gyc(i,j)*m-&gt;gyc(i,j) + b*m-&gt;gyc(i,j) + c;</div>
-<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;    }</div>
-<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;    <span class="keywordflow">else</span> <span class="keywordflow">if</span>(bcflags[2] == 1)        <span class="comment">// pressure outlet</span></div>
-<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;        <span class="keywordflow">for</span>(j = 1; j &lt;= m-&gt;gjmx()-1; j++)</div>
-<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;            u[0](i,j) = bvalues[2][0];</div>
-<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;    <span class="keywordflow">else</span> <span class="keywordflow">if</span>(bcflags[2] == 2)    <span class="comment">// no-slip wall</span></div>
-<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;        <span class="keywordflow">for</span>(j = 1; j &lt;= m-&gt;gjmx()-1; j++)</div>
-<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;        {</div>
-<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;            u[0](i,j) = u[0](i+1,j);</div>
-<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;            u[1](i,j) = 2.0*bvalues[2][0] - u[1](i+1,j);</div>
-<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;            u[2](i,j) = 2.0*bvalues[2][1] - u[2](i+1,j);</div>
-<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;        }</div>
-<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;    <span class="keywordflow">else</span>            <span class="comment">// slip-wall</span></div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    <span class="keywordtype">bool</span> isalloc;</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    <a class="code" href="classSteady__insac.html">Steady_insac</a>();</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    <span class="keywordtype">void</span> setup(<a class="code" href="classacfd_1_1Structmesh2d.html">Structmesh2d</a>* mesh, <span class="keywordtype">double</span> dens, <span class="keywordtype">double</span> visc, vector&lt;int&gt; _bcflags, vector&lt;vector&lt;double&gt;&gt; _bvalues, <span class="keywordtype">string</span> gradscheme, <span class="keywordtype">string</span> pressure_scheme, <span class="keywordtype">double</span> refvel, <span class="keywordtype">double</span> CFL, <span class="keywordtype">double</span> tolerance, <span class="keywordtype">int</span> maxiters);</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;    ~<a class="code" href="classSteady__insac.html">Steady_insac</a>();</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    <span class="keywordtype">void</span> compute_beta();</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    <span class="keywordtype">void</span> setBCs();</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    <span class="keywordtype">void</span> setInitialConditions();</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    <span class="keywordtype">void</span> compute_timesteps();</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    <span class="keywordtype">void</span> solve();</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;};</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;Steady_insac::Steady_insac() {</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    isalloc = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;}</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;</div>
+<div class="line"><a name="l00076"></a><span class="lineno"><a class="line" href="classSteady__insac.html#a00b6d0ee352825a809773cda60da727f">   76</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="classSteady__insac.html#a00b6d0ee352825a809773cda60da727f">Steady_insac::setup</a>(<a class="code" href="classacfd_1_1Structmesh2d.html">Structmesh2d</a>* mesh, <span class="keywordtype">double</span> dens, <span class="keywordtype">double</span> visc, vector&lt;int&gt; _bcflags, vector&lt;vector&lt;double&gt;&gt; _bvalues, <span class="keywordtype">string</span> gradscheme, <span class="keywordtype">string</span> pressure_scheme, <span class="keywordtype">double</span> refvel, <span class="keywordtype">double</span> CFL, <span class="keywordtype">double</span> tolerance, <span class="keywordtype">int</span> maxiters)</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;{</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;    ndim = 2;</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    m = mesh;</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    nvar = 3;</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    rho = dens;</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;    mu = visc;</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    bcflags = _bcflags;</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    bvalues = _bvalues;</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    pressurescheme = pressure_scheme;</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    uref = refvel;</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    <span class="comment">//if(gradscheme == &quot;thinlayer&quot;)</span></div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;        grad = <span class="keyword">new</span> <a class="code" href="classacfd_1_1ThinLayerGradientIns.html">ThinLayerGradientIns</a>;</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;    invf = <span class="keyword">new</span> <a class="code" href="classacfd_1_1InviscidFlux.html">InviscidFlux</a>;</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;    u = <span class="keyword">new</span> <a class="code" href="classamat_1_1Array2d.html">Array2d&lt;double&gt;</a>[nvar];</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;    res = <span class="keyword">new</span> <a class="code" href="classamat_1_1Array2d.html">Array2d&lt;double&gt;</a>[nvar];</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;    visc_lhs = <span class="keyword">new</span> <a class="code" href="classamat_1_1Array2d.html">Array2d&lt;double&gt;</a>[5];</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;    isalloc = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;    <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i = 0; i &lt; nvar; i++)</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;    {</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;        u[i].<a class="code" href="classamat_1_1Array2d.html#ab1a5ad56d9a01f92fe1b8dcab28233c3">setup</a>(m-&gt;gimx()+1, m-&gt;gjmx()+1);</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;        res[i].setup(m-&gt;gimx()+1, m-&gt;gjmx()+1);</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;    }</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;    <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i = 0; i &lt; 5; i++)</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;        visc_lhs[i].setup(m-&gt;gimx()+1, m-&gt;gjmx()+1);</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;    beta.setup(m-&gt;gimx()+1,m-&gt;gjmx()+1);</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;    dt.setup(m-&gt;gimx()+1,m-&gt;gjmx()+1);</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;    cfl = CFL;</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;    tol = tolerance;</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;    maxiter = maxiters;</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;    cout &lt;&lt; <span class="stringliteral">&quot;Steady_insac: setup(): Setting up inviscid flux object&quot;</span> &lt;&lt; endl;</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;    invf-&gt;setup(m, u, res, &amp;beta, rho, pressure_scheme, _bcflags, _bvalues);</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;    grad-&gt;setup(m,u,res,visc_lhs, mu);</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;}</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;Steady_insac::~Steady_insac()</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;{</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;    <span class="keywordflow">if</span>(isalloc) {</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;        <span class="keyword">delete</span> [] u;</div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;        <span class="keyword">delete</span> [] res;</div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;        <span class="keyword">delete</span> [] visc_lhs;</div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;        <span class="keyword">delete</span> grad;</div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;    }</div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;}</div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;</div>
+<div class="line"><a name="l00127"></a><span class="lineno"><a class="line" href="classSteady__insac.html#a101431f6e083a161d188c2738b9e6513">  127</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="classSteady__insac.html#a101431f6e083a161d188c2738b9e6513">Steady_insac::compute_beta</a>()</div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;{</div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;    <span class="keywordtype">int</span> i,j; <span class="keywordtype">double</span> vmag;</div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;    <span class="keywordflow">for</span>(i = 0; i &lt;= m-&gt;gimx(); i++)</div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;        <span class="keywordflow">for</span>(j = 0; j &lt;= m-&gt;gjmx(); j++)</div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;        {</div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;            vmag = sqrt(u[1].<span class="keyword">get</span>(i,j)*u[1].<span class="keyword">get</span>(i,j) + u[2].<span class="keyword">get</span>(i,j)*u[2].<span class="keyword">get</span>(i,j));</div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;            <span class="keywordflow">if</span>(vmag &gt;= uref)</div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;                beta(i,j) = vmag;</div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;            <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;                beta(i,j) = uref;</div>
+<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;        }</div>
+<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;}</div>
+<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;</div>
+<div class="line"><a name="l00145"></a><span class="lineno"><a class="line" href="classSteady__insac.html#a8ddcc2ec645e8a21e231bc634fc4d9cc">  145</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="classSteady__insac.html#a8ddcc2ec645e8a21e231bc634fc4d9cc">Steady_insac::setBCs</a>()</div>
+<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;{</div>
+<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;    <span class="keywordtype">int</span> i,j,k;</div>
+<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;    <span class="keywordtype">double</span> vdotn;</div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;</div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;    <span class="comment">// boundary 0</span></div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;    i = m-&gt;gimx();</div>
+<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;    <span class="keywordflow">if</span>(bcflags[0] == 1)     <span class="comment">// pressure outlet</span></div>
+<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;        <span class="keywordflow">for</span>(j = 1; j &lt;= m-&gt;gjmx()-1; j++)</div>
+<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;            u[0](i,j) = bvalues[0][0];</div>
+<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;    <span class="keywordflow">else</span> <span class="keywordflow">if</span>(bcflags[0] == 2)    <span class="comment">// no-slip wall</span></div>
+<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;        <span class="keywordflow">for</span>(j = 1; j &lt;= m-&gt;gjmx()-1; j++)</div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;        {</div>
+<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;            u[0](i,j) = u[0](i-1,j);</div>
+<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;            u[1](i,j) = 2.0*bvalues[0][0] - u[1](i-1,j);</div>
+<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;            u[2](i,j) = 2.0*bvalues[0][1] - u[2](i-1,j);</div>
+<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;        }</div>
+<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;    <span class="keywordflow">else</span>            <span class="comment">// slip-wall</span></div>
+<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;        <span class="keywordflow">for</span>(j = 1; j &lt;= m-&gt;gjmx()-1; j++)</div>
+<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;        {</div>
+<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;            u[0](i,j) = u[0](i-1,j);</div>
+<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;            vdotn = u[1](i-1,j)*m-&gt;gdel(i-1,j,0) + u[2](i-1,j)*m-&gt;gdel(i-1,j,1);</div>
+<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;            u[1](i,j) = u[1](i-1,j) - 2*vdotn*m-&gt;gdel(i-1,j,0);</div>
+<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;            u[2](i,j) = u[2](i-1,j) - 2*vdotn*m-&gt;gdel(i-1,j,1);</div>
+<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;        }</div>
+<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;</div>
+<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;    <span class="comment">// boundary 2</span></div>
+<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;    i = 0;</div>
+<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;    <span class="keywordflow">if</span>(bcflags[2] == 0)         <span class="comment">// parabolic velocity inlet</span></div>
+<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;    {</div>
+<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;        <span class="keywordtype">double</span> a,b,c, rm;</div>
+<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;        rm = (m-&gt;gy(1,1) + m-&gt;gy(1,m-&gt;gjmx()))/2.0;     <span class="comment">// mid point</span></div>
+<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;        a = bvalues[2][0] / ( rm*rm - 2.0*rm*rm + m-&gt;gy(1,1)*m-&gt;gy(1,m-&gt;gjmx()) );</div>
+<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;        b = -a*2.0*rm;</div>
+<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;        c = -a*m-&gt;gy(1,1)*m-&gt;gy(1,1) - b*m-&gt;gy(1,1);</div>
 <div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;        <span class="keywordflow">for</span>(j = 1; j &lt;= m-&gt;gjmx()-1; j++)</div>
-<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;        {</div>
-<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;            u[0](i,j) = u[0](i+1,j);</div>
-<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;            <span class="comment">// we use negative of the del value as the normal always points in the positive i direction.</span></div>
-<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;            vdotn = u[1](i+1,j)*(-1*m-&gt;gdel(i,j,0)) + u[2](i+1,j)*(-1*m-&gt;gdel(i,j,1));</div>
-<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;            u[1](i,j) = u[1](i+1,j) - 2*vdotn*m-&gt;gdel(i+1,j,0);</div>
-<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;            u[2](i,j) = u[2](i+1,j) - 2*vdotn*m-&gt;gdel(i+1,j,1);</div>
-<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;        }</div>
-<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;    </div>
-<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;    <span class="comment">// boundary 1</span></div>
-<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;    j = m-&gt;gjmx();</div>
-<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;    <span class="keywordflow">if</span>(bcflags[1] == 1)     <span class="comment">// pressure outlet</span></div>
-<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;        <span class="keywordflow">for</span>(i = 1; i &lt;= m-&gt;gimx()-1; i++)</div>
-<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;            u[0](i,j) = bvalues[1][0];</div>
-<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;    <span class="keywordflow">else</span> <span class="keywordflow">if</span>(bcflags[1] == 2)    <span class="comment">// no-slip wall</span></div>
-<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;        <span class="keywordflow">for</span>(i = 1; i &lt;= m-&gt;gimx()-1; i++)</div>
-<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;        {</div>
-<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;            u[0](i,j) = u[0](i,j-1);</div>
-<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;            u[1](i,j) = 2*bvalues[1][0] - u[1](i,j-1);</div>
-<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;            u[2](i,j) = 2*bvalues[1][1] - u[2](i,j-1);</div>
-<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;        }</div>
-<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;    <span class="keywordflow">else</span> <span class="keywordflow">if</span>(bcflags[1] == 3)    <span class="comment">// slip wall</span></div>
-<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;        <span class="keywordflow">for</span>(i = 1; i &lt;= m-&gt;gimx()-1; i++)</div>
-<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;        {</div>
-<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;            u[0](i,j) = u[0](i,j-1);</div>
-<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;            vdotn = u[1](i,j-1)*m-&gt;gdel(i,j-1,2) + u[2](i,j-1)*m-&gt;gdel(i,j-1,3);</div>
-<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;            u[1](i,j) = u[1](i,j-1) - 2.0*vdotn*m-&gt;gdel(i,j-1,2);</div>
-<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;            u[2](i,j) = u[2](i,j-1) - 2.0*vdotn*m-&gt;gdel(i,j-1,3);</div>
-<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;        }</div>
-<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;    </div>
-<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;    <span class="comment">// boundary 3</span></div>
-<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;    j = 0;</div>
-<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;    <span class="keywordflow">if</span>(bcflags[3] == 1)     <span class="comment">// pressure outlet</span></div>
-<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;        <span class="keywordflow">for</span>(i = 1; i &lt;= m-&gt;gimx()-1; i++)</div>
-<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;            u[0](i,j) = bvalues[3][0];</div>
-<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;    <span class="keywordflow">else</span> <span class="keywordflow">if</span>(bcflags[3] == 2)    <span class="comment">// no-slip wall</span></div>
+<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;            u[1](i,j) = a*m-&gt;gyc(i,j)*m-&gt;gyc(i,j) + b*m-&gt;gyc(i,j) + c;</div>
+<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;    }</div>
+<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;    <span class="keywordflow">else</span> <span class="keywordflow">if</span>(bcflags[2] == 1)        <span class="comment">// pressure outlet</span></div>
+<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;        <span class="keywordflow">for</span>(j = 1; j &lt;= m-&gt;gjmx()-1; j++)</div>
+<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;            u[0](i,j) = bvalues[2][0];</div>
+<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;    <span class="keywordflow">else</span> <span class="keywordflow">if</span>(bcflags[2] == 2)    <span class="comment">// no-slip wall</span></div>
+<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;        <span class="keywordflow">for</span>(j = 1; j &lt;= m-&gt;gjmx()-1; j++)</div>
+<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;        {</div>
+<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;            u[0](i,j) = u[0](i+1,j);</div>
+<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;            u[1](i,j) = 2.0*bvalues[2][0] - u[1](i+1,j);</div>
+<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;            u[2](i,j) = 2.0*bvalues[2][1] - u[2](i+1,j);</div>
+<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;        }</div>
+<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;    <span class="keywordflow">else</span>            <span class="comment">// slip-wall</span></div>
+<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;        <span class="keywordflow">for</span>(j = 1; j &lt;= m-&gt;gjmx()-1; j++)</div>
+<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;        {</div>
+<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;            u[0](i,j) = u[0](i+1,j);</div>
+<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;            <span class="comment">// we use negative of the del value as the normal always points in the positive i direction.</span></div>
+<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;            vdotn = u[1](i+1,j)*(-1*m-&gt;gdel(i,j,0)) + u[2](i+1,j)*(-1*m-&gt;gdel(i,j,1));</div>
+<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;            u[1](i,j) = u[1](i+1,j) - 2*vdotn*m-&gt;gdel(i+1,j,0);</div>
+<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;            u[2](i,j) = u[2](i+1,j) - 2*vdotn*m-&gt;gdel(i+1,j,1);</div>
+<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;        }</div>
+<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;</div>
+<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;    <span class="comment">// boundary 1</span></div>
+<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;    j = m-&gt;gjmx();</div>
+<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;    <span class="keywordflow">if</span>(bcflags[1] == 1)     <span class="comment">// pressure outlet</span></div>
+<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;        <span class="keywordflow">for</span>(i = 1; i &lt;= m-&gt;gimx()-1; i++)</div>
+<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;            u[0](i,j) = bvalues[1][0];</div>
+<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;    <span class="keywordflow">else</span> <span class="keywordflow">if</span>(bcflags[1] == 2)    <span class="comment">// no-slip wall</span></div>
+<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;        <span class="keywordflow">for</span>(i = 1; i &lt;= m-&gt;gimx()-1; i++)</div>
+<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;        {</div>
+<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;            u[0](i,j) = u[0](i,j-1);</div>
+<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;            u[1](i,j) = 2*bvalues[1][0] - u[1](i,j-1);</div>
+<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;            u[2](i,j) = 2*bvalues[1][1] - u[2](i,j-1);</div>
+<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;        }</div>
+<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;    <span class="keywordflow">else</span> <span class="keywordflow">if</span>(bcflags[1] == 3)    <span class="comment">// slip wall</span></div>
 <div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;        <span class="keywordflow">for</span>(i = 1; i &lt;= m-&gt;gimx()-1; i++)</div>
 <div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;        {</div>
-<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;            u[0](i,j) = u[0](i,j+1);</div>
-<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;            u[1](i,j) = 2*bvalues[3][0] - u[1](i,j+1);</div>
-<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;            u[2](i,j) = 2*bvalues[3][1] - u[2](i,j+1);</div>
-<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;        }</div>
-<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;    <span class="keywordflow">else</span> <span class="keywordflow">if</span>(bcflags[3] == 3)    <span class="comment">// slip wall</span></div>
-<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;        <span class="keywordflow">for</span>(i = 1; i &lt;= m-&gt;gimx()-1; i++)</div>
-<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;        {</div>
-<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;            u[0](i,j) = u[0](i,j+1);</div>
-<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;            <span class="comment">// we use negative of the del values as the normal always points in the positive j-direction.</span></div>
-<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;            vdotn = u[1](i,j+1)*(-1)*m-&gt;gdel(i,j,2) + u[2](i,j+1)*(-1)*m-&gt;gdel(i,j,3);</div>
-<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;            u[1](i,j) = u[1](i,j+1) - 2.0*vdotn*m-&gt;gdel(i,j,2);</div>
-<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;            u[2](i,j) = u[2](i,j+1) - 2.0*vdotn*m-&gt;gdel(i,j,3);</div>
-<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;        }</div>
-<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;</div>
-<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;}</div>
-<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;</div>
-<div class="line"><a name="l00238"></a><span class="lineno"><a class="line" href="classSteady__insac.html#aadd17629d9de3d3b5ba44d344f77d75c">  238</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="classSteady__insac.html#aadd17629d9de3d3b5ba44d344f77d75c">Steady_insac::compute_timesteps</a>()</div>
-<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;{</div>
-<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;    <span class="keywordtype">int</span> i,j, dim;</div>
-<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;    vector&lt;double&gt; areavi(ndim), areavj(ndim);      <span class="comment">// area vectors</span></div>
-<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;    vector&lt;double&gt; inormal(ndim), jnormal(ndim);    <span class="comment">// unit normal vectors</span></div>
-<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;    <span class="keywordtype">double</span> areai, areaj;                            <span class="comment">// area magnitudes</span></div>
-<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;    <span class="keywordtype">double</span> vdotni, vdotnj, eigeni, eigenj, voldt;</div>
-<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;    cout &lt;&lt; <span class="stringliteral">&quot;Steady_insac: compute_timesteps(): Now computing time steps for next iteration...&quot;</span> &lt;&lt; endl;</div>
-<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;</div>
-<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;    <span class="keywordflow">for</span>(i = 1; i &lt;= m-&gt;gimx()-1; i++)</div>
-<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;        <span class="keywordflow">for</span>(j = 1; j &lt;= m-&gt;gjmx()-1; j++)</div>
-<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;        {</div>
-<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;            <span class="keywordflow">for</span>(dim = 0; dim &lt; ndim; dim++) {</div>
-<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;                areavi[dim] = 0.5*(m-&gt;gdel(i,j,dim) + m-&gt;gdel(i-1,j,dim));</div>
-<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;                areavj[dim] = 0.5*(m-&gt;gdel(i,j,2+dim) + m-&gt;gdel(i-1,j,2+dim));</div>
-<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;            }</div>
-<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;            areai = sqrt(areavi[0]*areavi[0] + areavi[1]*areavi[1]);</div>
-<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;            areaj = sqrt(areavj[0]*areavj[0] + areavj[1]*areavj[1]);</div>
-<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;            <span class="keywordflow">for</span>(dim = 0; dim &lt; ndim; dim++)</div>
-<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;            {</div>
-<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;                inormal[dim] = areavi[dim]/areai;</div>
-<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;                jnormal[dim] = areavj[dim]/areaj;</div>
-<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;            }</div>
-<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;            <span class="comment">// we now have face geometrical info &quot;at the cell centers&quot;</span></div>
-<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;</div>
-<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;            vdotni = u[1](i,j)*inormal[0] * u[2](i,j)*inormal[1];</div>
-<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;            vdotnj = u[1](i,j)*jnormal[0] * u[2](i,j)*jnormal[1];</div>
-<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;</div>
-<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;            eigeni = 0.5*( fabs(vdotni) + sqrt(vdotni*vdotni + 4.0*beta(i,j)*beta(i,j)) );</div>
-<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;            eigenj = 0.5*( fabs(vdotnj) + sqrt(vdotnj*vdotnj + 4.0*beta(i,j)*beta(i,j)) );</div>
-<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;            voldt = eigeni*areai + eigenj*areaj;</div>
-<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;            dt(i,j) = m-&gt;gvol(i,j)/voldt * cfl;</div>
-<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;        }</div>
-<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;}</div>
-<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;</div>
-<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;<span class="keywordtype">void</span> Steady_insac::setInitialConidtions()</div>
-<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;{</div>
-<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;    <span class="keywordtype">int</span> i,j,k;</div>
-<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;    <span class="keywordflow">for</span>(i = 0; i &lt;= m-&gt;gimx(); i++)</div>
-<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;        <span class="keywordflow">for</span>(j = 0; j &lt;= m-&gt;gjmx(); j++)</div>
-<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;        {</div>
-<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;            <span class="keywordflow">for</span>(k = 0; k &lt; nvar; k++)</div>
-<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;            {</div>
-<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;                u[k](i,j) = 0;</div>
-<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;                res[k](i,j) = 0;</div>
-<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;            }</div>
-<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;        }</div>
-<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;}</div>
-<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;</div>
-<div class="line"><a name="l00290"></a><span class="lineno"><a class="line" href="classSteady__insac.html#add12c13937400622ce17a2d685975dff">  290</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="classSteady__insac.html#add12c13937400622ce17a2d685975dff">Steady_insac::solve</a>()</div>
-<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;{</div>
-<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;    <span class="keywordtype">int</span> i,j,k;</div>
-<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;    <span class="keywordtype">double</span> resnorm, resnorm0, massflux;</div>
-<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;    cout &lt;&lt; <span class="stringliteral">&quot;Steady_insac: solve(): Beginning the time-march.&quot;</span> &lt;&lt; endl;</div>
-<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;    <span class="keywordflow">for</span>(<span class="keywordtype">int</span> n = 0; n &lt; maxiter; n++)</div>
-<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;    {   </div>
-<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;        <span class="comment">// calculate stuff needed for this iteration</span></div>
-<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;        setBCs();</div>
-<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;        compute_beta();</div>
-<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;        compute_timesteps();</div>
-<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;</div>
-<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;        <span class="comment">// compute fluxes</span></div>
-<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;        <span class="keywordflow">for</span>(k = 0; k &lt; nvar; k++)</div>
-<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;            res[k].zeros();</div>
-<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;        invf-&gt;compute_flux();</div>
-<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;        grad-&gt;compute_flux();</div>
+<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;            u[0](i,j) = u[0](i,j-1);</div>
+<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;            vdotn = u[1](i,j-1)*m-&gt;gdel(i,j-1,2) + u[2](i,j-1)*m-&gt;gdel(i,j-1,3);</div>
+<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;            u[1](i,j) = u[1](i,j-1) - 2.0*vdotn*m-&gt;gdel(i,j-1,2);</div>
+<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;            u[2](i,j) = u[2](i,j-1) - 2.0*vdotn*m-&gt;gdel(i,j-1,3);</div>
+<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;        }</div>
+<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;</div>
+<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;    <span class="comment">// boundary 3</span></div>
+<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;    j = 0;</div>
+<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;    <span class="keywordflow">if</span>(bcflags[3] == 1)     <span class="comment">// pressure outlet</span></div>
+<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;        <span class="keywordflow">for</span>(i = 1; i &lt;= m-&gt;gimx()-1; i++)</div>
+<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;            u[0](i,j) = bvalues[3][0];</div>
+<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;    <span class="keywordflow">else</span> <span class="keywordflow">if</span>(bcflags[3] == 2)    <span class="comment">// no-slip wall</span></div>
+<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;        <span class="keywordflow">for</span>(i = 1; i &lt;= m-&gt;gimx()-1; i++)</div>
+<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;        {</div>
+<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;            u[0](i,j) = u[0](i,j+1);</div>
+<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;            u[1](i,j) = 2*bvalues[3][0] - u[1](i,j+1);</div>
+<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;            u[2](i,j) = 2*bvalues[3][1] - u[2](i,j+1);</div>
+<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;        }</div>
+<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;    <span class="keywordflow">else</span> <span class="keywordflow">if</span>(bcflags[3] == 3)    <span class="comment">// slip wall</span></div>
+<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;        <span class="keywordflow">for</span>(i = 1; i &lt;= m-&gt;gimx()-1; i++)</div>
+<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;        {</div>
+<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;            u[0](i,j) = u[0](i,j+1);</div>
+<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;            <span class="comment">// we use negative of the del values as the normal always points in the positive j-direction.</span></div>
+<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;            vdotn = u[1](i,j+1)*(-1)*m-&gt;gdel(i,j,2) + u[2](i,j+1)*(-1)*m-&gt;gdel(i,j,3);</div>
+<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;            u[1](i,j) = u[1](i,j+1) - 2.0*vdotn*m-&gt;gdel(i,j,2);</div>
+<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;            u[2](i,j) = u[2](i,j+1) - 2.0*vdotn*m-&gt;gdel(i,j,3);</div>
+<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;        }</div>
+<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;</div>
+<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;    <span class="keywordflow">for</span>(k = 0; k &lt; nvar; k++)</div>
+<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;    {</div>
+<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;        u[k](0,0) = 0.5*(u[k](1,0)+u[k](0,1));</div>
+<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;        u[k](0,m-&gt;gjmx()) = 0.5*(u[k](1,m-&gt;gjmx())+u[k](0,m-&gt;gjmx()-1));</div>
+<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;        u[k](m-&gt;gimx(),0) = 0.5*(u[k](m-&gt;gimx(),1)+u[k](m-&gt;gimx()-1,0));</div>
+<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;        u[k](m-&gt;gimx(),m-&gt;gjmx()) = 0.5*(u[k](m-&gt;gimx()-1,m-&gt;gjmx())+u[k](m-&gt;gimx(),m-&gt;gjmx()-1));</div>
+<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;    }</div>
+<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;}</div>
+<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;</div>
+<div class="line"><a name="l00258"></a><span class="lineno"><a class="line" href="classSteady__insac.html#aadd17629d9de3d3b5ba44d344f77d75c">  258</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="classSteady__insac.html#aadd17629d9de3d3b5ba44d344f77d75c">Steady_insac::compute_timesteps</a>()</div>
+<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;{</div>
+<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;    <span class="keywordtype">int</span> i,j, dim;</div>
+<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;    vector&lt;double&gt; areavi(ndim), areavj(ndim);      <span class="comment">// area vectors</span></div>
+<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;    vector&lt;double&gt; inormal(ndim), jnormal(ndim);    <span class="comment">// unit normal vectors</span></div>
+<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;    <span class="keywordtype">double</span> areai, areaj;                            <span class="comment">// area magnitudes</span></div>
+<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;    <span class="keywordtype">double</span> vdotni, vdotnj, eigeni, eigenj, voldt;</div>
+<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;    cout &lt;&lt; <span class="stringliteral">&quot;Steady_insac: compute_timesteps(): Now computing time steps for next iteration...&quot;</span> &lt;&lt; endl;</div>
+<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;</div>
+<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;    <span class="keywordflow">for</span>(i = 1; i &lt;= m-&gt;gimx()-1; i++)</div>
+<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;        <span class="keywordflow">for</span>(j = 1; j &lt;= m-&gt;gjmx()-1; j++)</div>
+<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;        {</div>
+<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;            <span class="keywordflow">for</span>(dim = 0; dim &lt; ndim; dim++) {</div>
+<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;                areavi[dim] = 0.5*(m-&gt;gdel(i,j,dim) + m-&gt;gdel(i-1,j,dim));</div>
+<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;                areavj[dim] = 0.5*(m-&gt;gdel(i,j,2+dim) + m-&gt;gdel(i-1,j,2+dim));</div>
+<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;            }</div>
+<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;            areai = sqrt(areavi[0]*areavi[0] + areavi[1]*areavi[1]);</div>
+<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;            areaj = sqrt(areavj[0]*areavj[0] + areavj[1]*areavj[1]);</div>
+<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;            <span class="keywordflow">for</span>(dim = 0; dim &lt; ndim; dim++)</div>
+<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;            {</div>
+<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;                inormal[dim] = areavi[dim]/areai;</div>
+<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;                jnormal[dim] = areavj[dim]/areaj;</div>
+<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;            }</div>
+<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;            <span class="comment">// we now have face geometrical info &quot;at the cell centers&quot;</span></div>
+<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;</div>
+<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;            vdotni = u[1](i,j)*inormal[0] * u[2](i,j)*inormal[1];</div>
+<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;            vdotnj = u[1](i,j)*jnormal[0] * u[2](i,j)*jnormal[1];</div>
+<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;</div>
+<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;            eigeni = 0.5*( fabs(vdotni) + sqrt(vdotni*vdotni + 4.0*beta(i,j)*beta(i,j)) );</div>
+<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;            eigenj = 0.5*( fabs(vdotnj) + sqrt(vdotnj*vdotnj + 4.0*beta(i,j)*beta(i,j)) );</div>
+<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;            voldt = eigeni*areai + eigenj*areaj;</div>
+<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;            dt(i,j) = m-&gt;gvol(i,j)/voldt * cfl;</div>
+<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;        }</div>
+<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;}</div>
+<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;</div>
+<div class="line"><a name="l00294"></a><span class="lineno"><a class="line" href="classSteady__insac.html#a3758fb469efa41272230b92a54944f9b">  294</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="classSteady__insac.html#a3758fb469efa41272230b92a54944f9b">Steady_insac::setInitialConditions</a>()</div>
+<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;{</div>
+<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;    <span class="keywordtype">int</span> i,j,k;</div>
+<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;    <span class="keywordflow">for</span>(i = 0; i &lt;= m-&gt;gimx(); i++)</div>
+<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;        <span class="keywordflow">for</span>(j = 0; j &lt;= m-&gt;gjmx(); j++)</div>
+<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;        {</div>
+<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;            <span class="keywordflow">for</span>(k = 0; k &lt; nvar; k++)</div>
+<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;            {</div>
+<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;                u[k](i,j) = 0;</div>
+<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;                res[k](i,j) = 0;</div>
+<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;            }</div>
+<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;        }</div>
+<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;}</div>
 <div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;</div>
-<div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160;        <span class="comment">// check convergence</span></div>
-<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;        resnorm = 0; massflux = 0;</div>
-<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;        <span class="keywordflow">for</span>(i = 1; i &lt;= m-&gt;gimx()-1; i++)</div>
-<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;            <span class="keywordflow">for</span>(j = 1; j &lt;= m-&gt;gjmx()-1; j++)</div>
-<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;                resnorm += res[1].<span class="keyword">get</span>(i,j)*res[1].get(i,j) + res[2].get(i,j)*res[2].get(i,j);</div>
-<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160;        <span class="keywordflow">if</span>(n == 0) resnorm0 = resnorm;</div>
-<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;        <span class="keywordflow">if</span>(n == 1 || n%10 == 0) cout &lt;&lt; <span class="stringliteral">&quot;Steady_insac: solve(): Iteration &quot;</span> &lt;&lt; n &lt;&lt; <span class="stringliteral">&quot;:relative  l2 norm of residual = &quot;</span> &lt;&lt; resnorm/resnorm0;</div>
-<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;        <span class="keywordflow">if</span>(resnorm/resnorm0 &lt; tol) </div>
-<div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;        {</div>
-<div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;            cout &lt;&lt; <span class="stringliteral">&quot;Steady_insac: solve(): Converged in &quot;</span> &lt;&lt; n &lt;&lt; <span class="stringliteral">&quot; iterations. Norm of final residual = &quot;</span> &lt;&lt; resnorm &lt;&lt; endl;</div>
-<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;            <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;        }</div>
-<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;</div>
-<div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;        <span class="comment">// update u</span></div>
-<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;        <span class="keywordflow">for</span>(i = 1; i &lt;= m-&gt;gimx()-1; i++)</div>
-<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;            <span class="keywordflow">for</span>(j = 1; j &lt;= m-&gt;gjmx()-1; j++)</div>
-<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;            {</div>
-<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;                u[0](i,j) = u[0].<span class="keyword">get</span>(i,j) - res[0].get(i,j)*beta.get(i,j)*beta.get(i,j)*dt.get(i,j)/m-gvol(i,j);</div>
-<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;                <span class="keywordflow">for</span>(k = 1; k &lt; nvar; k++)</div>
-<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;                    u[k](i,j) = u[k].get(i,j) - res[k].get(i,j)*dt.get(i,j)/(rho*m-&gt;gvol(i,j));</div>
-<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;            }</div>
-<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;    }</div>
-<div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160;}</div>
+<div class="line"><a name="l00310"></a><span class="lineno"><a class="line" href="classSteady__insac.html#add12c13937400622ce17a2d685975dff">  310</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="classSteady__insac.html#add12c13937400622ce17a2d685975dff">Steady_insac::solve</a>()</div>
+<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;{</div>
+<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;    setInitialConditions();</div>
+<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160;</div>
+<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;    <span class="keywordtype">int</span> i,j,k;</div>
+<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;    <span class="keywordtype">double</span> resnorm, resnorm0, massflux;</div>
+<div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;    cout &lt;&lt; <span class="stringliteral">&quot;Steady_insac: solve(): Beginning the time-march.&quot;</span> &lt;&lt; endl;</div>
+<div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;    <span class="keywordflow">for</span>(<span class="keywordtype">int</span> n = 0; n &lt; maxiter; n++)</div>
+<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;    {</div>
+<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;        <span class="comment">// calculate stuff needed for this iteration</span></div>
+<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;        setBCs();</div>
+<div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;        compute_beta();</div>
+<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;        compute_timesteps();</div>
+<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;</div>
+<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;        <span class="comment">// compute fluxes</span></div>
+<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;        <span class="keywordflow">for</span>(k = 0; k &lt; nvar; k++)</div>
+<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;            res[k].zeros();</div>
+<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;        invf-&gt;compute_fluxes();</div>
+<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;        grad-&gt;compute_fluxes();</div>
+<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;</div>
+<div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160;        <span class="comment">// check convergence</span></div>
+<div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160;        resnorm = 0; massflux = 0;</div>
+<div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160;        <span class="keywordflow">for</span>(i = 1; i &lt;= m-&gt;gimx()-1; i++)</div>
+<div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;            <span class="keywordflow">for</span>(j = 1; j &lt;= m-&gt;gjmx()-1; j++)</div>
+<div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160;            {</div>
+<div class="line"><a name="l00335"></a><span class="lineno">  335</span>&#160;                resnorm += res[1].get(i,j)*res[1].get(i,j) + res[2].get(i,j)*res[2].get(i,j);</div>
+<div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160;                massflux += res[0].get(i,j);</div>
+<div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160;            }</div>
+<div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;        <span class="keywordflow">if</span>(n == 0) resnorm0 = resnorm;</div>
+<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;        <span class="keywordflow">if</span>(n == 1 || n%10 == 0) cout &lt;&lt; <span class="stringliteral">&quot;Steady_insac: solve(): Iteration &quot;</span> &lt;&lt; n &lt;&lt; <span class="stringliteral">&quot;:relative  l2 norm of residual = &quot;</span> &lt;&lt; resnorm/resnorm0 &lt;&lt; <span class="stringliteral">&quot;, net mass flux = &quot;</span> &lt;&lt; massflux &lt;&lt; endl;</div>
+<div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160;        <span class="keywordflow">if</span>(resnorm/resnorm0 &lt; tol &amp;&amp; fabs(massflux) &lt; sqrt(tol))</div>
+<div class="line"><a name="l00341"></a><span class="lineno">  341</span>&#160;        {</div>
+<div class="line"><a name="l00342"></a><span class="lineno">  342</span>&#160;            cout &lt;&lt; <span class="stringliteral">&quot;Steady_insac: solve(): Converged in &quot;</span> &lt;&lt; n &lt;&lt; <span class="stringliteral">&quot; iterations. Norm of final residual = &quot;</span> &lt;&lt; resnorm &lt;&lt; <span class="stringliteral">&quot;, final net mass flux = &quot;</span> &lt;&lt; massflux &lt;&lt; endl;</div>
+<div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160;            <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l00344"></a><span class="lineno">  344</span>&#160;        }</div>
+<div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160;</div>
+<div class="line"><a name="l00346"></a><span class="lineno">  346</span>&#160;        <span class="comment">// update u</span></div>
+<div class="line"><a name="l00347"></a><span class="lineno">  347</span>&#160;        <span class="keywordflow">for</span>(i = 1; i &lt;= m-&gt;gimx()-1; i++)</div>
+<div class="line"><a name="l00348"></a><span class="lineno">  348</span>&#160;            <span class="keywordflow">for</span>(j = 1; j &lt;= m-&gt;gjmx()-1; j++)</div>
+<div class="line"><a name="l00349"></a><span class="lineno">  349</span>&#160;            {</div>
+<div class="line"><a name="l00350"></a><span class="lineno">  350</span>&#160;                u[0](i,j) = u[0].<span class="keyword">get</span>(i,j) - res[0].get(i,j)*beta.get(i,j)*beta.get(i,j)*dt.get(i,j)/m-&gt;gvol(i,j);</div>
+<div class="line"><a name="l00351"></a><span class="lineno">  351</span>&#160;                <span class="keywordflow">for</span>(k = 1; k &lt; nvar; k++)</div>
+<div class="line"><a name="l00352"></a><span class="lineno">  352</span>&#160;                    u[k](i,j) = u[k].get(i,j) - res[k].get(i,j)*dt.get(i,j)/(rho*m-&gt;gvol(i,j));</div>
+<div class="line"><a name="l00353"></a><span class="lineno">  353</span>&#160;            }</div>
+<div class="line"><a name="l00354"></a><span class="lineno">  354</span>&#160;    }</div>
+<div class="line"><a name="l00355"></a><span class="lineno">  355</span>&#160;}</div>
 <div class="ttc" id="classSteady__insac_html_a61029030a89582afdac5fe92361fec3c"><div class="ttname"><a href="classSteady__insac.html#a61029030a89582afdac5fe92361fec3c">Steady_insac::rho</a></div><div class="ttdeci">double rho</div><div class="ttdoc">Density. </div><div class="ttdef"><b>Definition:</b> ins.hpp:26</div></div>
-<div class="ttc" id="classacfd_1_1InviscidFlux_html"><div class="ttname"><a href="classacfd_1_1InviscidFlux.html">acfd::InviscidFlux</a></div><div class="ttdoc">Class to add contributions of inviscid fluxes to the residual. </div><div class="ttdef"><b>Definition:</b> inviscidflux.hpp:113</div></div>
+<div class="ttc" id="classacfd_1_1InviscidFlux_html"><div class="ttname"><a href="classacfd_1_1InviscidFlux.html">acfd::InviscidFlux</a></div><div class="ttdoc">Class to add contributions of inviscid fluxes to the residual. </div><div class="ttdef"><b>Definition:</b> inviscidflux.hpp:118</div></div>
 <div class="ttc" id="classSteady__insac_html_a1851717f13031328df384ea30e82c75f"><div class="ttname"><a href="classSteady__insac.html#a1851717f13031328df384ea30e82c75f">Steady_insac::maxiter</a></div><div class="ttdeci">int maxiter</div><div class="ttdoc">Max number of time steps. </div><div class="ttdef"><b>Definition:</b> ins.hpp:37</div></div>
 <div class="ttc" id="classamat_1_1Array2d_html"><div class="ttname"><a href="classamat_1_1Array2d.html">amat::Array2d&lt; double &gt;</a></div></div>
 <div class="ttc" id="classSteady__insac_html_a3068b2de1d5e18ef0ff74214234c87b0"><div class="ttname"><a href="classSteady__insac.html#a3068b2de1d5e18ef0ff74214234c87b0">Steady_insac::visc_lhs</a></div><div class="ttdeci">Array2d&lt; double &gt; * visc_lhs</div><div class="ttdoc">Required for gradient reconstruction. </div><div class="ttdef"><b>Definition:</b> ins.hpp:31</div></div>
-<div class="ttc" id="classSteady__insac_html_ac364b7937e6ed544ca6a7b64b06872a3"><div class="ttname"><a href="classSteady__insac.html#ac364b7937e6ed544ca6a7b64b06872a3">Steady_insac::setup</a></div><div class="ttdeci">void setup(Structmesh2d *mesh, double dens, double visc, vector&lt; int &gt; _bcflags, vector&lt; vector&lt; int &gt;&gt; _bvalues, string gradscheme, string pressure_scheme, double refvel, double CFL, double tolerance, int maxiters)</div><div class="ttdoc">Sets up the iNS problem. </div><div class="ttdef"><b>Definition:</b> ins.hpp:68</div></div>
-<div class="ttc" id="classSteady__insac_html_a8ddcc2ec645e8a21e231bc634fc4d9cc"><div class="ttname"><a href="classSteady__insac.html#a8ddcc2ec645e8a21e231bc634fc4d9cc">Steady_insac::setBCs</a></div><div class="ttdeci">void setBCs()</div><div class="ttdoc">Sets quantities to ghost cells. </div><div class="ttdef"><b>Definition:</b> ins.hpp:131</div></div>
+<div class="ttc" id="classSteady__insac_html_a8ddcc2ec645e8a21e231bc634fc4d9cc"><div class="ttname"><a href="classSteady__insac.html#a8ddcc2ec645e8a21e231bc634fc4d9cc">Steady_insac::setBCs</a></div><div class="ttdeci">void setBCs()</div><div class="ttdoc">Sets quantities to ghost cells. </div><div class="ttdef"><b>Definition:</b> ins.hpp:145</div></div>
 <div class="ttc" id="classSteady__insac_html_a560520d539292e45dfb870691468c8b1"><div class="ttname"><a href="classSteady__insac.html#a560520d539292e45dfb870691468c8b1">Steady_insac::mu</a></div><div class="ttdeci">double mu</div><div class="ttdoc">Viscosity. </div><div class="ttdef"><b>Definition:</b> ins.hpp:27</div></div>
+<div class="ttc" id="classSteady__insac_html_a00b6d0ee352825a809773cda60da727f"><div class="ttname"><a href="classSteady__insac.html#a00b6d0ee352825a809773cda60da727f">Steady_insac::setup</a></div><div class="ttdeci">void setup(Structmesh2d *mesh, double dens, double visc, vector&lt; int &gt; _bcflags, vector&lt; vector&lt; double &gt;&gt; _bvalues, string gradscheme, string pressure_scheme, double refvel, double CFL, double tolerance, int maxiters)</div><div class="ttdoc">Sets up the iNS problem. </div><div class="ttdef"><b>Definition:</b> ins.hpp:76</div></div>
 <div class="ttc" id="classacfd_1_1Structmesh2d_html"><div class="ttname"><a href="classacfd_1_1Structmesh2d.html">acfd::Structmesh2d</a></div><div class="ttdoc">This class encapsulates the 2D structured mesh. </div><div class="ttdef"><b>Definition:</b> structmesh2d.hpp:24</div></div>
+<div class="ttc" id="classSteady__insac_html_a2a1c7cc6ef53e792cf45d704e6c05c78"><div class="ttname"><a href="classSteady__insac.html#a2a1c7cc6ef53e792cf45d704e6c05c78">Steady_insac::grad</a></div><div class="ttdeci">GradientSchemeIns * grad</div><div class="ttdoc">Gradient reconstruction object for viscous flux. </div><div class="ttdef"><b>Definition:</b> ins.hpp:30</div></div>
 <div class="ttc" id="classSteady__insac_html_a5965b8fedaa2d3f2909f3d1b4e2b41cd"><div class="ttname"><a href="classSteady__insac.html#a5965b8fedaa2d3f2909f3d1b4e2b41cd">Steady_insac::bcflags</a></div><div class="ttdeci">vector&lt; int &gt; bcflags</div><div class="ttdoc">Flags indicating the type of boundary for each of the 4 boundaries. </div><div class="ttdef"><b>Definition:</b> ins.hpp:24</div></div>
 <div class="ttc" id="classacfd_1_1GradientSchemeIns_html"><div class="ttname"><a href="classacfd_1_1GradientSchemeIns.html">acfd::GradientSchemeIns</a></div><div class="ttdoc">Base class for gradient reconstruction schemes for AC formulation of iNS equations. </div><div class="ttdef"><b>Definition:</b> gradientschemesins.hpp:24</div></div>
+<div class="ttc" id="classSteady__insac_html_a736f4da147d054d053f041d7ffdd6d41"><div class="ttname"><a href="classSteady__insac.html#a736f4da147d054d053f041d7ffdd6d41">Steady_insac::invf</a></div><div class="ttdeci">InviscidFlux * invf</div><div class="ttdoc">Inviscid flux object. </div><div class="ttdef"><b>Definition:</b> ins.hpp:29</div></div>
 <div class="ttc" id="classacfd_1_1ThinLayerGradientIns_html"><div class="ttname"><a href="classacfd_1_1ThinLayerGradientIns.html">acfd::ThinLayerGradientIns</a></div><div class="ttdoc">Thin layer gradient reconstruction scheme. </div><div class="ttdef"><b>Definition:</b> gradientschemesins.hpp:100</div></div>
 <div class="ttc" id="classSteady__insac_html_a4a3bef01127662602820ee14441ff46d"><div class="ttname"><a href="classSteady__insac.html#a4a3bef01127662602820ee14441ff46d">Steady_insac::nvar</a></div><div class="ttdeci">int nvar</div><div class="ttdoc">Number of unkowns - 3 in this case. </div><div class="ttdef"><b>Definition:</b> ins.hpp:18</div></div>
 <div class="ttc" id="classSteady__insac_html_a5cc9b13e54f942d64b38161b1e52ffba"><div class="ttname"><a href="classSteady__insac.html#a5cc9b13e54f942d64b38161b1e52ffba">Steady_insac::dt</a></div><div class="ttdeci">Array2d&lt; double &gt; dt</div><div class="ttdoc">Local time step for each cell. </div><div class="ttdef"><b>Definition:</b> ins.hpp:22</div></div>
-<div class="ttc" id="classSteady__insac_html_ae1425bcaf76fca9ff8fa67ead043f308"><div class="ttname"><a href="classSteady__insac.html#ae1425bcaf76fca9ff8fa67ead043f308">Steady_insac::invf</a></div><div class="ttdeci">InviscidFlux invf</div><div class="ttdoc">Inviscid flux object. </div><div class="ttdef"><b>Definition:</b> ins.hpp:29</div></div>
 <div class="ttc" id="classSteady__insac_html_a325ac8b1950528cdb1288cc59fe2efb9"><div class="ttname"><a href="classSteady__insac.html#a325ac8b1950528cdb1288cc59fe2efb9">Steady_insac::tol</a></div><div class="ttdeci">double tol</div><div class="ttdoc">Relative residual tolerance to decide convergence to steady-state. </div><div class="ttdef"><b>Definition:</b> ins.hpp:36</div></div>
 <div class="ttc" id="classSteady__insac_html_a85285261b667bb89b10a9d5374c0a6ca"><div class="ttname"><a href="classSteady__insac.html#a85285261b667bb89b10a9d5374c0a6ca">Steady_insac::bvalues</a></div><div class="ttdeci">vector&lt; vector&lt; double &gt; &gt; bvalues</div><div class="ttdoc">Boundary values for each of the 4 boundaries (2 each, at most) </div><div class="ttdef"><b>Definition:</b> ins.hpp:25</div></div>
 <div class="ttc" id="classSteady__insac_html_a9b033a16260ad0acd72fff5b5d0a0248"><div class="ttname"><a href="classSteady__insac.html#a9b033a16260ad0acd72fff5b5d0a0248">Steady_insac::uref</a></div><div class="ttdeci">double uref</div><div class="ttdoc">Some reference fluid velocity. </div><div class="ttdef"><b>Definition:</b> ins.hpp:34</div></div>
-<div class="ttc" id="classSteady__insac_html_add12c13937400622ce17a2d685975dff"><div class="ttname"><a href="classSteady__insac.html#add12c13937400622ce17a2d685975dff">Steady_insac::solve</a></div><div class="ttdeci">void solve()</div><div class="ttdoc">Contains the main solver time loop. </div><div class="ttdef"><b>Definition:</b> ins.hpp:290</div></div>
+<div class="ttc" id="classSteady__insac_html_add12c13937400622ce17a2d685975dff"><div class="ttname"><a href="classSteady__insac.html#add12c13937400622ce17a2d685975dff">Steady_insac::solve</a></div><div class="ttdeci">void solve()</div><div class="ttdoc">Contains the main solver time loop. </div><div class="ttdef"><b>Definition:</b> ins.hpp:310</div></div>
 <div class="ttc" id="classSteady__insac_html_a9fda1fdd9bcc52a26639abf224254d3b"><div class="ttname"><a href="classSteady__insac.html#a9fda1fdd9bcc52a26639abf224254d3b">Steady_insac::pressurescheme</a></div><div class="ttdeci">string pressurescheme</div><div class="ttdoc">Denotes which pressure reconstruction scheme to use in mass flux. </div><div class="ttdef"><b>Definition:</b> ins.hpp:33</div></div>
 <div class="ttc" id="classSteady__insac_html_a803a61f879dfa92dce34fd8b0be5f193"><div class="ttname"><a href="classSteady__insac.html#a803a61f879dfa92dce34fd8b0be5f193">Steady_insac::beta</a></div><div class="ttdeci">Array2d&lt; double &gt; beta</div><div class="ttdoc">Artificial compressibility in each cell. </div><div class="ttdef"><b>Definition:</b> ins.hpp:21</div></div>
 <div class="ttc" id="classSteady__insac_html_a758d92863a7fad697ae913e25b04edc8"><div class="ttname"><a href="classSteady__insac.html#a758d92863a7fad697ae913e25b04edc8">Steady_insac::cfl</a></div><div class="ttdeci">double cfl</div><div class="ttdoc">CFL number. </div><div class="ttdef"><b>Definition:</b> ins.hpp:23</div></div>
 <div class="ttc" id="classSteady__insac_html_a97f92712103ca1416d1740356f62e565"><div class="ttname"><a href="classSteady__insac.html#a97f92712103ca1416d1740356f62e565">Steady_insac::u</a></div><div class="ttdeci">Array2d&lt; double &gt; * u</div><div class="ttdoc">Values of the 3 unkowns - index 0 is pressure, 1 is x-velocity and 2 is y-velocity. </div><div class="ttdef"><b>Definition:</b> ins.hpp:19</div></div>
-<div class="ttc" id="classSteady__insac_html_aadd17629d9de3d3b5ba44d344f77d75c"><div class="ttname"><a href="classSteady__insac.html#aadd17629d9de3d3b5ba44d344f77d75c">Steady_insac::compute_timesteps</a></div><div class="ttdeci">void compute_timesteps()</div><div class="ttdef"><b>Definition:</b> ins.hpp:238</div></div>
+<div class="ttc" id="classSteady__insac_html_aadd17629d9de3d3b5ba44d344f77d75c"><div class="ttname"><a href="classSteady__insac.html#aadd17629d9de3d3b5ba44d344f77d75c">Steady_insac::compute_timesteps</a></div><div class="ttdeci">void compute_timesteps()</div><div class="ttdef"><b>Definition:</b> ins.hpp:258</div></div>
 <div class="ttc" id="classSteady__insac_html_ae396a35a31e8ef53b2e6902f03366b27"><div class="ttname"><a href="classSteady__insac.html#ae396a35a31e8ef53b2e6902f03366b27">Steady_insac::res</a></div><div class="ttdeci">Array2d&lt; double &gt; * res</div><div class="ttdoc">Residuals for each of the 3 quanitities. </div><div class="ttdef"><b>Definition:</b> ins.hpp:20</div></div>
 <div class="ttc" id="classSteady__insac_html_a7a080ed741406e76bca354bc072a55c3"><div class="ttname"><a href="classSteady__insac.html#a7a080ed741406e76bca354bc072a55c3">Steady_insac::ndim</a></div><div class="ttdeci">int ndim</div><div class="ttdoc">No. of spatial dimensions (2) </div><div class="ttdef"><b>Definition:</b> ins.hpp:35</div></div>
-<div class="ttc" id="classSteady__insac_html_a04866ae46ad003763b30612266950c9f"><div class="ttname"><a href="classSteady__insac.html#a04866ae46ad003763b30612266950c9f">Steady_insac::grad</a></div><div class="ttdeci">GradientSchemeIns grad</div><div class="ttdoc">Gradient reconstruction object for viscous flux. </div><div class="ttdef"><b>Definition:</b> ins.hpp:30</div></div>
 <div class="ttc" id="classamat_1_1Array2d_html_ab1a5ad56d9a01f92fe1b8dcab28233c3"><div class="ttname"><a href="classamat_1_1Array2d.html#ab1a5ad56d9a01f92fe1b8dcab28233c3">amat::Array2d::setup</a></div><div class="ttdeci">void setup(int nr, int nc, MStype st=ROWMAJOR)</div><div class="ttdoc">Separate setup function in case no-arg constructor has to be used. </div><div class="ttdef"><b>Definition:</b> aarray2d.hpp:255</div></div>
+<div class="ttc" id="classSteady__insac_html_a101431f6e083a161d188c2738b9e6513"><div class="ttname"><a href="classSteady__insac.html#a101431f6e083a161d188c2738b9e6513">Steady_insac::compute_beta</a></div><div class="ttdeci">void compute_beta()</div><div class="ttdoc">Computes artificial conmpressibility (beta ) for each cell. </div><div class="ttdef"><b>Definition:</b> ins.hpp:127</div></div>
 <div class="ttc" id="classSteady__insac_html"><div class="ttname"><a href="classSteady__insac.html">Steady_insac</a></div><div class="ttdoc">Implements the main solution loop of stead-state iNS equations in artificial compressibility form...</div><div class="ttdef"><b>Definition:</b> ins.hpp:15</div></div>
+<div class="ttc" id="classSteady__insac_html_a3758fb469efa41272230b92a54944f9b"><div class="ttname"><a href="classSteady__insac.html#a3758fb469efa41272230b92a54944f9b">Steady_insac::setInitialConditions</a></div><div class="ttdeci">void setInitialConditions()</div><div class="ttdef"><b>Definition:</b> ins.hpp:294</div></div>
 <div class="ttc" id="classSteady__insac_html_a2c160cf66550e5c45510fea65555e3d2"><div class="ttname"><a href="classSteady__insac.html#a2c160cf66550e5c45510fea65555e3d2">Steady_insac::m</a></div><div class="ttdeci">Structmesh2d * m</div><div class="ttdoc">Pointer to mesh. </div><div class="ttdef"><b>Definition:</b> ins.hpp:17</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Dec 2 2015 00:50:05 for iNSAC by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Dec 4 2015 23:28:45 for iNSAC by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.7
 </small></address>

@@ -36,7 +36,11 @@ class Steady_insac
 	double tol;						///< Relative residual tolerance to decide convergence to steady-state
 	int maxiter;					///< Max number of time steps
 
+	bool isalloc;
+
 public:
+	Steady_insac();
+
 	/// Sets up the iNS problem.
 	/** \param _bcflags contains 4 integers denoting the type of boundary for each boundary.
 	 - 0 is a velocity inlet
@@ -65,6 +69,10 @@ public:
 	void solve();
 };
 
+Steady_insac::Steady_insac() {
+	isalloc = false;
+}
+
 void Steady_insac::setup(Structmesh2d* mesh, double dens, double visc, vector<int> _bcflags, vector<vector<double>> _bvalues, string gradscheme, string pressure_scheme, double refvel, double CFL, double tolerance, int maxiters)
 {
 	ndim = 2;
@@ -76,12 +84,15 @@ void Steady_insac::setup(Structmesh2d* mesh, double dens, double visc, vector<in
 	bvalues = _bvalues;
 	pressurescheme = pressure_scheme;
 	uref = refvel;
-	if(gradscheme == "thinlayer")
+	//if(gradscheme == "thinlayer")
 		grad = new ThinLayerGradientIns;
-	
+	invf = new InviscidFlux;
+
 	u = new Array2d<double>[nvar];
 	res = new Array2d<double>[nvar];
 	visc_lhs = new Array2d<double>[5];
+
+	isalloc = true;
 
 	for(int i = 0; i < nvar; i++)
 	{
@@ -95,7 +106,7 @@ void Steady_insac::setup(Structmesh2d* mesh, double dens, double visc, vector<in
 	cfl = CFL;
 	tol = tolerance;
 	maxiter = maxiters;
-	
+
 	cout << "Steady_insac: setup(): Setting up inviscid flux object" << endl;
 	invf->setup(m, u, res, &beta, rho, pressure_scheme, _bcflags, _bvalues);
 	grad->setup(m,u,res,visc_lhs, mu);
@@ -103,9 +114,12 @@ void Steady_insac::setup(Structmesh2d* mesh, double dens, double visc, vector<in
 
 Steady_insac::~Steady_insac()
 {
-	delete [] u;
-	delete [] res;
-	delete [] visc_lhs;
+	if(isalloc) {
+		delete [] u;
+		delete [] res;
+		delete [] visc_lhs;
+		delete grad;
+	}
 }
 
 /** We currently do not consider viscosity in calculating the artificial compressibility [beta](@ref beta).
@@ -153,7 +167,7 @@ void Steady_insac::setBCs()
 			u[1](i,j) = u[1](i-1,j) - 2*vdotn*m->gdel(i-1,j,0);
 			u[2](i,j) = u[2](i-1,j) - 2*vdotn*m->gdel(i-1,j,1);
 		}
-	
+
 	// boundary 2
 	i = 0;
 	if(bcflags[2] == 0)			// parabolic velocity inlet
@@ -185,7 +199,7 @@ void Steady_insac::setBCs()
 			u[1](i,j) = u[1](i+1,j) - 2*vdotn*m->gdel(i+1,j,0);
 			u[2](i,j) = u[2](i+1,j) - 2*vdotn*m->gdel(i+1,j,1);
 		}
-	
+
 	// boundary 1
 	j = m->gjmx();
 	if(bcflags[1] == 1)		// pressure outlet
@@ -206,7 +220,7 @@ void Steady_insac::setBCs()
 			u[1](i,j) = u[1](i,j-1) - 2.0*vdotn*m->gdel(i,j-1,2);
 			u[2](i,j) = u[2](i,j-1) - 2.0*vdotn*m->gdel(i,j-1,3);
 		}
-	
+
 	// boundary 3
 	j = 0;
 	if(bcflags[3] == 1)		// pressure outlet
@@ -295,11 +309,13 @@ void Steady_insac::setInitialConditions()
 */
 void Steady_insac::solve()
 {
+	setInitialConditions();
+
 	int i,j,k;
 	double resnorm, resnorm0, massflux;
 	cout << "Steady_insac: solve(): Beginning the time-march." << endl;
 	for(int n = 0; n < maxiter; n++)
-	{	
+	{
 		// calculate stuff needed for this iteration
 		setBCs();
 		compute_beta();
@@ -321,7 +337,7 @@ void Steady_insac::solve()
 			}
 		if(n == 0) resnorm0 = resnorm;
 		if(n == 1 || n%10 == 0) cout << "Steady_insac: solve(): Iteration " << n << ":relative  l2 norm of residual = " << resnorm/resnorm0 << ", net mass flux = " << massflux << endl;
-		if(resnorm/resnorm0 < tol && fabs(massflux) < sqrt(tol)) 
+		if(resnorm/resnorm0 < tol && fabs(massflux) < sqrt(tol))
 		{
 			cout << "Steady_insac: solve(): Converged in " << n << " iterations. Norm of final residual = " << resnorm << ", final net mass flux = " << massflux << endl;
 			break;

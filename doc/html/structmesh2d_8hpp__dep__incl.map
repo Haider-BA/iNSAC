@@ -1,5 +1,7 @@
 <map id="structmesh2d.hpp" name="structmesh2d.hpp">
-<area shape="rect" id="node2" href="$aoutput__struct_8hpp_source.html" title="aoutput_struct.hpp" alt="" coords="4,80,133,107"/>
-<area shape="rect" id="node3" href="$gradientschemesins_8hpp_source.html" title="gradientschemesins.hpp" alt="" coords="159,80,321,107"/>
-<area shape="rect" id="node4" href="$ins_8hpp_source.html" title="ins.hpp" alt="" coords="208,155,272,181"/>
+<area shape="rect" id="node2" href="$aoutput__struct_8hpp.html" title="Provides a class to manage output of mesh data to VTK&#45;type files. " alt="" coords="5,80,135,107"/>
+<area shape="rect" id="node3" href="$gradientschemesins_8hpp_source.html" title="gradientschemesins.hpp" alt="" coords="160,80,323,107"/>
+<area shape="rect" id="node6" href="$inviscidflux_8hpp_source.html" title="inviscidflux.hpp" alt="" coords="347,80,457,107"/>
+<area shape="rect" id="node4" href="$ins_8hpp_source.html" title="ins.hpp" alt="" coords="289,155,353,181"/>
+<area shape="rect" id="node5" href="$insacs_8cpp.html" title="Driver function for stead&#45;state iNS AC solution. " alt="" coords="279,229,364,256"/>
 </map>

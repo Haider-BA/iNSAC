@@ -1,5 +1,5 @@
 INC_DIR = ../include
-GPP = g++
+GPP = g++-5
 OPTIONS = -ggdb -std=c++11
 
 insacs:

@@ -165,14 +165,14 @@ void InviscidFlux::setup(Structmesh2d* mesh, Array2d<double>* unknown, Array2d<d
 	
 	/// Sets the pressure reconstruction scheme to be used based on the last argument - "basic" or "TVD".
 	if(pressurereconstruction=="basic")
-		pr = new BasicPR();
+		pr = new BasicPR;
 	else if(pressurereconstruction=="tvd")
-		pr = new TVDPR();
+		pr = new TVDPR;
 	else {
 		cout << "InviscidFlux: setup(): Pressure reconstruction scheme requested does not exist. Choosing basic first-order scheme." << endl;
-		pr = new BasicPR();
+		pr = new BasicPR;
 	}
-	pr->setup(mesh, unknown, dp);
+	pr->setup(m, unknown, dp);
 	
 	/// Rhie-Chow constant [c](@ref c) is set as 0.5.
 	c = 0.5;

@@ -111,7 +111,7 @@ Collaboration diagram for acfd::BasicPR:</div>
 <div class="dyncontent">
 <div class="center"><img src="classacfd_1_1BasicPR__coll__graph.png" border="0" usemap="#acfd_1_1BasicPR_coll__map" alt="Collaboration graph"/></div>
 <map name="acfd_1_1BasicPR_coll__map" id="acfd_1_1BasicPR_coll__map">
-<area shape="rect" id="node2" href="classacfd_1_1PressureReconstruction.html" title="Compute pressure difference dp across each face as (p_L &#45; p_R) " alt="" coords="5,259,200,285"/><area shape="rect" id="node3" href="classacfd_1_1Structmesh2d.html" title="This class encapsulates the 2D structured mesh. " alt="" coords="35,168,169,195"/><area shape="rect" id="node4" href="classamat_1_1Array2d.html" title="amat::Array2d\&lt; double \&gt;" alt="" coords="19,5,185,32"/></map>
+<area shape="rect" id="node2" href="classacfd_1_1PressureReconstruction.html" title="Compute pressure difference dp across each face as (p_L &#45; p_R) " alt="" coords="5,261,200,288"/><area shape="rect" id="node3" href="classacfd_1_1Structmesh2d.html" title="This class encapsulates the 2D structured mesh. " alt="" coords="107,169,241,196"/><area shape="rect" id="node4" href="classamat_1_1Array2d.html" title="amat::Array2d\&lt; double \&gt;" alt="" coords="19,5,185,32"/></map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
@@ -121,8 +121,21 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>compute_pressure_diff
 <tr class="separator:a110240ed0bd58aeddb3fc8701d659c54"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classacfd_1_1PressureReconstruction"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classacfd_1_1PressureReconstruction')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classacfd_1_1PressureReconstruction.html">acfd::PressureReconstruction</a></td></tr>
 <tr class="memitem:ad954cc6f6aa589088f555a7cae643cfc inherit pub_methods_classacfd_1_1PressureReconstruction"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad954cc6f6aa589088f555a7cae643cfc"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>setup</b> (<a class="el" href="classacfd_1_1Structmesh2d.html">Structmesh2d</a> *mesh, Array2d&lt; double &gt; *unknowns, Array2d&lt; double &gt; *delp)</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>setup</b> (<a class="el" href="classacfd_1_1Structmesh2d.html">Structmesh2d</a> *mesh, <a class="el" href="classamat_1_1Array2d.html">Array2d</a>&lt; double &gt; *unknowns, <a class="el" href="classamat_1_1Array2d.html">Array2d</a>&lt; double &gt; *delp)</td></tr>
 <tr class="separator:ad954cc6f6aa589088f555a7cae643cfc inherit pub_methods_classacfd_1_1PressureReconstruction"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
+Additional Inherited Members</h2></td></tr>
+<tr class="inherit_header pro_attribs_classacfd_1_1PressureReconstruction"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_classacfd_1_1PressureReconstruction')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="classacfd_1_1PressureReconstruction.html">acfd::PressureReconstruction</a></td></tr>
+<tr class="memitem:aaa6b1f3b16122b847d9d47c594af9235 inherit pro_attribs_classacfd_1_1PressureReconstruction"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aaa6b1f3b16122b847d9d47c594af9235"></a>
+<a class="el" href="classacfd_1_1Structmesh2d.html">Structmesh2d</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>m</b></td></tr>
+<tr class="separator:aaa6b1f3b16122b847d9d47c594af9235 inherit pro_attribs_classacfd_1_1PressureReconstruction"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1ef4790190a998488d7bb437da73fb39 inherit pro_attribs_classacfd_1_1PressureReconstruction"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1ef4790190a998488d7bb437da73fb39"></a>
+<a class="el" href="classamat_1_1Array2d.html">Array2d</a>&lt; double &gt; *&#160;</td><td class="memItemRight" valign="bottom"><b>u</b></td></tr>
+<tr class="separator:a1ef4790190a998488d7bb437da73fb39 inherit pro_attribs_classacfd_1_1PressureReconstruction"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2cdf2f0e4b2cadc0093c4a32f899bda8 inherit pro_attribs_classacfd_1_1PressureReconstruction"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2cdf2f0e4b2cadc0093c4a32f899bda8"></a>
+<a class="el" href="classamat_1_1Array2d.html">Array2d</a>&lt; double &gt; *&#160;</td><td class="memItemRight" valign="bottom"><b>dp</b></td></tr>
+<tr class="separator:a2cdf2f0e4b2cadc0093c4a32f899bda8 inherit pro_attribs_classacfd_1_1PressureReconstruction"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Implements the basic first-order pressure reconstruction for the mass flux according to Rhie-Chow method. </p>
@@ -132,7 +145,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>setup</b> (<a class="
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Dec 2 2015 00:50:05 for iNSAC by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Dec 4 2015 23:28:45 for iNSAC by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.7
 </small></address>
