@@ -29,7 +29,7 @@ c       delp = pleft-pright                    ! higher-order model
         delu = u(i,j)-u(i,j+1)
         delv = v(i,j)-v(i,j+1)
 
-        dissip  = 0.5*area*const*eiga*delp/btave2   !multiply by 0.5 to make const < 1.0
+        dissip  = 0.5*area*const*eiga*delp/btave2   ! multiply by 0.5 to make const < 1.0
         xmassflux = area*rho*udotn 
         h(j,1) = xmassflux + dissip
         h(j,2) = xmassflux*uave + xnx*area*pave 
@@ -102,3 +102,8 @@ c ---- solution update
       enddo
       enddo
 
+! Don't have here:
+! - Zeroing out of mass-flux terms in inviscid flux
+! - Boundary conditions, ie, ghost cell values
+! - Calculation of beta
+! - Viscous fluxes

@@ -17,11 +17,11 @@ parallelcv
 basic
 
 -CFL-number
-0.05
+0.1
 -Relative-tolerance-momentum
-1e-5
+1e-6
 -Max-time-steps
-50000
+10000
 
 -Boundary-flags
 2 2 2 2

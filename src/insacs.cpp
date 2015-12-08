@@ -70,6 +70,7 @@ int main(int argc, char* argv[])
 	cout << endl;
 	cout << "Pressure scheme = " << pressurescheme << endl;
 	cout << "Gradient scheme = " << gradscheme << endl << endl;
+	cout << "CFL = " << cfl << endl;
 
 	Structmesh2d m;
 	m.readmesh(meshfile);

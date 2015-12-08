@@ -50,7 +50,7 @@ void PressureReconstruction::setup(Structmesh2d* mesh, Array2d<double>* unknowns
 	dp = delp;
 }
 
-/** \brief Implements the basic first-order pressure reconstruction for the mass flux according to Rhie-Chow method.
+/** \brief Implements the basic first-order pressure reconstruction for the mass flux needed for the Rhie-Chow method.
 */
 class BasicPR : public PressureReconstruction
 {
@@ -69,7 +69,7 @@ void BasicPR::compute_pressure_difference()
 		}
 }
 
-/** \brief Implements a second-order accurate TVD pressure reconstruction for the mass flux according to Rhie-Chow scheme for colocated grid.
+/** \brief Implements a second-order accurate TVD pressure reconstruction for the mass flux needed for the Rhie-Chow scheme for colocated grid.
 */
 class TVDPR : public PressureReconstruction
 {
@@ -132,7 +132,7 @@ class InviscidFlux
 	int nvar;					///< Number of unknowns.
 	bool isallocdp;
 
-	/** \brief Integers indicating the tyoe of boundary for each of the 4 boundaries.
+	/** \brief Integers indicating the type of boundary for each of the 4 boundaries.
 	*
 	*	1. velocity inflow
 	*	2. pressure outflow
@@ -155,6 +155,7 @@ public:
 
 void InviscidFlux::setup(Structmesh2d* mesh, Array2d<double>* unknown, Array2d<double>* residuals, Array2d<double>* _beta, double _rho, string pressurereconstruction, vector<int> _bcflag, vector<vector<double>> _bvalues)
 {
+	cout << "InviscidFlux: setup(): Setting up inviscid flux calculator" << endl;
 	m = mesh;
 	u = unknown;
 	res = residuals;
@@ -169,7 +170,10 @@ void InviscidFlux::setup(Structmesh2d* mesh, Array2d<double>* unknown, Array2d<d
 	
 	/// Sets the pressure reconstruction scheme to be used based on the last argument - "basic" or "TVD".
 	if(pressurereconstruction=="basic")
+	{
 		pr = new BasicPR;
+		cout << "BasicPR\n";
+	}
 	else if(pressurereconstruction=="tvd")
 		pr = new TVDPR;
 	else {
@@ -179,9 +183,20 @@ void InviscidFlux::setup(Structmesh2d* mesh, Array2d<double>* unknown, Array2d<d
 	pr->setup(m, unknown, dp);
 	
 	/// Rhie-Chow constant [c](@ref c) is maximum 0.5.
-	c = 0.2;
+	c = 0.5;
 	
 	nvar = 3;
+	
+	cout << "BC flags ";
+	for(int i = 0; i < 4; i++)
+		cout << bcflags[i] << " ";
+	cout << "\nB values:\n";
+	for(int i = 0; i < 4; i++)
+	{
+		for(int j = 0; j < 2; j++)
+			cout << bvalues[i][j] << " ";
+		cout << endl;
+	}
 }
 
 InviscidFlux::~InviscidFlux()
@@ -228,26 +243,26 @@ void InviscidFlux::compute_fluxes()
 			vdotn = uhalf[1]*nx + uhalf[2]*ny;
 			
 			// now get eigenvalue for Rhie-Chow
-			eigen = 0.5*( fabs(vdotn) + sqrt(vdotn*vdotn + 4*bhalf2) );
+			eigen = 0.5*( fabs(vdotn) + sqrt(vdotn*vdotn + 4.0*bhalf2) );
 
 			// Boundary faces need to be treated differently to account for wall BCs.
 			if(i == 0)
 			{
-				g(i,0) = area*(rho*vdotn + c*eigen*dp[0](i,j)/bhalf2)*wall[2];
+				g(i,0) = area*(rho*vdotn + 0.5*c*eigen*dp[0](i,j)/bhalf2)*wall[2];
 				g(i,1) = area*(rho*vdotn*uhalf[1]*wall[2] + uhalf[0]*nx);
-				g(i,2) = area*(rho*vdotn*uhalf[2]*wall[2] + uhalf[0]*ny); 
+				g(i,2) = area*(rho*vdotn*uhalf[2]*wall[2] + uhalf[0]*ny);
 			}
 			else if(i == m->gimx()-1)
 			{
-				g(i,0) = area*(rho*vdotn + c*eigen*dp[0](i,j)/bhalf2)*wall[0];
+				g(i,0) = area*(rho*vdotn + 0.5*c*eigen*dp[0](i,j)/bhalf2)*wall[0];
 				g(i,1) = area*(rho*vdotn*uhalf[1]*wall[0] + uhalf[0]*nx);
-				g(i,2) = area*(rho*vdotn*uhalf[2]*wall[0] + uhalf[0]*ny); 
+				g(i,2) = area*(rho*vdotn*uhalf[2]*wall[0] + uhalf[0]*ny);
 			}
 			else
 			{
-				g(i,0) = area*(rho*vdotn + c*eigen*dp[0](i,j)/bhalf2);
+				g(i,0) = area*(rho*vdotn + 0.5*c*eigen*dp[0](i,j)/bhalf2);
 				g(i,1) = area*(rho*vdotn*uhalf[1] + uhalf[0]*nx);
-				g(i,2) = area*(rho*vdotn*uhalf[2] + uhalf[0]*ny); 
+				g(i,2) = area*(rho*vdotn*uhalf[2] + uhalf[0]*ny);
 			}
 		}
 		for(i = 1; i <= m->gimx()-1; i++)
@@ -273,19 +288,19 @@ void InviscidFlux::compute_fluxes()
 			
 			if(j == 0)
 			{
-				h(j,0) = area*(rho*vdotn + c*eigen*dp[1](i,j)/bhalf2)*wall[3];
+				h(j,0) = area*(rho*vdotn + 0.5*c*eigen*dp[1](i,j)/bhalf2)*wall[3];
 				h(j,1) = area*(rho*vdotn*uhalf[1]*wall[3] + uhalf[0]*nx);
 				h(j,2) = area*(rho*vdotn*uhalf[2]*wall[3] + uhalf[0]*ny); 
 			}
 			else if(j == m->gjmx()-1)
 			{
-				h(j,0) = area*(rho*vdotn + c*eigen*dp[1](i,j)/bhalf2)*wall[1];
+				h(j,0) = area*(rho*vdotn + 0.5*c*eigen*dp[1](i,j)/bhalf2)*wall[1];
 				h(j,1) = area*(rho*vdotn*uhalf[1]*wall[1] + uhalf[0]*nx);
 				h(j,2) = area*(rho*vdotn*uhalf[2]*wall[1] + uhalf[0]*ny); 
 			}
 			else
 			{
-				h(j,0) = area*(rho*vdotn + c*eigen*dp[1](i,j)/bhalf2);
+				h(j,0) = area*(rho*vdotn + 0.5*c*eigen*dp[1](i,j)/bhalf2);
 				h(j,1) = area*(rho*vdotn*uhalf[1] + uhalf[0]*nx);
 				h(j,2) = area*(rho*vdotn*uhalf[2] + uhalf[0]*ny); 
 			}
@@ -296,4 +311,4 @@ void InviscidFlux::compute_fluxes()
 	}
 }
 
-}
+} // end namespace

@@ -126,7 +126,6 @@ void Steady_insac::setup(Structmesh2d* mesh, double dens, double visc, vector<in
 	tol = tolerance;
 	maxiter = maxiters;
 
-	cout << "Steady_insac: setup(): Setting up inviscid flux object" << endl;
 	invf->setup(m, u, res, &beta, rho, pressure_scheme, _bcflags, _bvalues);
 	grad->setup(m,u,res,visc_lhs, mu);
 	
@@ -160,11 +159,11 @@ void Steady_insac::compute_beta()
 				beta(i,j) = uref;
 			
 			// account for viscous effect
-			h = sqrt((m->gx(i+1,j+1)-m->gx(i,j+1))*(m->gx(i+1,j+1)-m->gx(i,j+1)) + (m->gy(i+1,j+1)-m->gy(i,j+1))*(m->gy(i+1,j+1)-m->gy(i,j+1)));
+			/*h = sqrt((m->gx(i+1,j+1)-m->gx(i,j+1))*(m->gx(i+1,j+1)-m->gx(i,j+1)) + (m->gy(i+1,j+1)-m->gy(i,j+1))*(m->gy(i+1,j+1)-m->gy(i,j+1)));
 			h += sqrt((m->gx(i+1,j+1)-m->gx(i+1,j))*(m->gx(i+1,j+1)-m->gx(i+1,j)) + (m->gy(i+1,j+1)-m->gy(i+1,j))*(m->gy(i+1,j+1)-m->gy(i+1,j)));
 			h /= 2.0;
 			uvisc = (mu/rho)/h;
-			if(beta(i,j) < uvisc) beta(i,j) = uvisc;
+			if(beta(i,j) < uvisc) beta(i,j) = uvisc;*/
 		}
 }
 
@@ -322,7 +321,7 @@ void Steady_insac::compute_timesteps()
 		{
 			for(dim = 0; dim < ndim; dim++) {
 				areavi[dim] = 0.5*(m->gdel(i,j,dim) + m->gdel(i-1,j,dim));
-				areavj[dim] = 0.5*(m->gdel(i,j,2+dim) + m->gdel(i-1,j,2+dim));
+				areavj[dim] = 0.5*(m->gdel(i,j,2+dim) + m->gdel(i,j-1,2+dim));
 			}
 			areai = sqrt(areavi[0]*areavi[0] + areavi[1]*areavi[1]);
 			areaj = sqrt(areavj[0]*areavj[0] + areavj[1]*areavj[1]);
@@ -363,6 +362,7 @@ void Steady_insac::setInitialConditions()
 void Steady_insac::solve()
 {
 	setInitialConditions();
+	compute_beta();
 
 	int i,j,k;
 	double resnorm, resnorm0, massflux, dtv;
@@ -371,7 +371,7 @@ void Steady_insac::solve()
 	{
 		// calculate stuff needed for this iteration
 		setBCs();
-		compute_beta();
+		
 		compute_timesteps();
 
 		// compute fluxes
@@ -397,7 +397,6 @@ void Steady_insac::solve()
 		if(resnorm/resnorm0 < tol && fabs(massflux) < sqrt(tol))
 		{
 			cout << "Steady_insac: solve(): Converged in " << n << " iterations. Norm of final residual = " << resnorm << ", final net mass flux = " << massflux << endl;
-			getPointSolution();
 			break;
 		}
 
@@ -411,6 +410,8 @@ void Steady_insac::solve()
 					u[k](i,j) = u[k].get(i,j) - res[k].get(i,j)*dtv/rho;
 			}
 	}
+	
+	getPointSolution();
 }
 
 Array2d<double>* Steady_insac::getpressure()
