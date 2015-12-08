@@ -19,7 +19,7 @@ using namespace std;
 namespace acfd {
 
 /**	\brief Base class for gradient reconstruction schemes for AC formulation of iNS equations. */
-/**	NOTE: compute_fluxes() *increments* the residual res. If res contains anything non-zero, contribution by gradients is *added* to it; it is not replaced.
+/**	\note compute_fluxes() *increments* the residual res. If res contains anything non-zero, contribution by gradients is *added* to it; it is not replaced.
 */
 class GradientSchemeIns
 {
@@ -92,6 +92,89 @@ void GradientSchemeIns::compute_s()
 
 //----------------- end of base class GradientScheme -----------------------------//
 
+/// Parallel CV model for gradient reconstruction
+class ParallelCVGradientIns : public GradientSchemesIns
+{
+public:
+	void setup(Structmesh2d* mesh, Array2d<double>* unknown, Array2d<double>* residual, Array2d<double>* lhs, double visc);
+	void compute_fluxes():
+};
+
+void ParallelCVGradientIns::setup(Structmesh2d* mesh, Array2d<double>* unknown, Array2d<double>* residual, Array2d<double>* lhs, double visc)
+{
+	GradientSchemeIns::setup(mesh, unknown, residual, lhs, visc);
+	GradientSchemeIns::compute_CV_volumes();
+}
+
+void ParallelCVGradientIns::compute_fluxes()
+{
+	int i,j,k,l;
+	// fluxes across each i-face and j-face respectively
+	vector<vector<double>> g(nvar), h(nvar);
+	for(k = 1; k < nvar; k++)
+	{
+		g[k].resize(m->gimx());
+		h[k].resize(m->gjmx());
+	}
+
+	double f1, f2, f3, f4;
+	vector<double> deln(ndim);
+	vector<double> grad(ndim);
+	
+	for(k = 1; k < nvar; k++)
+	{
+		for(j = 1; j <= m->gjmx()-1; j++)
+		{
+			for(i = 0; i <= m->gimx()-1; i++)
+			{
+				// values at the 4 faces of the parallel CV
+				f1 = u[k].get(i+1,j);
+				f3 = u[k].get(i,j);
+				f2 = 0.25*(u[k].get(i,j) + u[k].get(i+1,j) + u[k].get(i,j+1) + u[k].get(i+1,j+1));
+				f4 = 0.25*(u[k].get(i,j) + u[k].get(i+1,j) + u[k].get(i,j-1) + u[k].get(i+1,j-1));
+				
+				// normal to the i-face of CV
+				deln[0] = -(m->gyc(i+1,j) - m->gyc(i,j));
+				deln[1] = (m->gxc(i+1,j) - m->gxc(i,j));
+
+				for(l = 0; l < ndim; l++)
+				{
+					grad[l] = (f1-f3)*m->gdel(i,j,l) + (f2-f4)*deln[l];
+					grad[l] /= dualvol[0].get(i,j);
+				}
+
+				g[i] = grad[0]*m->gdel(i,j,0) + grad[1]*m->gdel(i,j,1);
+			}
+			for(i = 1; i <= m->gimx()-1; i++)
+				res[k](i,j) += g[i] - g[i-1];
+		}
+
+		for(i = 1; i <= m->gimx()-1; i++)
+		{
+			for(j = 0; j <= m->gjmx()-1; j++)
+			{
+				// values at 4 faces of CV
+				f1 = u[k].get(i,j+1);
+				f3 = u[k].get(i,j);
+				f4 = 0.25* (u[k].get(i,j) + u[k].get(i,j+1) + u[k].get(i-1,j) + u[k].get(i-1,j+1);
+				f2 = 0.25* (u[k].get(i,j) + u[k].get(i,j+1) + u[k].get(i+1,j) + u[k].get(i+1,j+1);
+
+				deln[0] = m->gyc(i,j+1) - m->gyc(i,j);
+				deln[1] = -(m->gxc(i,j+1) - m->gxc(i,j));
+
+				for(l = 0; l < ndim; l++)
+				{
+					grad[l] = (f1-f3)*m->gdel(i,j,2+l) + (f2-f4)*deln[l];
+					grad[l] /= dualvol[1].get(i,j);
+				}
+
+				h(j) = grad[0]*m->gdel(i,j,2) + grad[1]*m->gdel(i,j,3);
+			}
+			for(j = 1; j <= m->gjmx()-1; j++)
+				res[k](i,j) += h[j] - h[j-1];
+		}
+	}
+}
 
 /**	\brief Thin layer gradient reconstruction scheme. 
 *
@@ -149,9 +232,6 @@ void ThinLayerGradientIns::compute_fluxes()
 *	Applied properly, the scheme is non-compact and has 13 terms in the LHS for each cell. However, we implement only the 5 compact terms for the LHS. 
 *	But we treat the residual fully. This requires specification of more than one layer of ghost cells. This is taken care of without introducing another layer;
 *	rather, we compute a `ghost state' on-the-fly using the BCs.
-* \todo TODO : This class is not yet ready for iNS:
-* - Implement for a vector unknown
-* - Multiply by viscosity at appropriate places
 */
 class NormTanGradientIns : public GradientSchemeIns
 {
@@ -236,22 +316,22 @@ void NormTanGradientIns::compute_fluxes()
 			{
 				for(k = 1; k < nvar; k++)
 				{
-					Array2d<double>* u = &(this->u[k]);
+					//Array2d<double>* u = &(this->u[k]);
 					// i,j-1
-					cdelu[k](0,d) = 0.5/m->gvol(i,j-1)*( (u->get(i,j-1)+u->get(i+1,j-1))*m->gdel(i,j-1,d) + (u->get(i,j-1)+u->get(i,j))*m->gdel(i,j-1,2+d)
-						- (u->get(i,j-1)+u->get(i-1,j-1))*m->gdel(i-1,j-1,d) - (u->get(i,j-1)+u->get(i,j-2))*m->gdel(i,j-2,2+d));
+					cdelu[k](0,d) = 0.5/m->gvol(i,j-1)*( (u[k].get(i,j-1)+u[k].get(i+1,j-1))*m->gdel(i,j-1,d) + (u[k].get(i,j-1)+u[k].get(i,j))*m->gdel(i,j-1,2+d)
+						- (u[k].get(i,j-1)+u[k].get(i-1,j-1))*m->gdel(i-1,j-1,d) - (u[k].get(i,j-1)+u[k].get(i,j-2))*m->gdel(i,j-2,2+d));
 					//i-1,j
-					cdelu[k](1,d) = 0.5/m->gvol(i-1,j)*( (u->get(i-1,j)+u->get(i,j))*m->gdel(i-1,j,d) + (u->get(i-1,j)+u->get(i-1,j+1))*m->gdel(i-1,j,2+d)
-						- (u->get(i-1,j)+u->get(i-2,j))*m->gdel(i-2,j,d) - (u->get(i-1,j)+u->get(i-1,j-1))*m->gdel(i-1,j-1,2+d));
+					cdelu[k](1,d) = 0.5/m->gvol(i-1,j)*( (u[k].get(i-1,j)+u[k].get(i,j))*m->gdel(i-1,j,d) + (u[k].get(i-1,j)+u[k].get(i-1,j+1))*m->gdel(i-1,j,2+d)
+						- (u[k].get(i-1,j)+u[k].get(i-2,j))*m->gdel(i-2,j,d) - (u[k].get(i-1,j)+u[k].get(i-1,j-1))*m->gdel(i-1,j-1,2+d));
 					//i,j
-					cdelu[k](2,d) = 0.5/m->gvol(i,j)*( (u->get(i,j)+u->get(i+1,j))*m->gdel(i,j,d) + (u->get(i,j)+u->get(i,j+1))*m->gdel(i,j,2+d)
-						- (u->get(i,j)+u->get(i-1,j))*m->gdel(i-1,j,d) - (u->get(i,j)+u->get(i,j-1))*m->gdel(i,j-1,2+d));
+					cdelu[k](2,d) = 0.5/m->gvol(i,j)*( (u[k].get(i,j)+u[k].get(i+1,j))*m->gdel(i,j,d) + (u[k].get(i,j)+u[k].get(i,j+1))*m->gdel(i,j,2+d)
+						- (u[k].get(i,j)+u[k].get(i-1,j))*m->gdel(i-1,j,d) - (u[k].get(i,j)+u[k].get(i,j-1))*m->gdel(i,j-1,2+d));
 					//i+1,j
-					cdelu[k](3,d) = 0.5/m->gvol(i+1,j)*( (u->get(i+1,j)+u->get(i+2,j))*m->gdel(i+1,j,d) + (u->get(i+1,j)+u->get(i+1,j+1))*m->gdel(i+1,j,2+d)
-						- (u->get(i+1,j)+u->get(i,j))*m->gdel(i,j,d) - (u->get(i+1,j)+u->get(i+1,j-1))*m->gdel(i+1,j-1,2+d));
+					cdelu[k](3,d) = 0.5/m->gvol(i+1,j)*( (u[k].get(i+1,j)+u[k].get(i+2,j))*m->gdel(i+1,j,d) + (u[k].get(i+1,j)+u[k].get(i+1,j+1))*m->gdel(i+1,j,2+d)
+						- (u[k].get(i+1,j)+u[k].get(i,j))*m->gdel(i,j,d) - (u[k].get(i+1,j)+u[k].get(i+1,j-1))*m->gdel(i+1,j-1,2+d));
 					//i,j+1
-					cdelu[k](4,d) = 0.5/m->gvol(i,j+1)*( (u->get(i,j+1)+u->get(i+1,j+1))*m->gdel(i,j+1,d) + (u->get(i,j+1)+u->get(i,j+2))*m->gdel(i,j+1,2+d)
-						- (u->get(i,j+1)+u->get(i-1,j+1))*m->gdel(i-1,j+1,d) - (u->get(i,j+1)+u->get(i,j))*m->gdel(i,j,2+d));
+					cdelu[k](4,d) = 0.5/m->gvol(i,j+1)*( (u[k].get(i,j+1)+u[k].get(i+1,j+1))*m->gdel(i,j+1,d) + (u[k].get(i,j+1)+u[k].get(i,j+2))*m->gdel(i,j+1,2+d)
+						- (u[k].get(i,j+1)+u[k].get(i-1,j+1))*m->gdel(i-1,j+1,d) - (u[k].get(i,j+1)+u[k].get(i,j))*m->gdel(i,j,2+d));
 				}
 			}
 			
@@ -261,7 +341,7 @@ void NormTanGradientIns::compute_fluxes()
 				Array2d<double>* u = &(this->u[k]);
 				res[k](i,j) += 0.5*((cdelu[k](2,0)+cdelu[k](3,0))*m->gdel(i,j,0)+(cdelu[k](2,1)+cdelu[k](3,1))*m->gdel(i,j,1) 
 					- ((cdelu[k](2,0)+cdelu[k](3,0))*svect[0](i,j)+(cdelu[k](2,1)+cdelu[k](3,1))*svect[1](i,j))*(svect[0](i,j)*m->gdel(i,j,0)+svect[1](i,j)*m->gdel(i,j,1)))
-					+ (u->get(i+1,j)-u->get(i,j))*(svect[0](i,j)*m->gdel(i,j,0)+svect[1](i,j)*m->gdel(i,j,1))/dels[0](i,j);
+					+ (u[k].get(i+1,j)-u[k].get(i,j))*(svect[0](i,j)*m->gdel(i,j,0)+svect[1](i,j)*m->gdel(i,j,1))/dels[0](i,j);
 				res[k](i,j) -= 0.5*((cdelu[k](2,0)+cdelu[k](1,0))*m->gdel(i-1,j,0)+(cdelu[k](2,1)+cdelu[k](1,1))*m->gdel(i-1,j,1) 
 					- ((cdelu[k](2,0)+cdelu[k](1,0))*svect[0](i-1,j)+(cdelu[k](2,1)+cdelu[k](1,1))*svect[1](i-1,j))*(svect[0](i-1,j)*m->gdel(i-1,j,0)+svect[1](i-1,j)*m->gdel(i-1,j,1)))
 					+ (u->get(i,j)-u->get(i-1,j))*(svect[0](i-1,j)*m->gdel(i-1,j,0)+svect[1](i-1,j)*m->gdel(i-1,j,1))/dels[0](i-1,j);

@@ -1,0 +1,12 @@
+Driven cavity
+=============
+
+50x50 basic:
+	final momentum residual = 2.82714e-12
+	final mass flux = 2.79253e-05
+	iterations = 11589
+
+50x50 TVD:
+	final momentum residual = 2.82755e-12
+	final mass flux = -1.40037e-06
+	iterations = 14666

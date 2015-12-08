@@ -123,7 +123,11 @@ class InviscidFlux
 	Array2d<double>* beta;		///< Artificial compressiblity factor for each cell.
 	double rho;					///< Density of fluid.
 	PressureReconstruction* pr;
-	Array2d<double>* dp;		///< Pressure difference across each face.
+
+	/// Pressure difference across each face.
+	/** dp[0] contains pressure difference across i-faces. dp[1] contains pressure differences across j-faces. */
+	Array2d<double>* dp;	
+	
 	double c;					///< Rhie-Chow constant.
 	int nvar;					///< Number of unknowns.
 	bool isallocdp;
@@ -174,8 +178,8 @@ void InviscidFlux::setup(Structmesh2d* mesh, Array2d<double>* unknown, Array2d<d
 	}
 	pr->setup(m, unknown, dp);
 	
-	/// Rhie-Chow constant [c](@ref c) is set as 0.5.
-	c = 0.5;
+	/// Rhie-Chow constant [c](@ref c) is maximum 0.5.
+	c = 0.3;
 	
 	nvar = 3;
 }
@@ -201,11 +205,11 @@ void InviscidFlux::compute_fluxes()
 			wall[i] = 1;
 
 	// add inviscid flux contribution to residuals
-	cout << "InviscidFlux: compute_flux(): Computing inviscid fluxes now..." << endl;
+	//cout << "InviscidFlux: compute_flux(): Computing inviscid fluxes now..." << endl;
 	// We consider the first ghost cell layer for i, but not the last.
 	int i, j, k;
 	double area, nx, ny, eigen, vdotn;
-	double bhalf; vector<double> uhalf(3);			// interface values for each unknown
+	double bhalf2; vector<double> uhalf(3);			// interface values for each unknown
 	Array2d<double> g(m->gimx(),nvar);
 	
 	for(j = 1; j <= m->gjmx()-1; j++)
@@ -217,27 +221,31 @@ void InviscidFlux::compute_fluxes()
 			ny = m->gdel(i,j,1)/area;
 			for(k = 0; k < nvar; k++)
 				uhalf[k] = 0.5*(u[k](i,j) + u[k](i+1,j));
-			bhalf = 0.5*(beta->get(i,j) + beta->get(i+1,j));
+
+			// get average of beta^2
+			bhalf2 = 0.5*(beta->get(i,j)*beta->get(i,j) + beta->get(i+1,j)*beta->get(i+1,j));
+
 			vdotn = uhalf[1]*nx + uhalf[2]*ny;
+			
 			// now get eigenvalue for Rhie-Chow
-			eigen = 0.5*( fabs(vdotn) + sqrt(vdotn*vdotn + 4*bhalf*bhalf) );
+			eigen = 0.5*( fabs(vdotn) + sqrt(vdotn*vdotn + 4*bhalf2) );
 
 			// Boundary faces need to be treated differently to account for wall BCs.
 			if(i == 0)
 			{
-				g(i,0) = area*(rho*vdotn + c*eigen*dp[0](i,j)/(bhalf*bhalf))*wall[2];
+				g(i,0) = area*(rho*vdotn + c*eigen*dp[0](i,j)/bhalf2)*wall[2];
 				g(i,1) = area*(rho*vdotn*uhalf[1]*wall[2] + uhalf[0]*nx);
 				g(i,2) = area*(rho*vdotn*uhalf[2]*wall[2] + uhalf[0]*ny); 
 			}
 			else if(i == m->gimx()-1)
 			{
-				g(i,0) = area*(rho*vdotn + c*eigen*dp[0](i,j)/(bhalf*bhalf))*wall[0];
+				g(i,0) = area*(rho*vdotn + c*eigen*dp[0](i,j)/bhalf2)*wall[0];
 				g(i,1) = area*(rho*vdotn*uhalf[1]*wall[0] + uhalf[0]*nx);
 				g(i,2) = area*(rho*vdotn*uhalf[2]*wall[0] + uhalf[0]*ny); 
 			}
 			else
 			{
-				g(i,0) = area*(rho*vdotn + c*eigen*dp[0](i,j)/(bhalf*bhalf));
+				g(i,0) = area*(rho*vdotn + c*eigen*dp[0](i,j)/bhalf2);
 				g(i,1) = area*(rho*vdotn*uhalf[1] + uhalf[0]*nx);
 				g(i,2) = area*(rho*vdotn*uhalf[2] + uhalf[0]*ny); 
 			}
@@ -259,25 +267,25 @@ void InviscidFlux::compute_fluxes()
 			ny = m->gdel(i,j,3)/area;
 			for(k = 0; k < nvar; k++)
 				uhalf[k] = 0.5*(u[k](i,j) + u[k](i,j+1));
-			bhalf = 0.5*(beta->get(i,j) + beta->get(i,j+1));
+			bhalf2 = 0.5*(beta->get(i,j)*beta->get(i,j) + beta->get(i,j+1)*beta->get(i,j+1));
 			vdotn = uhalf[1]*nx + uhalf[2]*ny;
-			eigen = 0.5*( fabs(vdotn) + sqrt(vdotn*vdotn + 4*bhalf*bhalf) );
+			eigen = 0.5*( fabs(vdotn) + sqrt(vdotn*vdotn + 4*bhalf2) );
 			
 			if(j == 0)
 			{
-				h(j,0) = area*(rho*vdotn + c*eigen*dp[1](i,j)/(bhalf*bhalf))*wall[3];
+				h(j,0) = area*(rho*vdotn + c*eigen*dp[1](i,j)/bhalf2)*wall[3];
 				h(j,1) = area*(rho*vdotn*uhalf[1]*wall[3] + uhalf[0]*nx);
 				h(j,2) = area*(rho*vdotn*uhalf[2]*wall[3] + uhalf[0]*ny); 
 			}
 			else if(j == m->gjmx()-1)
 			{
-				h(j,0) = area*(rho*vdotn + c*eigen*dp[1](i,j)/(bhalf*bhalf))*wall[1];
+				h(j,0) = area*(rho*vdotn + c*eigen*dp[1](i,j)/bhalf2)*wall[1];
 				h(j,1) = area*(rho*vdotn*uhalf[1]*wall[1] + uhalf[0]*nx);
 				h(j,2) = area*(rho*vdotn*uhalf[2]*wall[1] + uhalf[0]*ny); 
 			}
 			else
 			{
-				h(j,0) = area*(rho*vdotn + c*eigen*dp[1](i,j)/(bhalf*bhalf));
+				h(j,0) = area*(rho*vdotn + c*eigen*dp[1](i,j)/bhalf2);
 				h(j,1) = area*(rho*vdotn*uhalf[1] + uhalf[0]*nx);
 				h(j,2) = area*(rho*vdotn*uhalf[2] + uhalf[0]*ny); 
 			}

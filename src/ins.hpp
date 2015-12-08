@@ -38,6 +38,8 @@ class Steady_insac
 
 	bool isalloc;
 
+	Array2d<double>* vel[2];			///< Required for output of velocity
+
 public:
 	Steady_insac();
 
@@ -47,7 +49,7 @@ public:
 	 - 1 is a pressure outlet
 	 - 2 is a no-slip wall
 	 - 3 is a slip wall
-	\param _bvalues contains the corresponding boundary values - at most two per boundary.
+	\param bvalues contains the corresponding boundary values - at most two per boundary.
 	\param gradscheme is string which is either "thinlayer" or "normtan", describing the gradient reconstruction scheme to use for viscous fluxes.
 	\param pressure_scheme is a string (either "basic" or "tvd") describing the pressure reconstruction to use for the Rhie-Chow mass flux.
 	\param refvel is some reference fluid velocity.
@@ -61,12 +63,19 @@ public:
 
 	/// Computes artificial conmpressibility ([beta](@ref beta) ) for each cell.
 	void compute_beta();
+	
 	/// Sets quantities to ghost cells.
 	void setBCs();
+	
 	void setInitialConditions();
+	
 	void compute_timesteps();
+	
 	/// Contains the main solver time loop.
 	void solve();
+	
+	Array2d<double>* getpressure();
+	Array2d<double>** getvelocity();
 };
 
 Steady_insac::Steady_insac() {
@@ -84,8 +93,11 @@ void Steady_insac::setup(Structmesh2d* mesh, double dens, double visc, vector<in
 	bvalues = _bvalues;
 	pressurescheme = pressure_scheme;
 	uref = refvel;
-	//if(gradscheme == "thinlayer")
+	/*if(gradscheme == "normtan")
+		grad = new NormTanGradientIns;
+	else*/
 		grad = new ThinLayerGradientIns;
+	
 	invf = new InviscidFlux;
 
 	u = new Array2d<double>[nvar];
@@ -119,6 +131,7 @@ Steady_insac::~Steady_insac()
 		delete [] res;
 		delete [] visc_lhs;
 		delete grad;
+		delete invf;
 	}
 }
 
@@ -126,7 +139,7 @@ Steady_insac::~Steady_insac()
 */
 void Steady_insac::compute_beta()
 {
-	int i,j; double vmag;
+	int i,j; double vmag, uvisc, h;
 	for(i = 0; i <= m->gimx(); i++)
 		for(j = 0; j <= m->gjmx(); j++)
 		{
@@ -135,6 +148,13 @@ void Steady_insac::compute_beta()
 				beta(i,j) = vmag;
 			else
 				beta(i,j) = uref;
+			
+			// account for viscous effect
+			h = sqrt((m->gx(i+1,j+1)-m->gx(i,j+1))*(m->gx(i+1,j+1)-m->gx(i,j+1)) + (m->gy(i+1,j+1)-m->gy(i,j+1))*(m->gy(i+1,j+1)-m->gy(i,j+1)));
+			h += sqrt((m->gx(i+1,j+1)-m->gx(i+1,j))*(m->gx(i+1,j+1)-m->gx(i+1,j)) + (m->gy(i+1,j+1)-m->gy(i+1,j))*(m->gy(i+1,j+1)-m->gy(i+1,j)));
+			h /= 2.0;
+			uvisc = (mu/rho)/h;
+			if(beta(i,j) < uvisc) beta(i,j) = uvisc;
 		}
 }
 
@@ -151,7 +171,11 @@ void Steady_insac::setBCs()
 	i = m->gimx();
 	if(bcflags[0] == 1)		// pressure outlet
 		for(j = 1; j <= m->gjmx()-1; j++)
+		{
 			u[0](i,j) = bvalues[0][0];
+			u[1](i,j) = u[1].get(i-1,j);
+			u[2](i,j) = u[2].get(i-1,j);
+		}
 	else if(bcflags[0] == 2)	// no-slip wall
 		for(j = 1; j <= m->gjmx()-1; j++)
 		{
@@ -177,12 +201,21 @@ void Steady_insac::setBCs()
 		a = bvalues[2][0] / ( rm*rm - 2.0*rm*rm + m->gy(1,1)*m->gy(1,m->gjmx()) );
 		b = -a*2.0*rm;
 		c = -a*m->gy(1,1)*m->gy(1,1) - b*m->gy(1,1);
-		for(j = 1; j <= m->gjmx()-1; j++)
+		for(j = 1; j <= m->gjmx()-1; j++) {
 			u[1](i,j) = a*m->gyc(i,j)*m->gyc(i,j) + b*m->gyc(i,j) + c;
+			u[2](i,j) = 0;
+			u[0](i,j) = u[0](i+1,j);
+		}
 	}
 	else if(bcflags[2] == 1)		// pressure outlet
-		for(j = 1; j <= m->gjmx()-1; j++)
+	{
+		for(j = 1; j <= m->gjmx()-1; j++) 
+		{
 			u[0](i,j) = bvalues[2][0];
+			u[1](i,j) = u[1](i+1,j);
+			u[2](i,j) = u[2](i+1,j);
+		}
+	}
 	else if(bcflags[2] == 2)	// no-slip wall
 		for(j = 1; j <= m->gjmx()-1; j++)
 		{
@@ -204,14 +237,20 @@ void Steady_insac::setBCs()
 	j = m->gjmx();
 	if(bcflags[1] == 1)		// pressure outlet
 		for(i = 1; i <= m->gimx()-1; i++)
+		{
 			u[0](i,j) = bvalues[1][0];
+			u[1](i,j) = u[1](i,j-1);
+			u[2](i,j) = u[2](i,j-1);
+		}
 	else if(bcflags[1] == 2)	// no-slip wall
+	{
 		for(i = 1; i <= m->gimx()-1; i++)
 		{
 			u[0](i,j) = u[0](i,j-1);
 			u[1](i,j) = 2*bvalues[1][0] - u[1](i,j-1);
 			u[2](i,j) = 2*bvalues[1][1] - u[2](i,j-1);
 		}
+	}
 	else if(bcflags[1] == 3)	// slip wall
 		for(i = 1; i <= m->gimx()-1; i++)
 		{
@@ -225,7 +264,11 @@ void Steady_insac::setBCs()
 	j = 0;
 	if(bcflags[3] == 1)		// pressure outlet
 		for(i = 1; i <= m->gimx()-1; i++)
+		{
 			u[0](i,j) = bvalues[3][0];
+			u[1](i,j) = u[1](i,j+1);
+			u[2](i,j) = u[2](i,j+1);
+		}
 	else if(bcflags[3] == 2)	// no-slip wall
 		for(i = 1; i <= m->gimx()-1; i++)
 		{
@@ -262,7 +305,7 @@ void Steady_insac::compute_timesteps()
 	vector<double> inormal(ndim), jnormal(ndim);	// unit normal vectors
 	double areai, areaj;							// area magnitudes
 	double vdotni, vdotnj, eigeni, eigenj, voldt;
-	cout << "Steady_insac: compute_timesteps(): Now computing time steps for next iteration..." << endl;
+	//cout << "Steady_insac: compute_timesteps(): Now computing time steps for next iteration..." << endl;
 
 	for(i = 1; i <= m->gimx()-1; i++)
 		for(j = 1; j <= m->gjmx()-1; j++)
@@ -312,7 +355,7 @@ void Steady_insac::solve()
 	setInitialConditions();
 
 	int i,j,k;
-	double resnorm, resnorm0, massflux;
+	double resnorm, resnorm0, massflux, dtv;
 	cout << "Steady_insac: solve(): Beginning the time-march." << endl;
 	for(int n = 0; n < maxiter; n++)
 	{
@@ -332,11 +375,15 @@ void Steady_insac::solve()
 		for(i = 1; i <= m->gimx()-1; i++)
 			for(j = 1; j <= m->gjmx()-1; j++)
 			{
-				resnorm += res[1].get(i,j)*res[1].get(i,j) + res[2].get(i,j)*res[2].get(i,j);
+				resnorm += (res[1].get(i,j)*res[1].get(i,j) + res[2].get(i,j)*res[2].get(i,j))*m->gvol(i,j);
 				massflux += res[0].get(i,j);
 			}
+		resnorm = sqrt(resnorm);
 		if(n == 0) resnorm0 = resnorm;
-		if(n == 1 || n%10 == 0) cout << "Steady_insac: solve(): Iteration " << n << ":relative  l2 norm of residual = " << resnorm/resnorm0 << ", net mass flux = " << massflux << endl;
+		if(n == 1 || n%10 == 0) {
+			cout << "Steady_insac: solve(): Iteration " << n << ": relative L2 norm of residual = " << resnorm/resnorm0 << ", net mass flux = " << massflux << endl;
+			cout << "  L2 norm of residual = " << resnorm << endl;
+		}
 		if(resnorm/resnorm0 < tol && fabs(massflux) < sqrt(tol))
 		{
 			cout << "Steady_insac: solve(): Converged in " << n << " iterations. Norm of final residual = " << resnorm << ", final net mass flux = " << massflux << endl;
@@ -347,9 +394,23 @@ void Steady_insac::solve()
 		for(i = 1; i <= m->gimx()-1; i++)
 			for(j = 1; j <= m->gjmx()-1; j++)
 			{
-				u[0](i,j) = u[0].get(i,j) - res[0].get(i,j)*beta.get(i,j)*beta.get(i,j)*dt.get(i,j)/m->gvol(i,j);
+				dtv = dt.get(i,j)/m->gvol(i,j);
+				u[0](i,j) = u[0].get(i,j) - res[0].get(i,j)*beta.get(i,j)*beta.get(i,j)*dtv;
 				for(k = 1; k < nvar; k++)
-					u[k](i,j) = u[k].get(i,j) - res[k].get(i,j)*dt.get(i,j)/(rho*m->gvol(i,j));
+					u[k](i,j) = u[k].get(i,j) - res[k].get(i,j)*dtv/rho;
 			}
 	}
+}
+
+Array2d<double>* Steady_insac::getpressure()
+{
+	return &(u[0]);
+}
+
+Array2d<double>** Steady_insac::getvelocity()
+{
+	/// [vel](@ref vel) is an array of 2 [Array2d<double>](@ref Array2d)'s, one each to hold a pointer to a component Array2d of velocity.
+	vel[0] = &u[1];
+	vel[1] = &u[2];
+	return vel;
 }

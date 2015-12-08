@@ -1,27 +1,27 @@
 -Mesh-file
-cavity50.grid
+../input/cavity50.grid
 
 -Output-file
-cavity50.vtk
+../output/cavity50-Re100-test.vtk
 
 -Density
-1000
+1.0
 -Dynamic-viscosity
-1e-3
+1e-2
 -Reference-velocity-magnitude
 1.0
 
 -Gradient-reconstruction-scheme
 thinlayer
 -Pressure-reconstruction-scheme
-basic
+tvd
 
 -CFL-number
-0.1
+0.2
 -Relative-tolerance-momentum
-1e-4
+1e-6
 -Max-time-steps
-100
+50000
 
 -Boundary-flags
 2 2 2 2

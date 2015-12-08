@@ -1,0 +1,32 @@
+-Mesh-file
+../input/grid3.grid
+
+-Output-file
+../output/channel3-Re100-basic.vtk
+
+-Density
+1.0
+-Dynamic-viscosity
+1e-2
+-Reference-velocity-magnitude
+1.0
+
+-Gradient-reconstruction-scheme
+thinlayer
+-Pressure-reconstruction-scheme
+basic
+
+-CFL-number
+0.15
+-Relative-tolerance-momentum
+1e-4
+-Max-time-steps
+30000
+
+-Boundary-flags
+1 2 0 2
+-Boudary-values
+0.0
+0.0 0.0
+1.0
+0.0 0.0

@@ -3,6 +3,9 @@
  */
 
 #include "ins.hpp"
+#ifndef __AOUTPUT_STRUCT_H
+#include <aoutput_struct.hpp>
+#endif
 
 using namespace amat;
 using namespace acfd;
@@ -56,10 +59,21 @@ int main(int argc, char* argv[])
 	Structmesh2d m;
 	m.readmesh(meshfile);
 	m.preprocess();
+	
+	cout << "Length = " << m.gy(1,m.gjmx()) - m.gy(1,1) << endl;
 
 	Steady_insac ins;
 	ins.setup(&m, rho, mu, bcflags, bvalues, gradscheme, pressurescheme, refvel, cfl, tol, maxiter);
 	ins.solve();
+
+	Array2d<double>* pressure = ins.getpressure();
+	Array2d<double>** velocity = ins.getvelocity();
+
+	string scanames[] = {"pressure"};
+	string vecnames[] = {"velocity"};
+
+	Structdata2d strd(&m, 1, pressure, scanames, 1, velocity, vecnames, "insac");
+	strd.writevtk(outfile);
 
 	cout << endl;
 	return 0;
