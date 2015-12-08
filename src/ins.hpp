@@ -38,6 +38,8 @@ class Steady_insac
 
 	bool isalloc;
 
+	Array2d<double> upoint[3];
+	
 	Array2d<double>* vel[2];			///< Required for output of velocity
 
 public:
@@ -74,6 +76,9 @@ public:
 	/// Contains the main solver time loop.
 	void solve();
 	
+	/// Computes solutions at grid nodes by averaging cell values around each node
+	void getPointSolution();
+
 	Array2d<double>* getpressure();
 	Array2d<double>** getvelocity();
 };
@@ -124,6 +129,9 @@ void Steady_insac::setup(Structmesh2d* mesh, double dens, double visc, vector<in
 	cout << "Steady_insac: setup(): Setting up inviscid flux object" << endl;
 	invf->setup(m, u, res, &beta, rho, pressure_scheme, _bcflags, _bvalues);
 	grad->setup(m,u,res,visc_lhs, mu);
+	
+	for(int k = 0; k < 3; k++)
+		upoint[k].setup(m->gimx()+1,m->gjmx()+1);
 }
 
 Steady_insac::~Steady_insac()
@@ -389,6 +397,7 @@ void Steady_insac::solve()
 		if(resnorm/resnorm0 < tol && fabs(massflux) < sqrt(tol))
 		{
 			cout << "Steady_insac: solve(): Converged in " << n << " iterations. Norm of final residual = " << resnorm << ", final net mass flux = " << massflux << endl;
+			getPointSolution();
 			break;
 		}
 
@@ -406,13 +415,24 @@ void Steady_insac::solve()
 
 Array2d<double>* Steady_insac::getpressure()
 {
-	return &(u[0]);
+	return &(upoint[0]);
 }
 
 Array2d<double>** Steady_insac::getvelocity()
 {
 	/// [vel](@ref vel) is an array of 2 [Array2d<double>](@ref Array2d)'s, one each to hold a pointer to a component Array2d of velocity.
-	vel[0] = &u[1];
-	vel[1] = &u[2];
+	vel[0] = &upoint[1];
+	vel[1] = &upoint[2];
 	return vel;
+}
+
+void Steady_insac::getPointSolution()
+{ 
+	// interior points
+	for(int k = 0; k < 3; k++)
+		for(int i = 1; i <= m->gimx(); i++)
+			for(int j = 1; j <= m->gjmx(); j++)
+			{
+				upoint[k](i,j) = (u[k].get(i,j) + u[k].get(i-1,j) + u[k].get(i,j-1) + u[k].get(i-1,j-1))*0.25;
+			}
 }

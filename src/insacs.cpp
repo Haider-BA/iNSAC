@@ -24,7 +24,7 @@ int main(int argc, char* argv[])
 	vector<int> bcflags(4);
 	vector<vector<double>> bvalues(4);
 	for(int i = 0; i < 4; i++)
-		bvalues[i].resize(2);
+		bvalues[i].resize(2,-1);
 
 	ifstream conf(argv[1]);
 
@@ -55,6 +55,21 @@ int main(int argc, char* argv[])
 	}
 
 	conf.close();
+
+	cout << "Input data:\n";
+	cout << "BC flags ";
+	for(int i = 0; i < 4; i++)
+		cout << bcflags[i] << " ";
+	cout << "\nB values:\n";
+	for(int i = 0; i < 4; i++)
+	{
+		for(int j = 0; j < 2; j++)
+			cout << bvalues[i][j] << " ";
+		cout << endl;
+	}
+	cout << endl;
+	cout << "Pressure scheme = " << pressurescheme << endl;
+	cout << "Gradient scheme = " << gradscheme << endl << endl;
 
 	Structmesh2d m;
 	m.readmesh(meshfile);

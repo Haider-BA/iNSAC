@@ -6,7 +6,7 @@
 
 -Density
 1.0
--Dynamic-viscosity
+-Dynamic-viscosity-4e-3
 1e-2
 -Reference-velocity-magnitude
 1.0
@@ -17,11 +17,11 @@ parallelcv
 basic
 
 -CFL-number
-0.2
+0.05
 -Relative-tolerance-momentum
-1e-4
+1e-5
 -Max-time-steps
-30000
+50000
 
 -Boundary-flags
 2 2 2 2
