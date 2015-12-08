@@ -19,9 +19,9 @@ basic
 -CFL-number
 0.1
 -Relative-tolerance-momentum
-1e-6
+1e-4
 -Max-time-steps
-10000
+100
 
 -Boundary-flags
 2 2 2 2

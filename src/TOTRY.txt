@@ -1,0 +1,1 @@
+Correct thin-layer gradient scheme and try, so that corner ghost cells don't come into the picture. 

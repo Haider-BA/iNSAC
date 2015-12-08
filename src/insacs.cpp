@@ -82,13 +82,10 @@ int main(int argc, char* argv[])
 	ins.setup(&m, rho, mu, bcflags, bvalues, gradscheme, pressurescheme, refvel, cfl, tol, maxiter);
 	ins.solve();
 
-	Array2d<double>* pressure = ins.getpressure();
-	Array2d<double>** velocity = ins.getvelocity();
+	Array2d<double>* u = ins.getVariables();
+	Array2d<double>* residuals = ins.getResiduals();
 
-	string scanames[] = {"pressure"};
-	string vecnames[] = {"velocity"};
-
-	Structdata2d strd(&m, 1, pressure, scanames, 1, velocity, vecnames, "insac");
+	Structdata2d strd(&m, u, residuals, "insac");
 	strd.writevtk(outfile);
 
 	cout << endl;

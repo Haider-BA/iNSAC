@@ -118,6 +118,7 @@ public:
 
 void ParallelCVGradientIns::setup(Structmesh2d* mesh, Array2d<double>* unknown, Array2d<double>* residual, Array2d<double>* lhs, double visc)
 {
+	cout << "ParallelCVGradientIns: setup() called." << endl;
 	GradientSchemeIns::setup(mesh, unknown, residual, lhs, visc);
 	GradientSchemeIns::compute_CV_volumes();
 
@@ -137,6 +138,7 @@ void ParallelCVGradientIns::compute_fluxes()
 	
 	for(k = 1; k < nvar; k++)
 	{
+		// i- fluxes
 		for(j = 1; j <= m->gjmx()-1; j++)
 		{
 			for(i = 0; i <= m->gimx()-1; i++)
@@ -163,6 +165,7 @@ void ParallelCVGradientIns::compute_fluxes()
 				res[k](i,j) -= mu*(g[i] - g[i-1]);
 		}
 
+		// j- fluxes
 		for(i = 1; i <= m->gimx()-1; i++)
 		{
 			for(j = 0; j <= m->gjmx()-1; j++)

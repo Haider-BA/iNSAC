@@ -81,6 +81,9 @@ public:
 
 	Array2d<double>* getpressure();
 	Array2d<double>** getvelocity();
+	
+	Array2d<double>* getVariables();
+	Array2d<double>* getResiduals();
 };
 
 Steady_insac::Steady_insac() {
@@ -325,6 +328,7 @@ void Steady_insac::compute_timesteps()
 			}
 			areai = sqrt(areavi[0]*areavi[0] + areavi[1]*areavi[1]);
 			areaj = sqrt(areavj[0]*areavj[0] + areavj[1]*areavj[1]);
+			
 			for(dim = 0; dim < ndim; dim++)
 			{
 				inormal[dim] = areavi[dim]/areai;
@@ -337,6 +341,7 @@ void Steady_insac::compute_timesteps()
 
 			eigeni = 0.5*( fabs(vdotni) + sqrt(vdotni*vdotni + 4.0*beta(i,j)*beta(i,j)) );
 			eigenj = 0.5*( fabs(vdotnj) + sqrt(vdotnj*vdotnj + 4.0*beta(i,j)*beta(i,j)) );
+			
 			voldt = eigeni*areai + eigenj*areaj;
 			dt(i,j) = m->gvol(i,j)/voldt * cfl;
 		}
@@ -411,7 +416,33 @@ void Steady_insac::solve()
 			}
 	}
 	
-	getPointSolution();
+	/*ofstream fout("ghostcells.dat");
+	i = m->gimx();
+	for(j = 0; j <= m->gjmx(); j++)
+		fout << u[0](i,j) << " " << u[1](i,j) << " " << u[2](i,j) << '\n';
+	fout << '\n';
+	j = m->gjmx();
+	for(i = 0; i <= m->gimx(); i++)
+		fout << u[0](i,j) << " " << u[1](i,j) << " " << u[2](i,j) << '\n';
+	fout << '\n';
+	i = 0;
+	for(j = 0; j <= m->gjmx(); j++)
+		fout << u[0](i,j) << " " << u[1](i,j) << " " << u[2](i,j) << '\n';
+	fout << '\n';
+	j = 0;
+	for(i = 0; i <= m->gimx(); i++)
+		fout << u[0](i,j) << " " << u[1](i,j) << " " << u[2](i,j) << '\n';
+	fout.close();*/
+}
+
+Array2d<double>* Steady_insac::getVariables()
+{
+	return u;
+}
+
+Array2d<double>* Steady_insac::getResiduals()
+{
+	return res;
 }
 
 Array2d<double>* Steady_insac::getpressure()

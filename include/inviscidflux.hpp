@@ -45,6 +45,7 @@ public:
 
 void PressureReconstruction::setup(Structmesh2d* mesh, Array2d<double>* unknowns, Array2d<double>* delp)
 {
+	cout << "PressureReconstruction: Contructor called." << endl;
 	m = mesh;
 	u = unknowns;
 	dp = delp;
