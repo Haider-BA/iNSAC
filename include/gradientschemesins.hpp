@@ -25,6 +25,7 @@ class GradientSchemeIns
 {
 protected:
 	int nvar;				///< Number of variables in u.
+	int ndim;
 	double mu;				///< Viscosity (dynamic)
 	Structmesh2d* m;		///< Associated mesh
 	Array2d<double>* u;		///< The unknown with which to compute the graient flux
@@ -64,6 +65,7 @@ public:
 void GradientSchemeIns::setup(Structmesh2d* mesh, Array2d<double>* unknown, Array2d<double>* residual, Array2d<double>* lhs, double visc)
 {
 	nvar = 3;
+	ndim = 2;
 	mu = visc;
 	m = mesh;
 	u = unknown;
@@ -93,33 +95,45 @@ void GradientSchemeIns::compute_s()
 //----------------- end of base class GradientScheme -----------------------------//
 
 /// Parallel CV model for gradient reconstruction
-class ParallelCVGradientIns : public GradientSchemesIns
+class ParallelCVGradientIns : public GradientSchemeIns
 {
+	/// flux across any i-face
+	vector<double> g;
+	/// flux across any j-face
+	vector<double> h;
+
+	/// CV normal
+	vector<double> deln;
+	/// gradient
+	vector<double> grad;
+	
 public:
 	void setup(Structmesh2d* mesh, Array2d<double>* unknown, Array2d<double>* residual, Array2d<double>* lhs, double visc);
-	void compute_fluxes():
+	
+	/// This function is a dummy for this class
+	void compute_lhs();
+
+	void compute_fluxes();
 };
 
 void ParallelCVGradientIns::setup(Structmesh2d* mesh, Array2d<double>* unknown, Array2d<double>* residual, Array2d<double>* lhs, double visc)
 {
 	GradientSchemeIns::setup(mesh, unknown, residual, lhs, visc);
 	GradientSchemeIns::compute_CV_volumes();
+
+	g.resize(m->gimx());
+	h.resize(m->gjmx());
+	deln.resize(ndim);
+	grad.resize(ndim);
 }
+
+void ParallelCVGradientIns::compute_lhs()
+{ }
 
 void ParallelCVGradientIns::compute_fluxes()
 {
 	int i,j,k,l;
-	// fluxes across each i-face and j-face respectively
-	vector<vector<double>> g(nvar), h(nvar);
-	for(k = 1; k < nvar; k++)
-	{
-		g[k].resize(m->gimx());
-		h[k].resize(m->gjmx());
-	}
-
 	double f1, f2, f3, f4;
-	vector<double> deln(ndim);
-	vector<double> grad(ndim);
 	
 	for(k = 1; k < nvar; k++)
 	{
@@ -146,7 +160,7 @@ void ParallelCVGradientIns::compute_fluxes()
 				g[i] = grad[0]*m->gdel(i,j,0) + grad[1]*m->gdel(i,j,1);
 			}
 			for(i = 1; i <= m->gimx()-1; i++)
-				res[k](i,j) += g[i] - g[i-1];
+				res[k](i,j) -= mu*(g[i] - g[i-1]);
 		}
 
 		for(i = 1; i <= m->gimx()-1; i++)
@@ -156,8 +170,8 @@ void ParallelCVGradientIns::compute_fluxes()
 				// values at 4 faces of CV
 				f1 = u[k].get(i,j+1);
 				f3 = u[k].get(i,j);
-				f4 = 0.25* (u[k].get(i,j) + u[k].get(i,j+1) + u[k].get(i-1,j) + u[k].get(i-1,j+1);
-				f2 = 0.25* (u[k].get(i,j) + u[k].get(i,j+1) + u[k].get(i+1,j) + u[k].get(i+1,j+1);
+				f4 = 0.25* (u[k].get(i,j) + u[k].get(i,j+1) + u[k].get(i-1,j) + u[k].get(i-1,j+1));
+				f2 = 0.25* (u[k].get(i,j) + u[k].get(i,j+1) + u[k].get(i+1,j) + u[k].get(i+1,j+1));
 
 				deln[0] = m->gyc(i,j+1) - m->gyc(i,j);
 				deln[1] = -(m->gxc(i,j+1) - m->gxc(i,j));
@@ -168,10 +182,10 @@ void ParallelCVGradientIns::compute_fluxes()
 					grad[l] /= dualvol[1].get(i,j);
 				}
 
-				h(j) = grad[0]*m->gdel(i,j,2) + grad[1]*m->gdel(i,j,3);
+				h[j] = grad[0]*m->gdel(i,j,2) + grad[1]*m->gdel(i,j,3);
 			}
 			for(j = 1; j <= m->gjmx()-1; j++)
-				res[k](i,j) += h[j] - h[j-1];
+				res[k](i,j) -= mu*(h[j] - h[j-1]);
 		}
 	}
 }

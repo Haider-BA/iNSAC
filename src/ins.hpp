@@ -93,9 +93,11 @@ void Steady_insac::setup(Structmesh2d* mesh, double dens, double visc, vector<in
 	bvalues = _bvalues;
 	pressurescheme = pressure_scheme;
 	uref = refvel;
-	/*if(gradscheme == "normtan")
+	if(gradscheme == "normtan")
 		grad = new NormTanGradientIns;
-	else*/
+	else if(gradscheme == "parallelcv")
+		grad = new ParallelCVGradientIns;
+	else
 		grad = new ThinLayerGradientIns;
 	
 	invf = new InviscidFlux;

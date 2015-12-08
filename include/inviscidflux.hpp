@@ -179,7 +179,7 @@ void InviscidFlux::setup(Structmesh2d* mesh, Array2d<double>* unknown, Array2d<d
 	pr->setup(m, unknown, dp);
 	
 	/// Rhie-Chow constant [c](@ref c) is maximum 0.5.
-	c = 0.3;
+	c = 0.2;
 	
 	nvar = 3;
 }

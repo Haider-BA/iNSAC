@@ -12,16 +12,16 @@
 1.0
 
 -Gradient-reconstruction-scheme
-thinlayer
+parallelcv
 -Pressure-reconstruction-scheme
-tvd
+basic
 
 -CFL-number
 0.2
 -Relative-tolerance-momentum
-1e-6
+1e-4
 -Max-time-steps
-50000
+30000
 
 -Boundary-flags
 2 2 2 2
