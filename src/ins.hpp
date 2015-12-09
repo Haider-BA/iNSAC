@@ -137,6 +137,19 @@ void Steady_insac::setup(Structmesh2d* mesh, double dens, double visc, vector<in
 	
 	for(int k = 0; k < 3; k++)
 		upoint[k].setup(m->gimx()+1,m->gjmx()+1);
+	
+	cout << "Steady_insac: setup():\n";
+	cout << "BC flags ";
+	for(int i = 0; i < 4; i++)
+		cout << bcflags[i] << " ";
+	cout << "\nB values:\n";
+	for(int i = 0; i < 4; i++)
+	{
+		for(int j = 0; j < 2; j++)
+			cout << bvalues[i][j] << " ";
+		cout << endl;
+	}
+	cout << endl;
 }
 
 Steady_insac::~Steady_insac()
@@ -192,12 +205,14 @@ void Steady_insac::setBCs()
 			u[2](i,j) = u[2].get(i-1,j);
 		}
 	else if(bcflags[0] == 2)	// no-slip wall
+	{
 		for(j = 1; j <= m->gjmx()-1; j++)
 		{
 			u[0](i,j) = u[0](i-1,j);
 			u[1](i,j) = 2.0*bvalues[0][0] - u[1](i-1,j);
 			u[2](i,j) = 2.0*bvalues[0][1] - u[2](i-1,j);
 		}
+	}
 	else 			// slip-wall
 		for(j = 1; j <= m->gjmx()-1; j++)
 		{

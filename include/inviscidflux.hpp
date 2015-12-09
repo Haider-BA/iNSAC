@@ -147,6 +147,10 @@ class InviscidFlux
 	* For other types of boundary, we just read the first value corresponding to that boundary.
 	*/
 	vector<vector<double>> bvalues;
+
+	/// one flag for each of the 4 boundaries, indicating whether or not that boundary is a wall.
+	vector<double> wall;
+
 public:
 	void setup(Structmesh2d* mesh, Array2d<double>* unknown, Array2d<double>* residuals, Array2d<double>* _beta, double _rho, string pressurereconstruction, vector<int> _bcflag, vector<vector<double>> _bvalues);
 	~InviscidFlux();
@@ -188,7 +192,7 @@ void InviscidFlux::setup(Structmesh2d* mesh, Array2d<double>* unknown, Array2d<d
 	
 	nvar = 3;
 	
-	cout << "BC flags ";
+	/*cout << "BC flags ";
 	for(int i = 0; i < 4; i++)
 		cout << bcflags[i] << " ";
 	cout << "\nB values:\n";
@@ -197,7 +201,20 @@ void InviscidFlux::setup(Structmesh2d* mesh, Array2d<double>* unknown, Array2d<d
 		for(int j = 0; j < 2; j++)
 			cout << bvalues[i][j] << " ";
 		cout << endl;
-	}
+	}*/
+	
+	// account for solid walls.
+	wall.resize(4);		// one flag for each of the 4 boundaries.
+	for(int i = 0; i < 4; i++)
+		if(bcflags[i] == 2 || bcflags[i] == 3)
+			wall[i] = 0.0;
+		else
+			wall[i] = 1.0;
+	
+	/*cout << "Wall:";
+	for(int i = 0; i < 4; i++)
+		cout << " " << wall[i];
+	cout << endl;*/
 }
 
 InviscidFlux::~InviscidFlux()
@@ -211,14 +228,6 @@ InviscidFlux::~InviscidFlux()
 void InviscidFlux::compute_fluxes()
 {
 	pr->compute_pressure_difference();
-
-	// account for solid walls.
-	vector<int> wall(4);		// one flag for each of the 4 boundaries.
-	for(int i = 0; i < 4; i++)
-		if(bcflags[i] == 2 || bcflags[i] == 3)
-			wall[i] = 0;
-		else
-			wall[i] = 1;
 
 	// add inviscid flux contribution to residuals
 	//cout << "InviscidFlux: compute_flux(): Computing inviscid fluxes now..." << endl;
@@ -285,7 +294,7 @@ void InviscidFlux::compute_fluxes()
 				uhalf[k] = 0.5*(u[k](i,j) + u[k](i,j+1));
 			bhalf2 = 0.5*(beta->get(i,j)*beta->get(i,j) + beta->get(i,j+1)*beta->get(i,j+1));
 			vdotn = uhalf[1]*nx + uhalf[2]*ny;
-			eigen = 0.5*( fabs(vdotn) + sqrt(vdotn*vdotn + 4*bhalf2) );
+			eigen = 0.5*( fabs(vdotn) + sqrt(vdotn*vdotn + 4.0*bhalf2) );
 			
 			if(j == 0)
 			{

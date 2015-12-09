@@ -57,17 +57,6 @@ int main(int argc, char* argv[])
 	conf.close();
 
 	cout << "Input data:\n";
-	cout << "BC flags ";
-	for(int i = 0; i < 4; i++)
-		cout << bcflags[i] << " ";
-	cout << "\nB values:\n";
-	for(int i = 0; i < 4; i++)
-	{
-		for(int j = 0; j < 2; j++)
-			cout << bvalues[i][j] << " ";
-		cout << endl;
-	}
-	cout << endl;
 	cout << "Pressure scheme = " << pressurescheme << endl;
 	cout << "Gradient scheme = " << gradscheme << endl << endl;
 	cout << "CFL = " << cfl << endl;
