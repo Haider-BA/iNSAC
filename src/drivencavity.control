@@ -9,7 +9,7 @@
 -Dynamic-viscosity-4e-3
 1e-2
 -Reference-velocity-magnitude
-1.0
+1.5
 
 -Gradient-reconstruction-scheme
 parallelcv
@@ -21,7 +21,7 @@ basic
 -Relative-tolerance-momentum
 1e-4
 -Max-time-steps
-100
+40000
 
 -Boundary-flags
 2 2 2 2

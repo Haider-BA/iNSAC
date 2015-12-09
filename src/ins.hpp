@@ -37,6 +37,7 @@ class Steady_insac
 	int maxiter;					///< Max number of time steps
 
 	bool isalloc;
+	bool isinviscid;				///< If true, viscous flux calculation is not carried out
 
 	Array2d<double> upoint[3];
 	
@@ -59,7 +60,7 @@ public:
 	\param tolerance is the relative tolerance
 	\param maxiters is the maximum number of time steps
 	*/
-	void setup(Structmesh2d* mesh, double dens, double visc, vector<int> _bcflags, vector<vector<double>> _bvalues, string gradscheme, string pressure_scheme, double refvel, double CFL, double tolerance, int maxiters);
+	void setup(Structmesh2d* mesh, double dens, double visc, vector<int> _bcflags, vector<vector<double>> _bvalues, string gradscheme, string pressure_scheme, double refvel, double CFL, double tolerance, int maxiters, bool is_inviscid = false);
 
 	~Steady_insac();
 
@@ -90,7 +91,7 @@ Steady_insac::Steady_insac() {
 	isalloc = false;
 }
 
-void Steady_insac::setup(Structmesh2d* mesh, double dens, double visc, vector<int> _bcflags, vector<vector<double>> _bvalues, string gradscheme, string pressure_scheme, double refvel, double CFL, double tolerance, int maxiters)
+void Steady_insac::setup(Structmesh2d* mesh, double dens, double visc, vector<int> _bcflags, vector<vector<double>> _bvalues, string gradscheme, string pressure_scheme, double refvel, double CFL, double tolerance, int maxiters, bool is_inviscid)
 {
 	ndim = 2;
 	m = mesh;
@@ -115,6 +116,8 @@ void Steady_insac::setup(Structmesh2d* mesh, double dens, double visc, vector<in
 	visc_lhs = new Array2d<double>[5];
 
 	isalloc = true;
+
+	isinviscid = is_inviscid;
 
 	for(int i = 0; i < nvar; i++)
 	{
@@ -177,7 +180,7 @@ void Steady_insac::compute_beta()
 void Steady_insac::setBCs()
 {
 	int i,j,k;
-	double vdotn;
+	double nx, ny, area, vdotn;
 
 	// boundary 0
 	i = m->gimx();
@@ -199,9 +202,12 @@ void Steady_insac::setBCs()
 		for(j = 1; j <= m->gjmx()-1; j++)
 		{
 			u[0](i,j) = u[0](i-1,j);
-			vdotn = u[1](i-1,j)*m->gdel(i-1,j,0) + u[2](i-1,j)*m->gdel(i-1,j,1);
-			u[1](i,j) = u[1](i-1,j) - 2*vdotn*m->gdel(i-1,j,0);
-			u[2](i,j) = u[2](i-1,j) - 2*vdotn*m->gdel(i-1,j,1);
+			area = sqrt(m->gdel(i-1,j,0)*m->gdel(i-1,j,0) + m->gdel(i-1,j,1)*m->gdel(i-1,j,1));
+			nx = m->gdel(i-1,j,0)/area;
+			ny = m->gdel(i-1,j,1)/area;
+			vdotn = u[1](i-1,j)*nx + u[2](i-1,j)*ny;
+			u[1](i,j) = u[1](i-1,j) - 2*vdotn*nx;
+			u[2](i,j) = u[2](i-1,j) - 2*vdotn*ny;
 		}
 
 	// boundary 2
@@ -213,7 +219,8 @@ void Steady_insac::setBCs()
 		a = bvalues[2][0] / ( rm*rm - 2.0*rm*rm + m->gy(1,1)*m->gy(1,m->gjmx()) );
 		b = -a*2.0*rm;
 		c = -a*m->gy(1,1)*m->gy(1,1) - b*m->gy(1,1);
-		for(j = 1; j <= m->gjmx()-1; j++) {
+		for(j = 1; j <= m->gjmx()-1; j++) 
+		{
 			u[1](i,j) = a*m->gyc(i,j)*m->gyc(i,j) + b*m->gyc(i,j) + c;
 			u[2](i,j) = 0;
 			u[0](i,j) = u[0](i+1,j);
@@ -239,10 +246,13 @@ void Steady_insac::setBCs()
 		for(j = 1; j <= m->gjmx()-1; j++)
 		{
 			u[0](i,j) = u[0](i+1,j);
+			area = sqrt(m->gdel(i,j,0)*m->gdel(i,j,0) + m->gdel(i,j,1)*m->gdel(i,j,1));
 			// we use negative of the del value as the normal always points in the positive i direction.
-			vdotn = u[1](i+1,j)*(-1*m->gdel(i,j,0)) + u[2](i+1,j)*(-1*m->gdel(i,j,1));
-			u[1](i,j) = u[1](i+1,j) - 2*vdotn*m->gdel(i+1,j,0);
-			u[2](i,j) = u[2](i+1,j) - 2*vdotn*m->gdel(i+1,j,1);
+			nx = -m->gdel(i,j,0)/area;
+			ny = -m->gdel(i,j,1)/area;
+			vdotn = u[1](i+1,j)*nx + u[2](i+1,j)*ny;
+			u[1](i,j) = u[1](i+1,j) - 2*vdotn*nx;
+			u[2](i,j) = u[2](i+1,j) - 2*vdotn*ny;
 		}
 
 	// boundary 1
@@ -267,9 +277,12 @@ void Steady_insac::setBCs()
 		for(i = 1; i <= m->gimx()-1; i++)
 		{
 			u[0](i,j) = u[0](i,j-1);
-			vdotn = u[1](i,j-1)*m->gdel(i,j-1,2) + u[2](i,j-1)*m->gdel(i,j-1,3);
-			u[1](i,j) = u[1](i,j-1) - 2.0*vdotn*m->gdel(i,j-1,2);
-			u[2](i,j) = u[2](i,j-1) - 2.0*vdotn*m->gdel(i,j-1,3);
+			area = sqrt(m->gdel(i,j-1,2)*m->gdel(i,j-1,2) + m->gdel(i,j-1,3)*m->gdel(i,j-1,3));
+			nx = m->gdel(i,j-1,2)/area;
+			ny = m->gdel(i,j-1,3)/area;
+			vdotn = u[1](i,j-1)*nx + u[2](i,j-1)*ny;
+			u[1](i,j) = u[1](i,j-1) - 2.0*vdotn*nx;
+			u[2](i,j) = u[2](i,j-1) - 2.0*vdotn*ny;
 		}
 
 	// boundary 3
@@ -292,10 +305,13 @@ void Steady_insac::setBCs()
 		for(i = 1; i <= m->gimx()-1; i++)
 		{
 			u[0](i,j) = u[0](i,j+1);
-			// we use negative of the del values as the normal always points in the positive j-direction.
-			vdotn = u[1](i,j+1)*(-1)*m->gdel(i,j,2) + u[2](i,j+1)*(-1)*m->gdel(i,j,3);
-			u[1](i,j) = u[1](i,j+1) - 2.0*vdotn*m->gdel(i,j,2);
-			u[2](i,j) = u[2](i,j+1) - 2.0*vdotn*m->gdel(i,j,3);
+			area = sqrt(m->gdel(i,j,2)*m->gdel(i,j,2) + m->gdel(i,j,3)*m->gdel(i,j,3));
+			// we use negative of the del values as the normal always points in the positive j-direction (this really does not matter, though)
+			nx = m->gdel(i,j,2)/area;
+			ny = m->gdel(i,j,3)/area;
+			vdotn = u[1](i,j+1)*nx + u[2](i,j+1)*ny;
+			u[1](i,j) = u[1](i,j+1) - 2.0*vdotn*nx;
+			u[2](i,j) = u[2](i,j+1) - 2.0*vdotn*ny;
 		}
 
 	for(k = 0; k < nvar; k++)
@@ -379,11 +395,13 @@ void Steady_insac::solve()
 		
 		compute_timesteps();
 
-		// compute fluxes
 		for(k = 0; k < nvar; k++)
 			res[k].zeros();
+		
+		// compute fluxes
 		invf->compute_fluxes();
-		grad->compute_fluxes();
+		if(!isinviscid)
+			grad->compute_fluxes();
 
 		// check convergence
 		resnorm = 0; massflux = 0;
