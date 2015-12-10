@@ -135,10 +135,10 @@ class InviscidFlux
 
 	/** \brief Integers indicating the type of boundary for each of the 4 boundaries.
 	*
-	*	1. velocity inflow
-	*	2. pressure outflow
-	*	3. no-slip wall
-	*	4. slip wall
+	*	0. velocity inflow
+	*	1. pressure outflow
+	*	2. no-slip wall
+	*	3. slip wall
 	*/
 	vector<int> bcflags;
 	
@@ -177,7 +177,7 @@ void InviscidFlux::setup(Structmesh2d* mesh, Array2d<double>* unknown, Array2d<d
 	if(pressurereconstruction=="basic")
 	{
 		pr = new BasicPR;
-		cout << "BasicPR\n";
+		cout << "InviscidFlux: setup(): BasicPR selected.\n";
 	}
 	else if(pressurereconstruction=="tvd")
 		pr = new TVDPR;
@@ -203,7 +203,7 @@ void InviscidFlux::setup(Structmesh2d* mesh, Array2d<double>* unknown, Array2d<d
 		cout << endl;
 	}*/
 	
-	// account for solid walls.
+	// account for solid walls; ie bcflag values of 2 or 3
 	wall.resize(4);		// one flag for each of the 4 boundaries.
 	for(int i = 0; i < 4; i++)
 		if(bcflags[i] == 2 || bcflags[i] == 3)

@@ -60,6 +60,9 @@ int main(int argc, char* argv[])
 	cout << "Pressure scheme = " << pressurescheme << endl;
 	cout << "Gradient scheme = " << gradscheme << endl << endl;
 	cout << "CFL = " << cfl << endl;
+	cout << "Dynamic viscosity = " << mu << endl;
+	cout << "Density = " << rho << endl;
+	cout << "Reference velocity = " << refvel << endl;
 
 	Structmesh2d m;
 	m.readmesh(meshfile);

@@ -39,8 +39,6 @@ class Steady_insac
 	bool isalloc;
 	bool isinviscid;				///< If true, viscous flux calculation is not carried out
 
-	Array2d<double> upoint[3];
-	
 	Array2d<double>* vel[2];			///< Required for output of velocity
 
 public:
@@ -134,9 +132,6 @@ void Steady_insac::setup(Structmesh2d* mesh, double dens, double visc, vector<in
 
 	invf->setup(m, u, res, &beta, rho, pressure_scheme, _bcflags, _bvalues);
 	grad->setup(m,u,res,visc_lhs, mu);
-	
-	for(int k = 0; k < 3; k++)
-		upoint[k].setup(m->gimx()+1,m->gjmx()+1);
 	
 	cout << "Steady_insac: setup():\n";
 	cout << "BC flags ";
@@ -284,8 +279,8 @@ void Steady_insac::setBCs()
 		for(i = 1; i <= m->gimx()-1; i++)
 		{
 			u[0](i,j) = u[0](i,j-1);
-			u[1](i,j) = 2*bvalues[1][0] - u[1](i,j-1);
-			u[2](i,j) = 2*bvalues[1][1] - u[2](i,j-1);
+			u[1](i,j) = 2.0*bvalues[1][0] - u[1](i,j-1);
+			u[2](i,j) = 2.0*bvalues[1][1] - u[2](i,j-1);
 		}
 	}
 	else if(bcflags[1] == 3)	// slip wall
@@ -313,8 +308,8 @@ void Steady_insac::setBCs()
 		for(i = 1; i <= m->gimx()-1; i++)
 		{
 			u[0](i,j) = u[0](i,j+1);
-			u[1](i,j) = 2*bvalues[3][0] - u[1](i,j+1);
-			u[2](i,j) = 2*bvalues[3][1] - u[2](i,j+1);
+			u[1](i,j) = 2.0*bvalues[3][0] - u[1](i,j+1);
+			u[2](i,j) = 2.0*bvalues[3][1] - u[2](i,j+1);
 		}
 	else if(bcflags[3] == 3)	// slip wall
 		for(i = 1; i <= m->gimx()-1; i++)
@@ -329,6 +324,7 @@ void Steady_insac::setBCs()
 			u[2](i,j) = u[2](i,j+1) - 2.0*vdotn*ny;
 		}
 
+	// for corner ghost cells
 	for(k = 0; k < nvar; k++)
 	{
 		u[k](0,0) = 0.5*(u[k](1,0)+u[k](0,1));
@@ -353,7 +349,8 @@ void Steady_insac::compute_timesteps()
 	for(i = 1; i <= m->gimx()-1; i++)
 		for(j = 1; j <= m->gjmx()-1; j++)
 		{
-			for(dim = 0; dim < ndim; dim++) {
+			for(dim = 0; dim < ndim; dim++) 
+			{
 				areavi[dim] = 0.5*(m->gdel(i,j,dim) + m->gdel(i-1,j,dim));
 				areavj[dim] = 0.5*(m->gdel(i,j,2+dim) + m->gdel(i,j-1,2+dim));
 			}
@@ -398,6 +395,7 @@ void Steady_insac::setInitialConditions()
 void Steady_insac::solve()
 {
 	setInitialConditions();
+	setBCs();
 	compute_beta();
 
 	int i,j,k;
@@ -478,26 +476,3 @@ Array2d<double>* Steady_insac::getResiduals()
 	return res;
 }
 
-Array2d<double>* Steady_insac::getpressure()
-{
-	return &(upoint[0]);
-}
-
-Array2d<double>** Steady_insac::getvelocity()
-{
-	/// [vel](@ref vel) is an array of 2 [Array2d<double>](@ref Array2d)'s, one each to hold a pointer to a component Array2d of velocity.
-	vel[0] = &upoint[1];
-	vel[1] = &upoint[2];
-	return vel;
-}
-
-void Steady_insac::getPointSolution()
-{ 
-	// interior points
-	for(int k = 0; k < 3; k++)
-		for(int i = 1; i <= m->gimx(); i++)
-			for(int j = 1; j <= m->gjmx(); j++)
-			{
-				upoint[k](i,j) = (u[k].get(i,j) + u[k].get(i-1,j) + u[k].get(i,j-1) + u[k].get(i-1,j-1))*0.25;
-			}
-}
