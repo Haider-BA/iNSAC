@@ -11,3 +11,5 @@ Questionable parts
 - Is beta calculated every time step or not?
 - What is the reference velocity used for beta calculation?
 - What is being done about corner ghost cells? We need it for parallel CV gradients.
+	Ans: One could set them according to left and right boundaries.
+- Check denominator of Rhie-Chow constant (is there a beta^2 or not?)

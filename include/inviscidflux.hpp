@@ -31,7 +31,7 @@ double minmod_avg(double a, double b)
 		return (signa+signb)*0.5*fabs(b);
 }
 
-/// Compute pressure difference dp across each face as (p_L - p_R)
+/// Abstract class to compute pressure difference dp across each face as (p_L - p_R)
 class PressureReconstruction
 {
 protected:
@@ -51,7 +51,9 @@ void PressureReconstruction::setup(Structmesh2d* mesh, Array2d<double>* unknowns
 	dp = delp;
 }
 
-/** \brief Implements the basic first-order pressure reconstruction for the mass flux needed for the Rhie-Chow method.
+/** \brief Implements the basic first-order pressure reconstruction needed for the mass flux in the Rhie-Chow method.
+*
+* Computes pressure difference across each face in the mesh (including faces shared between ghost cells).
 */
 class BasicPR : public PressureReconstruction
 {
@@ -231,10 +233,9 @@ void InviscidFlux::compute_fluxes()
 
 	// add inviscid flux contribution to residuals
 	//cout << "InviscidFlux: compute_flux(): Computing inviscid fluxes now..." << endl;
-	// We consider the first ghost cell layer for i, but not the last.
 	int i, j, k;
 	double area, nx, ny, eigen, vdotn;
-	double bhalf2; vector<double> uhalf(3);			// interface values for each unknown
+	double bhalf2; vector<double> uhalf(nvar);			// interface values for each unknown
 	Array2d<double> g(m->gimx(),nvar);
 	
 	for(j = 1; j <= m->gjmx()-1; j++)
@@ -315,7 +316,7 @@ void InviscidFlux::compute_fluxes()
 				h(j,2) = area*(rho*vdotn*uhalf[2] + uhalf[0]*ny); 
 			}
 		}
-		for(j = 1; j < m->gjmx()-1; j++)
+		for(j = 1; j <= m->gjmx()-1; j++)
 			for(k = 0; k < nvar; k++)
 				res[k](i,j) += h(j,k) - h(j-1,k);
 	}

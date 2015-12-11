@@ -21,7 +21,7 @@ basic
 -Relative-tolerance-momentum
 1e-4
 -Max-time-steps
-40000
+20000
 
 -Boundary-flags
 2 2 2 2
