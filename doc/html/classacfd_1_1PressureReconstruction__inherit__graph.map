@@ -1,4 +1,4 @@
 <map id="acfd::PressureReconstruction" name="acfd::PressureReconstruction">
-<area shape="rect" id="node2" href="$classacfd_1_1BasicPR.html" title="Implements the basic first&#45;order pressure reconstruction for the mass flux according to Rhie&#45;Chow met..." alt="" coords="5,80,112,107"/>
-<area shape="rect" id="node3" href="$classacfd_1_1TVDPR.html" title="Implements a second&#45;order accurate TVD pressure reconstruction for the mass flux according to Rhie&#45;Ch..." alt="" coords="136,80,237,107"/>
+<area shape="rect" id="node2" href="$classacfd_1_1BasicPR.html" title="Implements the basic first&#45;order pressure reconstruction needed for the mass flux in the Rhie&#45;Chow me..." alt="" coords="5,80,112,107"/>
+<area shape="rect" id="node3" href="$classacfd_1_1TVDPR.html" title="Implements a second&#45;order accurate TVD pressure reconstruction for the mass flux needed for the Rhie&#45;..." alt="" coords="136,80,237,107"/>
 </map>

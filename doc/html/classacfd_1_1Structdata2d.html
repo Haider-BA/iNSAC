@@ -38,7 +38,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
-      <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
       <li>
@@ -72,7 +71,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -105,14 +104,14 @@ Collaboration diagram for acfd::Structdata2d:</div>
 <div class="dyncontent">
 <div class="center"><img src="classacfd_1_1Structdata2d__coll__graph.png" border="0" usemap="#acfd_1_1Structdata2d_coll__map" alt="Collaboration graph"/></div>
 <map name="acfd_1_1Structdata2d_coll__map" id="acfd_1_1Structdata2d_coll__map">
-<area shape="rect" id="node2" href="classacfd_1_1Structmesh2d.html" title="This class encapsulates the 2D structured mesh. " alt="" coords="113,169,248,196"/><area shape="rect" id="node3" href="classamat_1_1Array2d.html" title="amat::Array2d\&lt; double \&gt;" alt="" coords="5,5,171,32"/></map>
+<area shape="rect" id="node2" href="classacfd_1_1Structmesh2d.html" title="This class encapsulates the 2D structured mesh. " alt="" coords="105,177,240,204"/><area shape="rect" id="node3" href="classamat_1_1Array2d.html" title="amat::Array2d\&lt; double \&gt;" alt="" coords="5,5,171,32"/></map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a80823566729770be203d841be07f0349"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a80823566729770be203d841be07f0349"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>Structdata2d</b> (<a class="el" href="classacfd_1_1Structmesh2d.html">Structmesh2d</a> *mesh, int n_scalars, <a class="el" href="classamat_1_1Array2d.html">Array2d</a>&lt; double &gt; *_scalars, string *scalar_names, int n_vectors, <a class="el" href="classamat_1_1Array2d.html">Array2d</a>&lt; double &gt; **_vectors, string *vector_names, string title)</td></tr>
-<tr class="separator:a80823566729770be203d841be07f0349"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac600c2c48e31c66292f231e63151e20e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac600c2c48e31c66292f231e63151e20e"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>Structdata2d</b> (<a class="el" href="classacfd_1_1Structmesh2d.html">Structmesh2d</a> *mesh, <a class="el" href="classamat_1_1Array2d.html">Array2d</a>&lt; double &gt; *_u, <a class="el" href="classamat_1_1Array2d.html">Array2d</a>&lt; double &gt; *_res, string _title)</td></tr>
+<tr class="separator:ac600c2c48e31c66292f231e63151e20e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a21754d9ef1ff3dac8780f015d00a449d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a21754d9ef1ff3dac8780f015d00a449d"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classacfd_1_1Structdata2d.html#a21754d9ef1ff3dac8780f015d00a449d">writevtk</a> (string fname)</td></tr>
 <tr class="memdesc:a21754d9ef1ff3dac8780f015d00a449d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Writes data to a file in legacy VTK format. <br /></td></tr>
@@ -124,29 +123,18 @@ Private Attributes</h2></td></tr>
 int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classacfd_1_1Structdata2d.html#a9ac3955ded3ca65f7a23672c80232132">ndim</a></td></tr>
 <tr class="memdesc:a9ac3955ded3ca65f7a23672c80232132"><td class="mdescLeft">&#160;</td><td class="mdescRight">Dimension of the problem. <br /></td></tr>
 <tr class="separator:a9ac3955ded3ca65f7a23672c80232132"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a10ce723ae992c044fe267b9f35573e27"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a10ce723ae992c044fe267b9f35573e27"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classacfd_1_1Structdata2d.html#a10ce723ae992c044fe267b9f35573e27">nscalars</a></td></tr>
-<tr class="memdesc:a10ce723ae992c044fe267b9f35573e27"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of scalar quantities. <br /></td></tr>
-<tr class="separator:a10ce723ae992c044fe267b9f35573e27"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aeb4a3f3ac7237d27e923e254f5dd2f77"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aeb4a3f3ac7237d27e923e254f5dd2f77"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classacfd_1_1Structdata2d.html#aeb4a3f3ac7237d27e923e254f5dd2f77">nvectors</a></td></tr>
-<tr class="memdesc:aeb4a3f3ac7237d27e923e254f5dd2f77"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of vector quantities. <br /></td></tr>
-<tr class="separator:aeb4a3f3ac7237d27e923e254f5dd2f77"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa19bd5c40a54aa63d7614089a1f531e3"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa19bd5c40a54aa63d7614089a1f531e3"></a>
 <a class="el" href="classacfd_1_1Structmesh2d.html">Structmesh2d</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>m</b></td></tr>
 <tr class="separator:aa19bd5c40a54aa63d7614089a1f531e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a19210febec5cad24c2c9a50d441d0e4d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a19210febec5cad24c2c9a50d441d0e4d"></a>
-<a class="el" href="classamat_1_1Array2d.html">Array2d</a>&lt; double &gt; *&#160;</td><td class="memItemRight" valign="bottom"><b>scalars</b></td></tr>
-<tr class="separator:a19210febec5cad24c2c9a50d441d0e4d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9735beb5a9c66cf69bf548e3e65186ae"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9735beb5a9c66cf69bf548e3e65186ae"></a>
-<a class="el" href="classamat_1_1Array2d.html">Array2d</a>&lt; double &gt; **&#160;</td><td class="memItemRight" valign="bottom"><b>vectors</b></td></tr>
-<tr class="separator:a9735beb5a9c66cf69bf548e3e65186ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa4cafc2e3a22ca4a42957d97bcab9efc"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa4cafc2e3a22ca4a42957d97bcab9efc"></a>
-string *&#160;</td><td class="memItemRight" valign="bottom"><b>scalarnames</b></td></tr>
-<tr class="separator:aa4cafc2e3a22ca4a42957d97bcab9efc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab35238a6e1bede27bcdbf26e90e8f12e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab35238a6e1bede27bcdbf26e90e8f12e"></a>
-string *&#160;</td><td class="memItemRight" valign="bottom"><b>vectornames</b></td></tr>
-<tr class="separator:ab35238a6e1bede27bcdbf26e90e8f12e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab881d18d88454e2f41a0963874d911db"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab881d18d88454e2f41a0963874d911db"></a>
+<a class="el" href="classamat_1_1Array2d.html">Array2d</a>&lt; double &gt; *&#160;</td><td class="memItemRight" valign="bottom"><b>u</b></td></tr>
+<tr class="separator:ab881d18d88454e2f41a0963874d911db"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a48bf7a7a70acbdcee873936ad5de636c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a48bf7a7a70acbdcee873936ad5de636c"></a>
+<a class="el" href="classamat_1_1Array2d.html">Array2d</a>&lt; double &gt; *&#160;</td><td class="memItemRight" valign="bottom"><b>res</b></td></tr>
+<tr class="separator:a48bf7a7a70acbdcee873936ad5de636c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a332074b09cdfb646999435ac24b28575"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a332074b09cdfb646999435ac24b28575"></a>
+<a class="el" href="classamat_1_1Array2d.html">Array2d</a>&lt; double &gt; *&#160;</td><td class="memItemRight" valign="bottom"><b>upoint</b></td></tr>
+<tr class="separator:a332074b09cdfb646999435ac24b28575"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4fe5ead3ea93904ef5ef693768d8766a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4fe5ead3ea93904ef5ef693768d8766a"></a>
 string&#160;</td><td class="memItemRight" valign="bottom"><b>title</b></td></tr>
 <tr class="separator:a4fe5ead3ea93904ef5ef693768d8766a"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -160,7 +148,7 @@ string&#160;</td><td class="memItemRight" valign="bottom"><b>title</b></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri Dec 4 2015 23:28:45 for iNSAC by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Sat Dec 12 2015 01:14:56 for iNSAC by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.7
 </small></address>

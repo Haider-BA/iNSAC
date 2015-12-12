@@ -38,7 +38,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
-      <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
       <li>
@@ -72,7 +71,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -95,7 +94,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!--header-->
 <div class="contents">
 
-<p>Implements a second-order accurate TVD pressure reconstruction for the mass flux according to Rhie-Chow scheme for colocated grid.  
+<p>Implements a second-order accurate TVD pressure reconstruction for the mass flux needed for the Rhie-Chow scheme for colocated grid.  
  <a href="classacfd_1_1TVDPR.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="inviscidflux_8hpp_source.html">inviscidflux.hpp</a>&gt;</code></p>
@@ -104,14 +103,14 @@ Inheritance diagram for acfd::TVDPR:</div>
 <div class="dyncontent">
 <div class="center"><img src="classacfd_1_1TVDPR__inherit__graph.png" border="0" usemap="#acfd_1_1TVDPR_inherit__map" alt="Inheritance graph"/></div>
 <map name="acfd_1_1TVDPR_inherit__map" id="acfd_1_1TVDPR_inherit__map">
-<area shape="rect" id="node2" href="classacfd_1_1PressureReconstruction.html" title="Compute pressure difference dp across each face as (p_L &#45; p_R) " alt="" coords="5,5,200,32"/></map>
+<area shape="rect" id="node2" href="classacfd_1_1PressureReconstruction.html" title="Abstract class to compute pressure difference dp across each face as (p_L &#45; p_R) " alt="" coords="5,5,200,32"/></map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <div class="dynheader">
 Collaboration diagram for acfd::TVDPR:</div>
 <div class="dyncontent">
 <div class="center"><img src="classacfd_1_1TVDPR__coll__graph.png" border="0" usemap="#acfd_1_1TVDPR_coll__map" alt="Collaboration graph"/></div>
 <map name="acfd_1_1TVDPR_coll__map" id="acfd_1_1TVDPR_coll__map">
-<area shape="rect" id="node2" href="classacfd_1_1PressureReconstruction.html" title="Compute pressure difference dp across each face as (p_L &#45; p_R) " alt="" coords="5,261,200,288"/><area shape="rect" id="node3" href="classacfd_1_1Structmesh2d.html" title="This class encapsulates the 2D structured mesh. " alt="" coords="107,169,241,196"/><area shape="rect" id="node4" href="classamat_1_1Array2d.html" title="amat::Array2d\&lt; double \&gt;" alt="" coords="19,5,185,32"/></map>
+<area shape="rect" id="node2" href="classacfd_1_1PressureReconstruction.html" title="Abstract class to compute pressure difference dp across each face as (p_L &#45; p_R) " alt="" coords="5,261,200,288"/><area shape="rect" id="node3" href="classacfd_1_1Structmesh2d.html" title="This class encapsulates the 2D structured mesh. " alt="" coords="107,169,241,196"/><area shape="rect" id="node4" href="classamat_1_1Array2d.html" title="amat::Array2d\&lt; double \&gt;" alt="" coords="19,5,185,32"/></map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
@@ -138,14 +137,14 @@ Additional Inherited Members</h2></td></tr>
 <tr class="separator:a2cdf2f0e4b2cadc0093c4a32f899bda8 inherit pro_attribs_classacfd_1_1PressureReconstruction"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Implements a second-order accurate TVD pressure reconstruction for the mass flux according to Rhie-Chow scheme for colocated grid. </p>
+<div class="textblock"><p>Implements a second-order accurate TVD pressure reconstruction for the mass flux needed for the Rhie-Chow scheme for colocated grid. </p>
 </div><hr/>The documentation for this class was generated from the following file:<ul>
 <li><a class="el" href="inviscidflux_8hpp_source.html">inviscidflux.hpp</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri Dec 4 2015 23:28:45 for iNSAC by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Sat Dec 12 2015 01:14:56 for iNSAC by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.7
 </small></address>

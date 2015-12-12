@@ -1,5 +1,7 @@
-/** This file defines some usually-needed constants.
-*/
+/** @file aconstants.h 
+ * @brief This file defines some usually-needed constants.
+ * @author Aditya Kashi
+ */
 
 #ifndef __ACONSTANTS_H
 	
@@ -12,5 +14,7 @@
 
 	/// A small number likely smaller than most convergence tolerances
 	#define A_SMALL_NUMBER 1e-12
+	
+	#define BIG_NUMBER 1e30
 
 #endif

@@ -2,7 +2,7 @@ c ---- Note: ii = imx, jj = jmx, standard cell-centered FV ordering
 
 c ---- open file containing immersed boundaries
 
-      nintpts = 8
+      nintpts = 8   ! number of neighbors of a cell
 
 c     open(10,file='ibsurf.dat',status='old')
 

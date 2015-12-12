@@ -38,7 +38,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
-      <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
       <li>
@@ -72,7 +71,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -105,7 +104,7 @@ Collaboration diagram for acfd::InviscidFlux:</div>
 <div class="dyncontent">
 <div class="center"><img src="classacfd_1_1InviscidFlux__coll__graph.png" border="0" usemap="#acfd_1_1InviscidFlux_coll__map" alt="Collaboration graph"/></div>
 <map name="acfd_1_1InviscidFlux_coll__map" id="acfd_1_1InviscidFlux_coll__map">
-<area shape="rect" id="node2" href="classacfd_1_1PressureReconstruction.html" title="Compute pressure difference dp across each face as (p_L &#45; p_R) " alt="" coords="40,304,235,331"/><area shape="rect" id="node3" href="classacfd_1_1Structmesh2d.html" title="This class encapsulates the 2D structured mesh. " alt="" coords="131,169,265,196"/><area shape="rect" id="node4" href="classamat_1_1Array2d.html" title="amat::Array2d\&lt; double \&gt;" alt="" coords="5,5,171,32"/></map>
+<area shape="rect" id="node2" href="classacfd_1_1PressureReconstruction.html" title="Abstract class to compute pressure difference dp across each face as (p_L &#45; p_R) " alt="" coords="40,304,235,331"/><area shape="rect" id="node3" href="classacfd_1_1Structmesh2d.html" title="This class encapsulates the 2D structured mesh. " alt="" coords="131,169,265,196"/><area shape="rect" id="node4" href="classamat_1_1Array2d.html" title="amat::Array2d\&lt; double \&gt;" alt="" coords="5,5,171,32"/></map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
@@ -141,9 +140,8 @@ double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cl
 <tr class="memitem:a5edbd09cbecaa602cb6815938843e563"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5edbd09cbecaa602cb6815938843e563"></a>
 <a class="el" href="classacfd_1_1PressureReconstruction.html">PressureReconstruction</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>pr</b></td></tr>
 <tr class="separator:a5edbd09cbecaa602cb6815938843e563"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5e14b3697e1fdfc949bae0aad0796e0a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5e14b3697e1fdfc949bae0aad0796e0a"></a>
-<a class="el" href="classamat_1_1Array2d.html">Array2d</a>&lt; double &gt; *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classacfd_1_1InviscidFlux.html#a5e14b3697e1fdfc949bae0aad0796e0a">dp</a></td></tr>
-<tr class="memdesc:a5e14b3697e1fdfc949bae0aad0796e0a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pressure difference across each face. <br /></td></tr>
+<tr class="memitem:a5e14b3697e1fdfc949bae0aad0796e0a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classamat_1_1Array2d.html">Array2d</a>&lt; double &gt; *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classacfd_1_1InviscidFlux.html#a5e14b3697e1fdfc949bae0aad0796e0a">dp</a></td></tr>
+<tr class="memdesc:a5e14b3697e1fdfc949bae0aad0796e0a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pressure difference across each face.  <a href="#a5e14b3697e1fdfc949bae0aad0796e0a">More...</a><br /></td></tr>
 <tr class="separator:a5e14b3697e1fdfc949bae0aad0796e0a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1281437e165261edbd301bd9666b13bf"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1281437e165261edbd301bd9666b13bf"></a>
 double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classacfd_1_1InviscidFlux.html#a1281437e165261edbd301bd9666b13bf">c</a></td></tr>
@@ -157,15 +155,19 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>isallocdp</b></td></tr>
 <tr class="separator:aafe42fee79d3b65a8500c75d90d11830"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a245fffb832907827b992e4309910cc5e"><td class="memItemLeft" align="right" valign="top">vector&lt; int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classacfd_1_1InviscidFlux.html#a245fffb832907827b992e4309910cc5e">bcflags</a></td></tr>
-<tr class="memdesc:a245fffb832907827b992e4309910cc5e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Integers indicating the tyoe of boundary for each of the 4 boundaries.  <a href="#a245fffb832907827b992e4309910cc5e">More...</a><br /></td></tr>
+<tr class="memdesc:a245fffb832907827b992e4309910cc5e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Integers indicating the type of boundary for each of the 4 boundaries.  <a href="#a245fffb832907827b992e4309910cc5e">More...</a><br /></td></tr>
 <tr class="separator:a245fffb832907827b992e4309910cc5e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3bae7e0c2f70a00f11338b02becd95cb"><td class="memItemLeft" align="right" valign="top">vector&lt; vector&lt; double &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classacfd_1_1InviscidFlux.html#a3bae7e0c2f70a00f11338b02becd95cb">bvalues</a></td></tr>
 <tr class="memdesc:a3bae7e0c2f70a00f11338b02becd95cb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Values of prescribed quantities corresponding to the flags in bcflags.  <a href="#a3bae7e0c2f70a00f11338b02becd95cb">More...</a><br /></td></tr>
 <tr class="separator:a3bae7e0c2f70a00f11338b02becd95cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5de61c1040182ff0745139df9d84bac2"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5de61c1040182ff0745139df9d84bac2"></a>
+vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classacfd_1_1InviscidFlux.html#a5de61c1040182ff0745139df9d84bac2">wall</a></td></tr>
+<tr class="memdesc:a5de61c1040182ff0745139df9d84bac2"><td class="mdescLeft">&#160;</td><td class="mdescRight">one flag for each of the 4 boundaries, indicating whether or not that boundary is a wall. <br /></td></tr>
+<tr class="separator:a5de61c1040182ff0745139df9d84bac2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Class to add contributions of inviscid fluxes to the residual. </p>
-<p>Implements a Rhie-Chow stabilization in the mass flux, for which pressure reconstruction is needed. </p><dl class="section see"><dt>See also</dt><dd><a class="el" href="classacfd_1_1PressureReconstruction.html" title="Compute pressure difference dp across each face as (p_L - p_R) ">PressureReconstruction</a> </dd></dl>
+<p>Implements a Rhie-Chow stabilization in the mass flux, for which pressure reconstruction is needed. </p><dl class="section see"><dt>See also</dt><dd><a class="el" href="classacfd_1_1PressureReconstruction.html" title="Abstract class to compute pressure difference dp across each face as (p_L - p_R) ">PressureReconstruction</a> </dd></dl>
 </div><h2 class="groupheader">Member Function Documentation</h2>
 <a class="anchor" id="a764acb5fc7a3b4fa72814e010fd5660c"></a>
 <div class="memitem">
@@ -227,7 +229,7 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>isallocdp</b></td></t
       </table>
 </div><div class="memdoc">
 <p>Sets the pressure reconstruction scheme to be used based on the last argument - "basic" or "TVD".</p>
-<p>Rhie-Chow constant <a class="el" href="classacfd_1_1InviscidFlux.html#a1281437e165261edbd301bd9666b13bf">c</a> is set as 0.5. </p>
+<p>Rhie-Chow constant <a class="el" href="classacfd_1_1InviscidFlux.html#a1281437e165261edbd301bd9666b13bf">c</a> is maximum 0.5. </p>
 
 </div>
 </div>
@@ -250,9 +252,8 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>isallocdp</b></td></t
 </table>
 </div><div class="memdoc">
 
-<p>Integers indicating the tyoe of boundary for each of the 4 boundaries. </p>
-<ol type="1">
-<li>velocity inflow</li>
+<p>Integers indicating the type of boundary for each of the 4 boundaries. </p>
+<p>0. velocity inflow</p><ol type="1">
 <li>pressure outflow</li>
 <li>no-slip wall</li>
 <li>slip wall </li>
@@ -283,13 +284,36 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>isallocdp</b></td></t
 
 </div>
 </div>
+<a class="anchor" id="a5e14b3697e1fdfc949bae0aad0796e0a"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classamat_1_1Array2d.html">Array2d</a>&lt;double&gt;* acfd::InviscidFlux::dp</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Pressure difference across each face. </p>
+<p>dp[0] contains pressure difference across i-faces. dp[1] contains pressure differences across j-faces. </p>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following file:<ul>
 <li><a class="el" href="inviscidflux_8hpp_source.html">inviscidflux.hpp</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri Dec 4 2015 23:28:45 for iNSAC by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Sat Dec 12 2015 01:14:56 for iNSAC by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.7
 </small></address>

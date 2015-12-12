@@ -11,7 +11,7 @@
 #include <fstream>
 #endif
 
-#ifndef _GLIBCXX_FSTREAM
+#ifndef _GLIBCXX_STRING
 #include <string>
 #endif
 
@@ -33,7 +33,7 @@ namespace acfd {
 
 ///	Class for managing output of analysis data for simulations on structured 2D grids.
 /**	We assume 1-based arrays for all array-quantities.
-* Vectors are taken as an array (for each different vector quantity) of arrays (for each component of vector) of matrices over i,j.
+* Cell data is taken as input and both cell data and point data are written to the output file.
 */
 class Structdata2d
 {

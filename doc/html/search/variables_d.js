@@ -1,5 +1,8 @@
 var searchData=
 [
-  ['u',['u',['../classacfd_1_1GradientSchemeIns.html#ad2dc3844931becf8e0a5d0eeec2dbd86',1,'acfd::GradientSchemeIns::u()'],['../classacfd_1_1InviscidFlux.html#ad29645ec40cf25bd2d0c89aa812581a7',1,'acfd::InviscidFlux::u()'],['../classSteady__insac.html#a97f92712103ca1416d1740356f62e565',1,'Steady_insac::u()']]],
-  ['uref',['uref',['../classSteady__insac.html#a9b033a16260ad0acd72fff5b5d0a0248',1,'Steady_insac']]]
+  ['snx',['snx',['../classacfd_1_1ImmersedBoundary.html#ae728731dcd08ba1c7ab8d3b8f8225f84',1,'acfd::ImmersedBoundary']]],
+  ['sny',['sny',['../classacfd_1_1ImmersedBoundary.html#aab9a87cc9d73be98d910a66b69509b65',1,'acfd::ImmersedBoundary']]],
+  ['spx',['spx',['../classacfd_1_1ImmersedBoundary.html#a41673f9564e8fdad84f04c29a49c623e',1,'acfd::ImmersedBoundary']]],
+  ['spy',['spy',['../classacfd_1_1ImmersedBoundary.html#ad89d3e01a28bf15fa739c2fd34483b93',1,'acfd::ImmersedBoundary']]],
+  ['svect',['svect',['../classacfd_1_1NormTanGradientIns.html#aeac05848a9df21cb8e4b8bb9b464996e',1,'acfd::NormTanGradientIns']]]
 ];

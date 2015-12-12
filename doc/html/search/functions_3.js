@@ -1,6 +1,7 @@
 var searchData=
 [
   ['gdel',['gdel',['../classacfd_1_1Structmesh2d.html#a496543c6f2908b8c06519c1d72b32804',1,'acfd::Structmesh2d']]],
+  ['getpointsolution',['getPointSolution',['../classSteady__insac.html#a62ea0f32ab109407c0a999a48c66f398',1,'Steady_insac']]],
   ['gimx',['gimx',['../classacfd_1_1Structmesh2d.html#ab98bbbc75a3717cd30f71a6af3075792',1,'acfd::Structmesh2d']]],
   ['gjmx',['gjmx',['../classacfd_1_1Structmesh2d.html#aceed69316861bac792f1d1e9d52dd550',1,'acfd::Structmesh2d']]],
   ['gvol',['gvol',['../classacfd_1_1Structmesh2d.html#aca26537dcaa21c892b3194d83a3326c1',1,'acfd::Structmesh2d']]],

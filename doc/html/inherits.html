@@ -38,7 +38,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
-      <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
       <li>
@@ -73,7 +72,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -92,37 +91,45 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><table border="0" cellspacing="10" cellpadding="0">
 <tr><td><img src="inherit_graph_0.png" border="0" alt="" usemap="#acfd_1_1GradientSchemeIns"/>
 <map name="acfd_1_1GradientSchemeIns" id="acfd_1_1GradientSchemeIns">
-<area shape="rect" id="node1" href="classacfd_1_1GradientSchemeIns.html" title="Base class for gradient reconstruction schemes for AC formulation of iNS equations. " alt="" coords="5,31,176,57"/><area shape="rect" id="node2" href="classacfd_1_1NormTanGradientIns.html" title="Computes LHS and residual for FVM solution of Poisson equation using Normal&#45;tangent gradient decompos..." alt="" coords="225,5,401,32"/><area shape="rect" id="node3" href="classacfd_1_1ThinLayerGradientIns.html" title="Thin layer gradient reconstruction scheme. " alt="" coords="224,56,403,83"/></map>
+<area shape="rect" id="node1" href="classacfd_1_1GradientSchemeIns.html" title="Base class for gradient reconstruction schemes for AC formulation of iNS equations. " alt="" coords="5,56,176,83"/><area shape="rect" id="node2" href="classacfd_1_1NormTanGradientIns.html" title="Computes LHS and residual for FVM solution of Poisson equation using Normal&#45;tangent gradient decompos..." alt="" coords="228,5,404,32"/><area shape="rect" id="node3" href="classacfd_1_1ParallelCVGradientIns.html" title="Parallel CV model for gradient reconstruction. " alt="" coords="224,56,408,83"/><area shape="rect" id="node4" href="classacfd_1_1ThinLayerGradientIns.html" title="Thin layer gradient reconstruction scheme. " alt="" coords="227,107,405,133"/></map>
 </td></tr>
-<tr><td><img src="inherit_graph_1.png" border="0" alt="" usemap="#acfd_1_1InviscidFlux"/>
+<tr><td><img src="inherit_graph_1.png" border="0" alt="" usemap="#acfd_1_1ImmersedBoundary"/>
+<map name="acfd_1_1ImmersedBoundary" id="acfd_1_1ImmersedBoundary">
+<area shape="rect" id="node1" href="classacfd_1_1ImmersedBoundary.html" title="Class to handle immersed boundary (IB) in finite volume code. " alt="" coords="5,5,173,32"/></map>
+</td></tr>
+<tr><td><img src="inherit_graph_2.png" border="0" alt="" usemap="#acfd_1_1InviscidFlux"/>
 <map name="acfd_1_1InviscidFlux" id="acfd_1_1InviscidFlux">
 <area shape="rect" id="node1" href="classacfd_1_1InviscidFlux.html" title="Class to add contributions of inviscid fluxes to the residual. " alt="" coords="5,5,131,32"/></map>
 </td></tr>
-<tr><td><img src="inherit_graph_2.png" border="0" alt="" usemap="#acfd_1_1PressureReconstruction"/>
+<tr><td><img src="inherit_graph_3.png" border="0" alt="" usemap="#acfd_1_1PressureReconstruction"/>
 <map name="acfd_1_1PressureReconstruction" id="acfd_1_1PressureReconstruction">
-<area shape="rect" id="node1" href="classacfd_1_1PressureReconstruction.html" title="Compute pressure difference dp across each face as (p_L &#45; p_R) " alt="" coords="5,31,200,57"/><area shape="rect" id="node2" href="classacfd_1_1BasicPR.html" title="Implements the basic first&#45;order pressure reconstruction for the mass flux according to Rhie&#45;Chow met..." alt="" coords="248,5,355,32"/><area shape="rect" id="node3" href="classacfd_1_1TVDPR.html" title="Implements a second&#45;order accurate TVD pressure reconstruction for the mass flux according to Rhie&#45;Ch..." alt="" coords="251,56,352,83"/></map>
+<area shape="rect" id="node1" href="classacfd_1_1PressureReconstruction.html" title="Abstract class to compute pressure difference dp across each face as (p_L &#45; p_R) " alt="" coords="5,31,200,57"/><area shape="rect" id="node2" href="classacfd_1_1BasicPR.html" title="Implements the basic first&#45;order pressure reconstruction needed for the mass flux in the Rhie&#45;Chow me..." alt="" coords="248,5,355,32"/><area shape="rect" id="node3" href="classacfd_1_1TVDPR.html" title="Implements a second&#45;order accurate TVD pressure reconstruction for the mass flux needed for the Rhie&#45;..." alt="" coords="251,56,352,83"/></map>
 </td></tr>
-<tr><td><img src="inherit_graph_3.png" border="0" alt="" usemap="#acfd_1_1Structdata2d"/>
+<tr><td><img src="inherit_graph_4.png" border="0" alt="" usemap="#acfd_1_1Structdata2d"/>
 <map name="acfd_1_1Structdata2d" id="acfd_1_1Structdata2d">
 <area shape="rect" id="node1" href="classacfd_1_1Structdata2d.html" title="Class for managing output of analysis data for simulations on structured 2D grids. " alt="" coords="6,5,135,32"/></map>
 </td></tr>
-<tr><td><img src="inherit_graph_4.png" border="0" alt="" usemap="#acfd_1_1Structmesh2d"/>
+<tr><td><img src="inherit_graph_5.png" border="0" alt="" usemap="#acfd_1_1Structmesh2d"/>
 <map name="acfd_1_1Structmesh2d" id="acfd_1_1Structmesh2d">
 <area shape="rect" id="node1" href="classacfd_1_1Structmesh2d.html" title="This class encapsulates the 2D structured mesh. " alt="" coords="5,5,141,32"/></map>
 </td></tr>
-<tr><td><img src="inherit_graph_5.png" border="0" alt="" usemap="#amat_1_1Array2d_3_01double_01_4"/>
+<tr><td><img src="inherit_graph_6.png" border="0" alt="" usemap="#amat_1_1Array2d_3_01double_01_4"/>
 <map name="amat_1_1Array2d_3_01double_01_4" id="amat_1_1Array2d_3_01double_01_4">
 <area shape="rect" id="node1" href="classamat_1_1Array2d.html" title="amat::Array2d\&lt; double \&gt;" alt="" coords="6,5,173,32"/></map>
 </td></tr>
-<tr><td><img src="inherit_graph_6.png" border="0" alt="" usemap="#amat_1_1Array2d_3_01T_01_4"/>
+<tr><td><img src="inherit_graph_7.png" border="0" alt="" usemap="#amat_1_1Array2d_3_01int_01_4"/>
+<map name="amat_1_1Array2d_3_01int_01_4" id="amat_1_1Array2d_3_01int_01_4">
+<area shape="rect" id="node1" href="classamat_1_1Array2d.html" title="amat::Array2d\&lt; int \&gt;" alt="" coords="6,5,149,32"/></map>
+</td></tr>
+<tr><td><img src="inherit_graph_8.png" border="0" alt="" usemap="#amat_1_1Array2d_3_01T_01_4"/>
 <map name="amat_1_1Array2d_3_01T_01_4" id="amat_1_1Array2d_3_01T_01_4">
 <area shape="rect" id="node1" href="classamat_1_1Array2d.html" title="amat::Array2d\&lt; T \&gt;" alt="" coords="5,5,141,32"/></map>
 </td></tr>
-<tr><td><img src="inherit_graph_7.png" border="0" alt="" usemap="#amat_1_1Matrix_3_01T_01_4"/>
+<tr><td><img src="inherit_graph_9.png" border="0" alt="" usemap="#amat_1_1Matrix_3_01T_01_4"/>
 <map name="amat_1_1Matrix_3_01T_01_4" id="amat_1_1Matrix_3_01T_01_4">
 <area shape="rect" id="node1" href="classamat_1_1Matrix.html" title="amat::Matrix\&lt; T \&gt;" alt="" coords="6,5,133,32"/></map>
 </td></tr>
-<tr><td><img src="inherit_graph_8.png" border="0" alt="" usemap="#Steady__insac"/>
+<tr><td><img src="inherit_graph_10.png" border="0" alt="" usemap="#Steady__insac"/>
 <map name="Steady__insac" id="Steady__insac">
 <area shape="rect" id="node1" href="classSteady__insac.html" title="Implements the main solution loop of stead&#45;state iNS equations in artificial compressibility form..." alt="" coords="5,5,107,32"/></map>
 </td></tr>
@@ -130,7 +137,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri Dec 4 2015 23:28:46 for iNSAC by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Sat Dec 12 2015 01:14:56 for iNSAC by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.7
 </small></address>

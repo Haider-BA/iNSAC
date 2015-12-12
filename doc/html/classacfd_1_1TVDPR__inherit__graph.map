@@ -1,3 +1,3 @@
 <map id="acfd::TVDPR" name="acfd::TVDPR">
-<area shape="rect" id="node2" href="$classacfd_1_1PressureReconstruction.html" title="Compute pressure difference dp across each face as (p_L &#45; p_R) " alt="" coords="5,5,200,32"/>
+<area shape="rect" id="node2" href="$classacfd_1_1PressureReconstruction.html" title="Abstract class to compute pressure difference dp across each face as (p_L &#45; p_R) " alt="" coords="5,5,200,32"/>
 </map>
