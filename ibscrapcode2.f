@@ -96,88 +96,90 @@ c -------------------------------------------------------------
 c ---------------------------------------------------------
 c ---- Step 2:  Determine interpolation data
 c ---------------------------------------------------------
-
+	! deldsum1 is same as deld1
+	! deldsum1d is same as deld2
+	
        do j=2,jj
        do i=2,ii
         if(hh(i,j).eq.1.0 .and. distg(i,j).gt.0.0) then
         
-        weight(i,j,1:nintpts) = 0.0 
- 
-        xnxd = xnxs(itag(i,j,lpri(i,j)),lpri(i,j))
-        xnyd = xnys(itag(i,j,lpri(i,j)),lpri(i,j))
-        xcd = xc(i,j)
-        ycd = yc(i,j)
+			weight(i,j,1:nintpts) = 0.0 
+	
+			xnxd = xnxs(itag(i,j,lpri(i,j)),lpri(i,j))
+			xnyd = xnys(itag(i,j,lpri(i,j)),lpri(i,j))
+			xcd = xc(i,j)
+			ycd = yc(i,j)
 
-        deldsum1 = 0.0
-        deldsum1d = 0.0
-        do k=1,nintpts
+			deldsum1 = 0.0
+			deldsum1d = 0.0
+			do k=1,nintpts
 
-         iq = i + idif(k)
-         jq = j + jdif(k)
-         xcp = xc(iq,jq)
-         ycp = yc(iq,jq)
-         dx = xcp - xcd
-         dy = ycp - ycd
-         distance = sqrt(dx**2 + dy**2)
-         deld = dx*xnxd + dy*xnyd
-         dcross = sqrt(distance**2-deld**2)
+				iq = i + idif(k)
+				jq = j + jdif(k)
+				xcp = xc(iq,jq)
+				ycp = yc(iq,jq)
+				dx = xcp - xcd
+				dy = ycp - ycd
+				distance = sqrt(dx**2 + dy**2)
+				deld = dx*xnxd + dy*xnyd
+				dcross = sqrt(distance**2-deld**2)
 
-         if(deld.gt.0.0.and.hh(iq,jq).eq.0.0) then   ! consider only field cells
-           dcross = 1.0/(dcross + 1e-12)
-           weight(i,j,k) = dcross
-           deldsum1 = deldsum1 + dcross
-           deldsum1d = deldsum1d + dcross*deld
-         endif
+				if(deld.gt.0.0.and.hh(iq,jq).eq.0.0) then   ! consider only field cells
+					dcross = 1.0/(dcross + 1e-12)
+					weight(i,j,k) = dcross
+					deldsum1 = deldsum1 + dcross
+					deldsum1d = deldsum1d + dcross*deld
+				endif
 
-        enddo
+			enddo
 
-        if(deldsum1.eq.0.0) then                    ! consider band and field cells
+			if(deldsum1.eq.0.0) then                    ! consider band and field cells
 
-        deldsum1 = 0.0
-        deldsum1d = 0.0
-        do k=1,nintpts
-         iq = i + idif(k)
-         jq = j + jdif(k)
-         xcp = xc(iq,jq)
-         ycp = yc(iq,jq)
-         dx = xcp - xcd
-         dy = ycp - ycd
-         distance = sqrt(dx**2 + dy**2)
-         deld = dx*xnxd + dy*xnyd
-         dcross = sqrt(distance**2-deld**2)
+				deldsum1 = 0.0
+				deldsum1d = 0.0
+				do k=1,nintpts
+					iq = i + idif(k)
+					jq = j + jdif(k)
+					xcp = xc(iq,jq)
+					ycp = yc(iq,jq)
+					dx = xcp - xcd
+					dy = ycp - ycd
+					distance = sqrt(dx**2 + dy**2)
+					deld = dx*xnxd + dy*xnyd
+					dcross = sqrt(distance**2-deld**2)
 
-         if(deld.gt.0.0.and.hh(iq,jq).ge.0.0) then   
-           dcross = 1.0/(dcross + 1e-12)
-           weight(i,j,k) = dcross
-           deldsum1 = deldsum1 + dcross
-           deldsum1d = deldsum1d + dcross*deld
-         endif
+					if(deld.gt.0.0.and.hh(iq,jq).ge.0.0) then   
+						dcross = 1.0/(dcross + 1e-12)
+						weight(i,j,k) = dcross
+						deldsum1 = deldsum1 + dcross
+						deldsum1d = deldsum1d + dcross*deld
+					endif
 
-        enddo
+				enddo
 
-        endif
+			endif
 
-        if(deldsum1.ne.0.0) then
+			if(deldsum1.ne.0.0) then
 
-        weight(i,j,1:nintpts) = weight(i,j,1:nintpts)/deldsum1
-        deld = deldsum1d/deldsum1
+				weight(i,j,1:nintpts) = weight(i,j,1:nintpts)/deldsum1
+				deld = deldsum1d/deldsum1
 
-        else
+			else
 
-        write(6,*) 'no interpolation point found'
-        weight = 0.0
-        deld = 0.0
+				write(6,*) 'no interpolation point found'
+				weight = 0.0
+				deld = 0.0
 
-        endif
+			endif
 
 
-        dratio = deld/distg(i,j)
-        acoef(i,j) = (1.0/(1.0+dratio))**power
-        diste = distg(i,j) + 0.5*deld
-        distd = 0.5*distg(i,j)
-        term = (distd/diste)**power/dratio
-        bcoef(i,j) = term/(1.0 + term)             ! attempts to satisfy continuity
-c       bcoef(i,j) = distg(i,j)/(deld+distg(i,j))  ! linear behavior
+			dratio = deld/distg(i,j)
+			acoef(i,j) = (1.0/(1.0+dratio))**power
+			diste = distg(i,j) + 0.5*deld
+			distd = 0.5*distg(i,j)
+			term = (distd/diste)**power/dratio
+			bcoef(i,j) = term/(1.0 + term)             ! attempts to satisfy continuity
+	c       bcoef(i,j) = distg(i,j)/(deld+distg(i,j))  ! linear behavior
 
         endif
 

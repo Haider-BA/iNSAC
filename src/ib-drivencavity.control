@@ -1,0 +1,35 @@
+-Mesh-file
+../input/cavity100.grid
+
+-Output-file
+../output/cavity100_ib-ellipse-Re250-tvd.vtk
+
+-IB-file
+../input/ib-ellipse-dc.dat
+
+-Density
+1.0
+-Dynamic-viscosity1e-2
+4e-3
+-Reference-velocity-magnitude
+1.1
+
+-Gradient-reconstruction-scheme
+parallelcv
+-Pressure-reconstruction-scheme
+tvd
+
+-CFL-number
+0.3
+-Relative-tolerance-momentum
+1e-4
+-Max-time-steps
+40000
+
+-Boundary-flags
+2 2 2 2
+-Boudary-values
+0.0 0.0
+1.0 0.0
+0.0 0.0
+0.0 0.0

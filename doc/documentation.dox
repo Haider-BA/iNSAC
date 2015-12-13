@@ -1,0 +1,4 @@
+/** \mainpage
+This C++ program implements the solution of incompressible Navier-Stokes (iNS) equations on (single-block) structured grids using second-order finite volume method. The specific formulation of the iNS equations is the `artificial compressibility' formulation; incorporating a pressure time-derivative in the continuity equation makes the inviscid part of the system hyperbolic, which enables the use of a solution method based on the characteristics of the system.
+
+*/

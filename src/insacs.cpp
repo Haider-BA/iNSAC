@@ -2,7 +2,7 @@
  * @brief Driver function for stead-state iNS AC solution
  */
 
-#include "ins.hpp"
+#include <ins.hpp>
 #ifndef __AOUTPUT_STRUCT_H
 #include <aoutput_struct.hpp>
 #endif

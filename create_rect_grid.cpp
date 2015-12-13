@@ -1,10 +1,11 @@
-/** Creates a rectilinear grid from data passed as command-line arguments.
-  Requires 5 arguments:
-  - Number of points in i-direction
-  - Number of points in j-direction
-  - Length of domain in i-direction
-  - Length of domain in j-direction
-  - Output mesh file name.
+/** @brief Creates a rectilinear grid from data passed as command-line arguments.
+ * 
+ * Requires 5 arguments:
+ * - Number of points in i-direction
+ * - Number of points in j-direction
+ * - Length of domain in i-direction
+ * - Length of domain in j-direction
+ * - Output mesh file name.
 */ 
 
 #include <structmesh2d.hpp>

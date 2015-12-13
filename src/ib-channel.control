@@ -1,0 +1,35 @@
+-Mesh-file
+../input/grid3.grid
+
+-Output-file
+../output/channel3_ib-Re250-basic.vtk
+
+-IB-file
+../input/ib-cyl.dat
+
+-Density
+1.0
+-Dynamic-viscosity
+4e-3
+-Reference-velocity-magnitude
+1.1
+
+-Gradient-reconstruction-scheme
+parallelcv
+-Pressure-reconstruction-scheme
+basic
+
+-CFL-number
+0.4
+-Relative-tolerance-momentum
+1e-4
+-Max-time-steps
+50000
+
+-Boundary-flags
+1 2 0 2
+-Boudary-values
+0.0
+0.0 0.0
+1.0
+0.0 0.0
