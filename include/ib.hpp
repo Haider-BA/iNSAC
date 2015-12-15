@@ -96,6 +96,8 @@ public:
 	/// Compute weights of surrounding cells in the interpolation point for each band cell, and acoef and bcoef
 	void compute_interpolation_data();
 	
+	int gnobj() const;
+	int gnspobj(int iobj) const;
 	int gncellvnbd() const;
 	int gidif(int k) const;
 	int gjdif(int k) const;
@@ -110,6 +112,14 @@ public:
 	double gacoef(int i, int j) const;
 	double gbcoef(int i, int j) const;
 	double gweights(int i, int j, int n_object) const;
+
+	/// Can be used to update the IB geometry.
+	/** The arguments are added to spx, spy, snx and sny respectively.
+	 */
+	void update_ib(const vector<vector<double>>& dspx, const vector<vector<double>>& dspy, const vector<vector<double>>& dsnx, const vector<vector<double>>& dsny);
+	
+	/// Used to update the position of the IB without changing the normals
+	void displace_ib(const vector<vector<double>>& dspx, const vector<vector<double>>& dspy);
 };
 
 void ImmersedBoundary::setup(Structmesh2d* mesh, string objectfile)
@@ -388,7 +398,13 @@ void ImmersedBoundary::compute_interpolation_data()
 		}
 }
 
-// some accessor functions
+// accessor functions
+int ImmersedBoundary::gnobj() const
+{ return nobj; }
+
+int ImmersedBoundary::gnspobj(int iobj) const
+{ return nspobj.at(iobj); }
+
 int ImmersedBoundary::gncellvnbd() const
 { return ncellvnbd; }
 
@@ -430,6 +446,32 @@ double ImmersedBoundary::gbcoef(int i, int j) const
 
 double ImmersedBoundary::gweights(int i, int j, int n_nbr) const
 { return weights.at(n_nbr).get(i,j); }
+
+void ImmersedBoundary::update_ib(const vector<vector<double>>& dspx, const vector<vector<double>>& dspy, const vector<vector<double>>& dsnx, const vector<vector<double>>& dsny)
+{
+	for(int iob = 0; iob < nobj; iob++)
+	{
+		for(int i = 0; i < nspobj[iob]; i++)
+		{
+			spx[iob][i] += dspx.at(iob).at(i);
+			spy[iob][i] += dspy.at(iob).at(i);
+			snx[iob][i] += dsnx.at(iob).at(i);
+			sny[iob][i] += dsny.at(iob).at(i);
+		}
+	}
+}
+
+void ImmersedBoundary::displace_ib(const vector<vector<double>>& dspx, const vector<vector<double>>& dspy)
+{
+	for(int iob = 0; iob < nobj; iob++)
+	{
+		for(int i = 0; i < nspobj[iob]; i++)
+		{
+			spx[iob][i] += dspx.at(iob).at(i);
+			spy[iob][i] += dspy.at(iob).at(i);
+		}
+	}
+}
 
 } // end namespace
 #endif

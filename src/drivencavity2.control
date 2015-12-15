@@ -1,35 +1,32 @@
 -Mesh-file
-../input/grid3.grid
+../input/cavity75.grid
 
 -Output-file
-../output/channel3_ibsaucer-Re250-basic.vtk
-
--IB-file
-../input/saucerib-channel.dat
+../output/cavity75-Re100-tvd.vtk
 
 -Density
 1.0
--Dynamic-viscosity
-4e-3
+-Dynamic-viscosity4e-3
+1e-2
 -Reference-velocity-magnitude
 1.1
 
 -Gradient-reconstruction-scheme
 parallelcv
 -Pressure-reconstruction-scheme
-basic
+tvd
 
 -CFL-number
-0.3
+0.4
 -Relative-tolerance-momentum
 1e-4
 -Max-time-steps
-50000
+40000
 
 -Boundary-flags
-1 2 0 2
+2 2 2 2
 -Boudary-values
-0.0
 0.0 0.0
-1.0
+1.0 0.0
+0.0 0.0
 0.0 0.0

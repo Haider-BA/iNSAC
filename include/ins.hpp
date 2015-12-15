@@ -83,6 +83,8 @@ public:
 	
 	Array2d<double>* getVariables();
 	Array2d<double>* getResiduals();
+	
+	vector<double> reslist;			///< For convergence history
 };
 
 Steady_insac::Steady_insac() {
@@ -425,14 +427,15 @@ void Steady_insac::solve()
 				massflux += res[0].get(i,j);
 			}
 		resnorm = sqrt(resnorm);
+		reslist.push_back(resnorm);
 		if(n == 0) resnorm0 = resnorm;
 		if(n == 1 || n%10 == 0) {
 			cout << "Steady_insac: solve(): Iteration " << n << ": relative L2 norm of residual = " << resnorm/resnorm0 << ", net mass flux = " << massflux << endl;
 			cout << "  L2 norm of residual = " << resnorm << endl;
 		}
-		if(resnorm/resnorm0 < tol && fabs(massflux) < sqrt(tol))
+		if(resnorm/resnorm0 < tol /*&& fabs(massflux) < sqrt(tol)*/)
 		{
-			cout << "Steady_insac: solve(): Converged in " << n << " iterations. Norm of final residual = " << resnorm << ", final net mass flux = " << massflux << endl;
+			cout << "Steady_insac: solve(): Converged in " << n << " iterations. Norm of final residual = " << resnorm/* *(1.0/(m->gimx() - 1)/(m->gjmx()-1))*/ << ", final net mass flux = " << massflux << endl;
 			break;
 		}
 

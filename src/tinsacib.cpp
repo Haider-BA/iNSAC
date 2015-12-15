@@ -1,8 +1,8 @@
-/** @file insacs.cpp
- * @brief Driver function for stead-state iNS AC solution
+/** @file tinsacib.cpp
+ * @brief Driver function for time-dependent iNS AC solution with immersed boundaries
  */
 
-#include <ins.hpp>
+#include <insibtime.hpp>
 #ifndef __AOUTPUT_STRUCT_H
 #include <aoutput_struct.hpp>
 #endif
@@ -13,13 +13,15 @@ using namespace std;
 
 int main(int argc, char* argv[])
 {
+	cout << endl;
+	
 	if(argc < 2) {
 		cout << "Please provide the name of a control file. Quitting.\n";
 		return -1;
 	}
 
-	string meshfile, outfile, pressurescheme, gradscheme, dum;
-	double tol, rho, mu, cfl, refvel;
+	string meshfile, outfile, ibfile, pressurescheme, gradscheme, dum;
+	double tol, rho, mu, cfl, refvel, totaltime, maxdisp, frequency;
 	int maxiter;
 	vector<int> bcflags(4);
 	vector<vector<double>> bvalues(4);
@@ -31,6 +33,9 @@ int main(int argc, char* argv[])
 	// read control file
 	conf >> dum; conf >> meshfile;
 	conf >> dum; conf >> outfile;
+	conf >> dum; conf >> ibfile;
+	conf >> dum; conf >> maxdisp;
+	conf >> dum; conf >> frequency;
 	conf >> dum; conf >> rho;
 	conf >> dum; conf >> mu;
 	conf >> dum; conf >> refvel;
@@ -39,6 +44,7 @@ int main(int argc, char* argv[])
 	conf >> dum; conf >> cfl;
 	conf >> dum; conf >> tol;
 	conf >> dum; conf >> maxiter;
+	conf >> dum; conf >> totaltime;
 	conf >> dum;
 	for(int i = 0; i < 4; i++)
 		conf >> bcflags[i];
@@ -53,7 +59,7 @@ int main(int argc, char* argv[])
 		else
 			conf >> bvalues[i][0];
 	}
-
+	
 	conf.close();
 
 	cout << "Input data:\n";
@@ -63,27 +69,21 @@ int main(int argc, char* argv[])
 	cout << "Dynamic viscosity = " << mu << endl;
 	cout << "Density = " << rho << endl;
 	cout << "Reference velocity = " << refvel << endl;
+	cout << "Final time = " << totaltime << endl;
 
 	Structmesh2d m;
 	m.readmesh(meshfile);
 	m.preprocess();
-	
-	cout << "Length = " << m.gy(1,m.gjmx()) - m.gy(1,1) << endl;
 
-	Steady_insac ins;
-	ins.setup(&m, rho, mu, bcflags, bvalues, gradscheme, pressurescheme, refvel, cfl, tol, maxiter);
+	Time_insac_ib ins;
+	ins.setup(&m, rho, mu, bcflags, bvalues, gradscheme, pressurescheme, refvel, cfl, tol, maxiter, totaltime, true, ibfile, maxdisp, frequency);
 	ins.solve();
 
 	Array2d<double>* u = ins.getVariables();
 	Array2d<double>* residuals = ins.getResiduals();
 
-	Structdata2d strd(&m, u, residuals, "insac");
+	Structdata2d strd(&m, u, residuals, "t_insac_ib");
 	strd.writevtk(outfile);
-	
-	ofstream fout("insacs-conv.dat");
-	for(int i = 0; i < ins.reslist.size(); i++)
-		fout << i << " " << ins.reslist[i] << '\n';
-	fout.close();
 
 	cout << endl;
 	return 0;

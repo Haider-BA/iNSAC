@@ -1,3 +1,13 @@
+/** @file insibtime.hpp
+ * @brief Time-dependent iNS in artificial compressibility formulation with unsteady immersed-boundary capability.
+ * @author Aditya Kashi
+ * @date December 2015
+ */
+
+#ifndef _GLIBCXX_CMATH
+#include <cmath>
+#endif
+
 #ifndef __INVISCIDFLUX_H
 #include <inviscidflux.hpp>
 #endif
@@ -14,19 +24,21 @@ using namespace amat;
 using namespace acfd;
 using namespace std;
 
-/** \brief Implements the main solution loop of stead-state iNS equations in artificial compressibility form, including immersed boundaries.
+/** \brief Implements the main solution loop of time-dependent iNS equations in artificial compressibility form, including immersed boundaries.
  *
- * We essentially use no-slip conditions at the immersed boundary.
- * Note that the method may fail if the immersed objects have sharp corners. But it seems sharp intersections of smooth objects are not a problem.
+ * We essentially use no-slip conditions at the immersed boundary. 
+ * Uses an approximate Newton scheme in every time step (called dual time-stepping) to solve implicit time discretization of iNS AC equations.
  */
-class Steady_insac_ib
+class Time_insac_ib
 {
 	Structmesh2d* m;				///< Pointer to mesh.
 	int nvar;						///< Number of unkowns - 3 in this case.
 	Array2d<double>* u;				///< Values of the 3 unkowns - index 0 is pressure, 1 is x-velocity and 2 is y-velocity.
+	Array2d<double>* uold;			///< Values of unkowns at previous time step
 	Array2d<double>* res;			///< Residuals for each of the 3 quanitities.
 	Array2d<double> beta;			///< Artificial compressibility in each cell.
 	Array2d<double> dt;				///< Local time step for each cell.
+	double gdt;						///< Global time step
 	double cfl;						///< CFL number
 	vector<int> bcflags;			///< Flags indicating the type of boundary for each of the 4 boundaries.
 	vector<vector<double>> bvalues;	///< Boundary values for each of the 4 boundaries (2 each, at most)
@@ -35,25 +47,43 @@ class Steady_insac_ib
 
 	InviscidFlux* invf;				///< Inviscid flux object
 	GradientSchemeIns* grad;		///< Gradient reconstruction object for viscous flux
-	Array2d<double>* visc_lhs;		///< Required for gradient reconstruction.
+	Array2d<double>* visc_lhs;		///< Required for thin layer gradient reconstruction.
 
 	string pressurescheme;			///< Denotes which pressure reconstruction scheme to use in mass flux.
 	double uref;					///< Some reference fluid velocity
 	int ndim;						///< No. of spatial dimensions (2)
 	double tol;						///< Relative residual tolerance to decide convergence to steady-state
 	int maxiter;					///< Max number of time steps
+	double tt;						///< Final physical time upto which the simulation is to be run
+	double a;						///< Parameter for steady/unsteady; equals 1.0 for unsteady problem and 0.0 for steady
 
 	bool isalloc;
 	bool isinviscid;				///< If true, viscous flux calculation is not carried out
 	bool haveIB;					///< True if we want immersed boundaries
 
-	Array2d<double>* vel[2];			///< Required for output of velocity
+	Array2d<double>* vel[2];		///< Required for output of velocity
 
 	/// Immersed boundary context
 	ImmersedBoundary ib;
+	/// x-movement of IB
+	vector<vector<double>> dspx;
+	/// y-movment of IB
+	vector<vector<double>> dspy;
+	/// amplitude of motion
+	double dispmax;
+	/// temporal frequency of motion
+	double freq;
+	/// Constant y-velocity
+	double yvel;
+
+	/// Function to give a displacement as a function of time
+	double dispfunc(double t)
+	{
+		return dispmax * sin(2*PI*freq*t);
+	}
 
 public:
-	Steady_insac_ib();
+	Time_insac_ib();
 
 	/// Sets up the iNS problem.
 	/** \param _bcflags contains 4 integers denoting the type of boundary for each boundary.
@@ -70,9 +100,9 @@ public:
 	\param maxiters is the maximum number of time steps
 	\param ibfile is the name of a file containing data of IB surface points and normals
 	*/
-	void setup(Structmesh2d* mesh, double dens, double visc, vector<int> _bcflags, vector<vector<double>> _bvalues, string gradscheme, string pressure_scheme, double refvel, double CFL, double tolerance, int maxiters, bool have_IB, string ibfile, bool is_inviscid = false);
+	void setup(Structmesh2d* mesh, double dens, double visc, vector<int> _bcflags, vector<vector<double>> _bvalues, string gradscheme, string pressure_scheme, double refvel, double CFL, double tolerance, int maxiters, double totaltime, bool have_IB, string ibfile, double maxdisp, double frequency, bool is_inviscid = false);
 
-	~Steady_insac_ib();
+	~Time_insac_ib();
 
 	/// Computes artificial conmpressibility ([beta](@ref beta) ) for each cell.
 	void compute_beta();
@@ -97,11 +127,11 @@ public:
 	Array2d<double>* getResiduals();
 };
 
-Steady_insac_ib::Steady_insac_ib() {
+Time_insac_ib::Time_insac_ib() {
 	isalloc = false;
 }
 
-void Steady_insac_ib::setup(Structmesh2d* mesh, double dens, double visc, vector<int> _bcflags, vector<vector<double>> _bvalues, string gradscheme, string pressure_scheme, double refvel, double CFL, double tolerance, int maxiters, bool have_IB, string ibfile, bool is_inviscid)
+void Time_insac_ib::setup(Structmesh2d* mesh, double dens, double visc, vector<int> _bcflags, vector<vector<double>> _bvalues, string gradscheme, string pressure_scheme, double refvel, double CFL, double tolerance, int maxiters, double totaltime, bool have_IB, string ibfile, double maxdisp, double frequency, bool is_inviscid)
 {
 	ndim = 2;
 	m = mesh;
@@ -112,7 +142,15 @@ void Steady_insac_ib::setup(Structmesh2d* mesh, double dens, double visc, vector
 	bvalues = _bvalues;
 	pressurescheme = pressure_scheme;
 	uref = refvel;
+
 	haveIB = have_IB;
+	dispmax = maxdisp;
+	freq = frequency;
+	yvel = 0.4;
+
+	tt = totaltime;
+	a = 1.0;
+
 	if(gradscheme == "normtan")
 		grad = new NormTanGradientIns;
 	else if(gradscheme == "parallelcv")
@@ -123,6 +161,7 @@ void Steady_insac_ib::setup(Structmesh2d* mesh, double dens, double visc, vector
 	invf = new InviscidFlux;
 
 	u = new Array2d<double>[nvar];
+	uold = new Array2d<double>[nvar];
 	res = new Array2d<double>[nvar];
 	visc_lhs = new Array2d<double>[5];
 
@@ -133,6 +172,7 @@ void Steady_insac_ib::setup(Structmesh2d* mesh, double dens, double visc, vector
 	for(int i = 0; i < nvar; i++)
 	{
 		u[i].setup(m->gimx()+1, m->gjmx()+1);
+		uold[i].setup(m->gimx()+1, m->gjmx()+1);
 		res[i].setup(m->gimx()+1, m->gjmx()+1);
 	}
 	for(int i = 0; i < 5; i++)
@@ -146,15 +186,18 @@ void Steady_insac_ib::setup(Structmesh2d* mesh, double dens, double visc, vector
 	invf->setup(m, u, res, &beta, rho, pressure_scheme, _bcflags, _bvalues);
 	grad->setup(m,u,res,visc_lhs, mu);
 
-	if(haveIB)
+	cout << "Time_insac_ib: setup(): Computing IB-related data." << endl;
+	ib.setup(m, ibfile);
+	ib.classify();
+	ib.compute_interpolation_data();
+	dspx.resize(ib.gnobj()); dspy.resize(ib.gnobj());
+	for(int i = 0; i < ib.gnobj(); i++)
 	{
-		cout << "Steady_insac_ib: setup(): Computing IB-related data." << endl;
-		ib.setup(m, ibfile);
-		ib.classify();
-		ib.compute_interpolation_data();
+		dspx[i].resize(ib.gnspobj(i));
+		dspy[i].resize(ib.gnspobj(i));
 	}
 	
-	cout << "Steady_insac_ib: setup():\n";
+	cout << "Time_insac_ib: setup():\n";
 	cout << "BC flags ";
 	for(int i = 0; i < 4; i++)
 		cout << bcflags[i] << " ";
@@ -168,7 +211,7 @@ void Steady_insac_ib::setup(Structmesh2d* mesh, double dens, double visc, vector
 	cout << endl;
 }
 
-Steady_insac_ib::~Steady_insac_ib()
+Time_insac_ib::~Time_insac_ib()
 {
 	if(isalloc) {
 		delete [] u;
@@ -181,7 +224,7 @@ Steady_insac_ib::~Steady_insac_ib()
 
 /** We currently do not consider viscosity in calculating the artificial compressibility [beta](@ref beta).
 */
-void Steady_insac_ib::compute_beta()
+void Time_insac_ib::compute_beta()
 {
 	int i,j; double vmag, uvisc, h;
 	for(i = 0; i <= m->gimx(); i++)
@@ -206,7 +249,7 @@ void Steady_insac_ib::compute_beta()
 * \note For the time being, inlet is only allowed for boundary 2, ie, for the i=1 boundary.
 * \note The corner ghost cells are not directly given values; they are just set as the average of their neighboring ghost cells.
 */
-void Steady_insac_ib::setBCs()
+void Time_insac_ib::setBCs()
 {
 	int i,j,k;
 	double nx, ny, area, vdotn;
@@ -358,14 +401,15 @@ void Steady_insac_ib::setBCs()
 /** Computes local time-step for each cell using characteristics of the system in the normal directions.
 * Face normals 'in a cell' are calculated by averaging those of the two faces bounding the cell in each the i- and j-directions.
 */
-void Steady_insac_ib::compute_timesteps()
+void Time_insac_ib::compute_timesteps()
 {
 	int i,j, dim;
 	vector<double> areavi(ndim), areavj(ndim);		// area vectors
 	vector<double> inormal(ndim), jnormal(ndim);	// unit normal vectors
 	double areai, areaj;							// area magnitudes
 	double vdotni, vdotnj, eigeni, eigenj, voldt;
-	//cout << "Steady_insac_ib: compute_timesteps(): Now computing time steps for next iteration..." << endl;
+	gdt = 10.0;
+	//cout << "Time_insac_ib: compute_timesteps(): Now computing time steps for next iteration..." << endl;
 
 	for(i = 1; i <= m->gimx()-1; i++)
 		for(j = 1; j <= m->gjmx()-1; j++)
@@ -393,11 +437,12 @@ void Steady_insac_ib::compute_timesteps()
 			
 			voldt = eigeni*areai + eigenj*areaj;
 			dt(i,j) = m->gvol(i,j)/voldt * cfl;
+			if(gdt > dt(i,j)) gdt = dt(i,j);
 		}
 }
 
 /** Sets all quantities in all cells to zero. */
-void Steady_insac_ib::setInitialConditions()
+void Time_insac_ib::setInitialConditions()
 {
 	int i,j,k;
 	for(i = 0; i <= m->gimx(); i++)
@@ -411,122 +456,179 @@ void Steady_insac_ib::setInitialConditions()
 		}
 }
 
-/** Make sure the [Steady_insac_ib](@ref Steady_insac_ib) object has been [setup](@ref setup) and initialized with some [initial condition](@ref setInitialConditions). Both the momentum-magnitude residual and the mass flux are taken as convergence criteria; the tolerance for the mass flux is the square-root of the tolerance for the relative momentum-magnitude residual. [tol](@ref tol) is the latter.
+/** Make sure the [Time_insac_ib](@ref Time_insac_ib) object has been [setup](@ref setup) and initialized with some [initial condition](@ref setInitialConditions). Both the momentum-magnitude residual and the mass flux are taken as convergence criteria; the tolerance for the mass flux is the square-root of the tolerance for the relative momentum-magnitude residual. [tol](@ref tol) is the latter.
 */
-void Steady_insac_ib::solve()
+void Time_insac_ib::solve()
 {
 	setInitialConditions();
 	setBCs();
 	compute_beta();
 
-	int i,j,k, ivar,iq,jq;
+	int i,j,k, ivar,iq,jq, nk, nt = 0;
 	vector<double> ubc(nvar);
 	vector<double> uave(nvar);
-	double nxd, nyd, udotn, unormal, vnormal, utangent, vtangent;
-	double resnorm, resnorm0, massflux, dtv;
-	cout << "Steady_insac_ib: solve(): Beginning the time-march." << endl;
-
-	for(int n = 0; n < maxiter; n++)
-	{
-		// calculate stuff needed for this iteration
-		setBCs();
-		
-		compute_timesteps();
-
-		for(k = 0; k < nvar; k++)
-			res[k].zeros();
-		
-		// compute fluxes
-		invf->compute_fluxes();
-		if(!isinviscid)
-			grad->compute_fluxes();
-
-		if(haveIB)
+	double nxd, nyd, udotn, unormal, vnormal, utangent, vtangent, ypos, uwall, vwall, uwall_n, vwall_n, uwall_t, vwall_t;
+	double resnorm, resnorm0, massflux, dtv, telapsed;
+	double mtol = sqrt(sqrt(sqrt(tol)));
+	
+	cout << "Time_insac_ib: solve(): Beginning the time-march." << endl;
+	
+	for(i = 0; i < ib.gnobj(); i++)
+		for(j = 0; j < ib.gnspobj(i); j++)
 		{
+			dspx[i][j] = 0.0;
+		}
+
+	
+	while(telapsed < tt)
+	{
+		cout << "\nTime_insac_ib: solve(): Time step " << nt << ", Time elapsed = " << telapsed << endl;
+		
+		// move the immersed boundary in y-direction
+		ypos = dispfunc(telapsed);
+		for(i = 0; i < ib.gnobj(); i++)
+			for(j = 0; j < ib.gnspobj(i); j++)
+			{
+				//dspy[i][j] = ypos - ib.gspy(i,j);
+				dspy[i][j] = yvel*gdt;
+			}
+
+		ib.displace_ib(dspx,dspy);
+		
+		ib.classify();
+		ib.compute_interpolation_data();
+
+		compute_timesteps();
+		
+		// for rigid displacements, the following estimation of wall velocity should be enough
+		// in general, we'd need a separate uwall for each IB surface point
+		uwall = dspx[0][0]/gdt;
+		vwall = dspy[0][0]/gdt;
+		
+		for(k = 0; k < nvar; k++)
+			uold[k] = u[k];
+
+		for(nk = 0; nk < maxiter; nk++)
+		{
+			for(k = 0; k < nvar; k++)
+				res[k].zeros();
+			
+			// compute fluxes
+			invf->compute_fluxes();
+			// if not inviscid, compute viscous fluxes
+			if(! isinviscid)
+				grad->compute_fluxes();
+			
+			// add time derivative terms
+			for(i = 1; i <= m->gimx()-1; i++)
+				for(j = 1; j <= m->gjmx()-1; j++)
+					for(k = 1; k < nvar; k++)
+						res[k](i,j) += rho * m->gvol(i,j)/gdt * (u[k](i,j) - uold[k](i,j));
+
+			if(haveIB)
+			{
+				for(i = 1; i <= m->gimx()-1; i++)
+					for(j = 1; j <= m->gjmx()-1; j++)
+					{
+						// CAUTION: checking equality of doubles
+						if(ib.ghh(i,j) == 1.0)
+						{
+							// if interior cell, set all properties to zero
+							if(ib.gdistg(i,j) < 0)
+							{
+								for(k = 0; k < nvar; k++)
+									ubc[k] = 0.0;
+							}
+							else
+							{
+								for(k = 0; k < nvar; k++)
+									uave[k] = 0.0;
+								for(k = 0; k < ib.gncellvnbd(); k++)
+								{
+									iq = i + ib.gidif(k);
+									jq = j + ib.gjdif(k);
+									for(ivar = 0; ivar < nvar; ivar++)
+										uave[ivar] += ib.gweights(i,j,k)*u[ivar].get(iq,jq);
+								}
+								
+								// since wall velocity is constant everywhere
+								uave[1] -= uwall;
+								uave[2] -= vwall;
+							
+								nxd = ib.gsnx( ib.glpri(i,j), ib.gitag(i,j,ib.glpri(i,j)) );
+								nyd = ib.gsny( ib.glpri(i,j), ib.gitag(i,j,ib.glpri(i,j)) );
+								udotn = uave[1]*nxd + uave[2]*nyd;
+								unormal = udotn*nxd;
+								vnormal = udotn*nyd;
+								utangent = uave[1] - unormal;
+								vtangent = uave[2] - vnormal;
+								
+								// take wall velocity into account
+								/*uwall_n = (uwall*nxd + vwall*nyd)*nxd;
+								vwall_n = (uwall*nxd + vwall*nyd)*nyd;
+								uwall_t = uwall - uwall_n;
+								vwall_t = vwall - vwall_n;*/
+								
+								ubc[0] = uave[0];	// "classic boundary layer" approximation - might fail for boundaries with high curvature
+								/*ubc[1] = uwall + (utangent-uwall_t)*ib.gacoef(i,j) + (unormal-uwall_n)*ib.gbcoef(i,j);
+								ubc[2] = vwall + (vtangent-vwall_t)*ib.gacoef(i,j) + (vnormal-vwall_n)*ib.gbcoef(i,j);*/
+								ubc[1] = utangent*ib.gacoef(i,j) + unormal*ib.gbcoef(i,j);
+								ubc[2] = vtangent*ib.gacoef(i,j) + vnormal*ib.gbcoef(i,j);
+							}
+
+							dtv = m->gvol(i,j)/dt.get(i,j);
+							// we update the residuals like this so that when we update u,v,p later, we get ubc,vbc,pbc in the band cell
+							res[0](i,j) = dtv*(u[0](i,j)-ubc[0])/(beta.get(i,j)*beta.get(i,j));
+							res[1](i,j) = rho*m->gvol(i,j)*(a/gdt + 1.0/dt(i,j)) * (u[1].get(i,j)-ubc[1]);
+							res[2](i,j) = rho*m->gvol(i,j)*(a/gdt + 1.0/dt(i,j)) * (u[2].get(i,j)-ubc[2]);
+						}
+					}
+			}
+
+			// check convergence
+			resnorm = 0; massflux = 0;
 			for(i = 1; i <= m->gimx()-1; i++)
 				for(j = 1; j <= m->gjmx()-1; j++)
 				{
-					// CAUTION: checking equality of doubles
-					if(ib.ghh(i,j) == 1.0)
-					{
-						// if interior cell, set call properties to zero
-						if(ib.gdistg(i,j) < 0)
-						{
-							for(k = 0; k < nvar; k++)
-								ubc[k] = 0.0;
-						}
-						else
-						{
-							for(k = 0; k < nvar; k++)
-								uave[k] = 0.0;
-							for(k = 0; k < ib.gncellvnbd(); k++)
-							{
-								iq = i + ib.gidif(k);
-								jq = j + ib.gjdif(k);
-								for(ivar = 0; ivar < nvar; ivar++)
-									uave[ivar] += ib.gweights(i,j,k)*u[ivar].get(iq,jq);
-							}
-						
-							nxd = ib.gsnx( ib.glpri(i,j), ib.gitag(i,j,ib.glpri(i,j)) );
-							nyd = ib.gsny( ib.glpri(i,j), ib.gitag(i,j,ib.glpri(i,j)) );
-							udotn = uave[1]*nxd + uave[2]*nyd;
-							unormal = udotn*nxd;
-							vnormal = udotn*nyd;
-							utangent = uave[1] - unormal;
-							vtangent = uave[2] - vnormal;
-							
-							ubc[0] = uave[0];	// "classic boundary layer" approximation - might fail for boundaries with high curvature
-							ubc[1] = utangent*ib.gacoef(i,j) + unormal*ib.gbcoef(i,j);
-							ubc[2] = vtangent*ib.gacoef(i,j) + vnormal*ib.gbcoef(i,j);
-						}
-
-						dtv = m->gvol(i,j)/dt.get(i,j);
-						// we update the residuals like this so that when we update u,v,p later, we get ubc,vbc,pbc in the band cell
-						res[0](i,j) = dtv*(u[0](i,j)-ubc[0])/(beta.get(i,j)*beta.get(i,j));
-						res[1](i,j) = dtv*rho*(u[1].get(i,j)-ubc[1]);
-						res[2](i,j) = dtv*rho*(u[2].get(i,j)-ubc[2]);
-					}
+					resnorm += (res[1].get(i,j)*res[1].get(i,j) + res[2].get(i,j)*res[2].get(i,j))*m->gvol(i,j);
+					massflux += res[0].get(i,j);
 				}
-		}
-
-		// check convergence
-		resnorm = 0; massflux = 0;
-		for(i = 1; i <= m->gimx()-1; i++)
-			for(j = 1; j <= m->gjmx()-1; j++)
-			{
-				resnorm += (res[1].get(i,j)*res[1].get(i,j) + res[2].get(i,j)*res[2].get(i,j))*m->gvol(i,j);
-				massflux += res[0].get(i,j);
+			resnorm = sqrt(resnorm);
+			if(nk == 0) resnorm0 = resnorm;
+			if(nk == 1 || nk%10 == 0) {
+				cout << "Time_insac_ib: solve(): Iteration " << nk << ": relative L2 norm of residual = " << resnorm/resnorm0 << ", net mass flux = " << massflux << endl;
+				cout << "  L2 norm of residual = " << resnorm << endl;
 			}
-		resnorm = sqrt(resnorm);
-		if(n == 0) resnorm0 = resnorm;
-		if(n == 1 || n%10 == 0) {
-			cout << "Steady_insac_ib: solve(): Iteration " << n << ": relative L2 norm of residual = " << resnorm/resnorm0 << ", net mass flux = " << massflux << endl;
-			cout << "  L2 norm of residual = " << resnorm << endl;
-		}
-		if(resnorm/resnorm0 < tol && fabs(massflux) < sqrt(tol))
-		{
-			cout << "Steady_insac_ib: solve(): Converged in " << n << " iterations. Norm of final residual = " << resnorm << ", final net mass flux = " << massflux << endl;
-			break;
-		}
-
-		// update u
-		for(i = 1; i <= m->gimx()-1; i++)
-			for(j = 1; j <= m->gjmx()-1; j++)
+			if(resnorm/resnorm0 < tol && fabs(massflux) < mtol)
 			{
-				dtv = dt.get(i,j)/m->gvol(i,j);
-				u[0](i,j) = u[0].get(i,j) - res[0].get(i,j)*beta.get(i,j)*beta.get(i,j)*dtv;
-				for(k = 1; k < nvar; k++)
-					u[k](i,j) = u[k].get(i,j) - res[k].get(i,j)*dtv/rho;
+				cout << "Time_insac_ib: solve(): Converged in " << nk << " iterations. Norm of final residual = " << resnorm << ", final net mass flux = " << massflux << endl;
+				break;
 			}
+
+			// update u
+			for(i = 1; i <= m->gimx()-1; i++)
+				for(j = 1; j <= m->gjmx()-1; j++)
+				{
+					dtv = dt.get(i,j)/m->gvol(i,j);
+					u[0](i,j) = u[0].get(i,j) - res[0].get(i,j)*beta.get(i,j)*beta.get(i,j)*dtv;
+					for(k = 1; k < nvar; k++)
+						u[k](i,j) = u[k].get(i,j) - res[k].get(i,j) * 1.0 / (rho*m->gvol(i,j) * (a/gdt + 1.0/dt(i,j)));
+				}
+			
+			setBCs();
+		}
+		
+		nt++;
+		telapsed += gdt;
 	}
 }
 
-Array2d<double>* Steady_insac_ib::getVariables()
+Array2d<double>* Time_insac_ib::getVariables()
 {
 	return u;
 }
 
-Array2d<double>* Steady_insac_ib::getResiduals()
+Array2d<double>* Time_insac_ib::getResiduals()
 {
 	return res;
 }

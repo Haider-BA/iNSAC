@@ -2,14 +2,19 @@
 ../input/grid3.grid
 
 -Output-file
-../output/channel3_ibsaucer-Re250-basic.vtk
+../output/unsteady/channel3_t0.20_ib-ellipse-vel0.4-Re250-basic.vtk
 
 -IB-file
-../input/saucerib-channel.dat
+../input/ib-ellipse-channel.dat
+
+-Displacement-amplitude
+0.1
+-Frequency-of-oscillation
+10.0
 
 -Density
 1.0
--Dynamic-viscosity
+-Dynamic-viscosity1e-2
 4e-3
 -Reference-velocity-magnitude
 1.1
@@ -20,11 +25,13 @@ parallelcv
 basic
 
 -CFL-number
-0.3
+0.4
 -Relative-tolerance-momentum
 1e-4
 -Max-time-steps
-50000
+10000
+-Total-time
+0.20
 
 -Boundary-flags
 1 2 0 2

@@ -12,3 +12,6 @@ insib:
 tinsac:
 	$(GPP) tinsac.cpp -o tinsac.out $(OPTIONS) -I$(INC_DIR)
 
+tinsib:
+	$(GPP) tinsacib.cpp -o tinsib.out $(OPTIONS) -I$(INC_DIR)
+

@@ -10,8 +10,10 @@ using namespace amat;
 using namespace acfd;
 using namespace std;
 
-/** \brief Implements the main solution loop of stead-state iNS equations in artificial compressibility form.
-*/
+/** \brief Implements the main solution loop of time-dependent iNS equations in artificial compressibility form.
+ *
+ * Uses an approximate Newton scheme in every time step (called dual time-stepping) to solve implicit time discretization of iNS AC equations.
+ */
 class Time_insac
 {
 	Structmesh2d* m;				///< Pointer to mesh.
@@ -114,6 +116,7 @@ void Time_insac::setup(Structmesh2d* mesh, double dens, double visc, vector<int>
 	invf = new InviscidFlux;
 
 	u = new Array2d<double>[nvar];
+	uold = new Array2d<double>[nvar];
 	res = new Array2d<double>[nvar];
 	visc_lhs = new Array2d<double>[5];
 
@@ -124,6 +127,7 @@ void Time_insac::setup(Structmesh2d* mesh, double dens, double visc, vector<int>
 	for(int i = 0; i < nvar; i++)
 	{
 		u[i].setup(m->gimx()+1, m->gjmx()+1);
+		uold[i].setup(m->gimx()+1, m->gjmx()+1);
 		res[i].setup(m->gimx()+1, m->gjmx()+1);
 	}
 	for(int i = 0; i < 5; i++)

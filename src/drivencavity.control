@@ -2,12 +2,12 @@
 ../input/cavity50.grid
 
 -Output-file
-../output/cavity50-Re250-basic.vtk
+../output/cavity50-Re100-basic.vtk
 
 -Density
 1.0
--Dynamic-viscosity1e-2
-4e-3
+-Dynamic-viscosity4e-3
+1e-2
 -Reference-velocity-magnitude
 1.1
 
@@ -17,7 +17,7 @@ parallelcv
 basic
 
 -CFL-number
-0.1
+0.4
 -Relative-tolerance-momentum
 1e-4
 -Max-time-steps

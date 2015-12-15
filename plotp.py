@@ -10,7 +10,7 @@ data = np.genfromtxt(fname)
 n = data.shape[0]
 print("Number of points = " + str(n))
 
-plt.plot(data[:,0], data[:,1])
+plt.plot(data[:,0], np.log10(data[:,1]))
 plt.xlabel("Iterations")
 plt.ylabel("log( relative residual )")
 plt.grid('on')
